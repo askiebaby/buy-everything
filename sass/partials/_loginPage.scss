@@ -1,0 +1,90 @@
+@import '../modules/color';
+@import '../modules/mediaQueries';
+
+.loginPage {
+  display: flex;
+  flex: 0 1 auto;
+  justify-content: center;
+  align-items: stretch;
+  text-align: center;
+  font-size: 16px;
+
+  .loginPage__banner {
+    position: relative;
+    background: url(../images/login-bg.jpg) center center / cover;
+    min-height: 100vh;
+    flex-basis: 50%;
+
+    @include media ($tablet){
+      display: none;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      opacity: .2;
+    }
+  }
+
+  .loginPage__login__background {
+    position: relative;
+    background: $white;
+    flex-basis: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 100vh;
+
+    @include media ($tablet){
+      background: url(../images/login-bg.jpg) center center / cover;
+      flex-basis: 100%;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        opacity: .2;
+      }
+    }
+  }
+
+  .loginPage__login__titleBox {
+    flex-basis: 80%;
+    background: $lightGray;
+    padding: 50px 0 80px;
+    border-radius: 5px;
+    min-height: 270px;
+    z-index: 1;
+
+    @include media ($tablet){
+      flex-basis: 90%;
+    }
+  }
+
+  .loginPage__login__title {
+    line-height: 1.8em;
+    letter-spacing: .1em;
+    font-size: 2em;
+    color: #333;
+
+    @include media ($tablet){
+      font-size: 1.5em;
+    }
+  }
+
+  p {
+    margin-bottom: 20px;
+    font-size: .8em;
+    color: #555;
+  }
+}

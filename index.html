@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Buy Everything</title>
+  <link rel="stylesheet" href="./style/main.css">
 </head>
 <body>
   <!-- login -->
@@ -13,37 +14,29 @@
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
     js = d.createElement(s); js.id = id;
-    js.src = 'https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v3.2&appId=597877933993806&autoLogAppEvents=1';
+    js.src = 'https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v3.2';
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));</script>
 
   <!-- login page start -->
-  <section>
-    <div class="fb-login-button" data-width="250" data-size="large" data-button-type="continue_with" data-auto-logout-link="true" data-use-continue-as="true"></div>
+  <section class="loginPage">
+    <div class="loginPage__banner"></div>
+    <div class="loginPage__login__background">
+      <div class="loginPage__login__titleBox">
+        <h1 class="loginPage__login__title">看直播做買賣</h1>
+        <p>登入臉書以便直接看直播購物/開直播上架</p>
+        <!-- <fb:login-button 
+        scope="public_profile,email"
+        onlogin="checkLoginState();">
+        </fb:login-button> -->
+        <div class="fb-login-button" data-width="200" data-size="large" data-button-type="continue_with" data-auto-logout-link="true" data-use-continue-as="true" scope="public_profile,email" onlogin="checkLoginState();"></div>
+        
+      </div>
+    </div>
+    <div id="status"></div>
   </section>
 
-  <script>
-    // sdk
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = 'https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v3.2&appId=597877933993806&autoLogAppEvents=1';
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-
-    window.fbAsyncInit = function() {
-      FB.init({
-        appId      : '597877933993806',
-        cookie     : true,
-        xfbml      : true,
-        version    : 'v3.2'
-      });
-
-      FB.AppEvents.logPageView();
-    };
-
-</script>
-<script src="./js/login.js"></script>
+  <!-- js area -->
+  <script src="./js/login.js"></script>
 </body>
 </html>
