@@ -1,7 +1,7 @@
 (function isToken (){
   let userToken = Cookies.get('buy-user-token');
   if (userToken) {
-    locationURL('character.html');
+    // locationURL('character.html');
   }
 })();
 
