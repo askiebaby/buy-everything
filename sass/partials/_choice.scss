@@ -1,0 +1,53 @@
+@import '../modules/color';
+@import '../modules/mediaQueries';
+@import '../modules/button';
+
+.character {
+  // background: url(../images/login-bg.jpg) center center / cover;
+  min-height: 100vh;
+  text-align: center;
+
+  @include overlay;
+
+  > div {
+    position: relative;
+    background: rgba(255,255,255,.9);
+    min-height: 100vh;
+    padding: 10% 0;
+    z-index: 1;
+  }
+
+  h1 {
+    @extend %pageTitle;
+  }
+
+  h2 {
+    line-height: 1.8;
+  }
+
+  .character__choice {
+    max-width: 500px;
+    margin: auto;
+  }
+
+  .character__choiceBox {
+    padding-top: 50px;
+  }
+
+  .character__choiceCard {
+    display: block;
+    margin: auto;
+    color: $white;
+    padding: 80px 50px 100px;
+    border-radius: 5px;
+    @extend %buttonBg;
+
+    &:hover {
+      opacity: .9;
+    }
+
+    p {
+      font-size: .7em;
+    }
+  }
+}

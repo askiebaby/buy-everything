@@ -1,0 +1,22 @@
+@import './color';
+@import './mediaQueries';
+
+%pageTitle {
+  letter-spacing: .1em;
+  font-size: 2em;
+  color: $title-color;
+
+  @include media ($tablet){
+    font-size: 1.5em;
+  }
+}
+
+
+
+@mixin paragraph ($level: small) {
+  @if ($level == small) {
+    padding: 5px 0 20px;
+    font-size: .8em;
+    color: #555;
+  }
+}

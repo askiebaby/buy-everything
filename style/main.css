@@ -12,6 +12,21 @@ body, h1, h2, h3, p {
   margin: 0;
 }
 
+a, a:hover {
+  text-decoration: none;
+}
+
+.loginPage .loginPage__login__title, .character h1 {
+  letter-spacing: .1em;
+  font-size: 2em;
+  color: #333;
+}
+@media all and (max-width: 768px) {
+  .loginPage .loginPage__login__title, .character h1 {
+    font-size: 1.5em;
+  }
+}
+
 .loginPage {
   display: flex;
   flex: 0 1 auto;
@@ -42,7 +57,6 @@ body, h1, h2, h3, p {
   opacity: .2;
 }
 .loginPage .loginPage__login__background {
-  position: relative;
   background: #f1f2f3;
   flex-basis: 50%;
   display: flex;
@@ -55,6 +69,7 @@ body, h1, h2, h3, p {
   .loginPage .loginPage__login__background {
     background: url(../images/login-bg.jpg) center center/cover;
     flex-basis: 100%;
+    position: relative;
   }
   .loginPage .loginPage__login__background::after {
     content: '';
@@ -80,19 +95,65 @@ body, h1, h2, h3, p {
     flex-basis: 90%;
   }
 }
-.loginPage .loginPage__login__title {
-  line-height: 1.8em;
-  letter-spacing: .1em;
-  font-size: 2em;
-  color: #333;
-}
-@media all and (max-width: 768px) {
-  .loginPage .loginPage__login__title {
-    font-size: 1.5em;
-  }
-}
 .loginPage p {
-  margin-bottom: 20px;
+  padding: 5px 0 20px;
   font-size: .8em;
   color: #555;
+}
+
+.character .character__choiceCard {
+  background: #098ee0;
+  background: -moz-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: -webkit-gradient(left top, right bottom, color-stop(0%, #098ee0), color-stop(100%, #6be0b5));
+  background: -webkit-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: -o-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: -ms-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: linear-gradient(135deg, #098ee0 0%, #6be0b5 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#098ee0', endColorstr='#6be0b5', GradientType=1 );
+}
+
+.character {
+  min-height: 100vh;
+  text-align: center;
+  position: relative;
+}
+.character::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: .2;
+}
+.character > div {
+  position: relative;
+  background: rgba(255, 255, 255, 0.9);
+  min-height: 100vh;
+  padding: 10% 0;
+  z-index: 1;
+}
+.character h2 {
+  line-height: 1.8;
+}
+.character .character__choice {
+  max-width: 500px;
+  margin: auto;
+}
+.character .character__choiceBox {
+  padding-top: 50px;
+}
+.character .character__choiceCard {
+  display: block;
+  margin: auto;
+  color: #f1f2f3;
+  padding: 80px 50px 100px;
+  border-radius: 5px;
+}
+.character .character__choiceCard:hover {
+  opacity: .9;
+}
+.character .character__choiceCard p {
+  font-size: .7em;
 }

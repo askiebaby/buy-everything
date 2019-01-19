@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-tw">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Buy Everything</title>
+  <title>Buy Everything Everywhere</title>
   <link rel="stylesheet" href="./style/main.css">
 </head>
 <body>
@@ -30,13 +30,14 @@
         onlogin="checkLoginState();">
         </fb:login-button> -->
         <div class="fb-login-button" data-width="200" data-size="large" data-button-type="continue_with" data-auto-logout-link="true" data-use-continue-as="true" scope="public_profile,email" onlogin="checkLoginState();"></div>
-        
+        <p id="status"></p>
       </div>
     </div>
-    <div id="status"></div>
   </section>
 
   <!-- js area -->
+  <script src="./js/cookie.js"></script>
   <script src="./js/login.js"></script>
+  <script src="./js/location.js"></script>
 </body>
 </html>

@@ -1,0 +1,10 @@
+%buttonBg {
+  background: rgba(9,142,224,1);
+  background: -moz-linear-gradient(-45deg, rgba(9,142,224,1) 0%, rgba(107,224,181,1) 100%);
+  background: -webkit-gradient(left top, right bottom, color-stop(0%, rgba(9,142,224,1)), color-stop(100%, rgba(107,224,181,1)));
+  background: -webkit-linear-gradient(-45deg, rgba(9,142,224,1) 0%, rgba(107,224,181,1) 100%);
+  background: -o-linear-gradient(-45deg, rgba(9,142,224,1) 0%, rgba(107,224,181,1) 100%);
+  background: -ms-linear-gradient(-45deg, rgba(9,142,224,1) 0%, rgba(107,224,181,1) 100%);
+  background: linear-gradient(135deg, rgba(9,142,224,1) 0%, rgba(107,224,181,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#098ee0', endColorstr='#6be0b5', GradientType=1 );
+}
