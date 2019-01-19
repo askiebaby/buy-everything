@@ -10,7 +10,7 @@ $( document ).ready(function() {
     if (response.status === 'connected') {
       console.log('step 4.1: statusChangeCallback: connected');
       // Logged into your app and Facebook.
-      testAPI();
+      // cookies
       saveToken(response.authResponse.accessToken);
     } else {
       // The person is not logged into your app or we are unable to tell.
@@ -50,19 +50,8 @@ $( document ).ready(function() {
       }
     });
 
-  // Here we run a very simple test of the Graph API after login is
-  // successful.  See statusChangeCallback() for when this call is made.
-  function testAPI() {
-    console.log('step 5: testAPI(); Welcome!  Fetching your information.... ');
-    FB.api('/me', function(response) {
-      console.log('step 6: 載入FB使用者資訊，Successful login for: ' + response.name);
-      document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
-    });
-  }
-
   function saveToken (fbToken) {
     Cookies.set('buy-user-token', fbToken);
-    console.log(fbToken);
+    console.log('拿到使用者token，存到cookie中');
   }
 });
