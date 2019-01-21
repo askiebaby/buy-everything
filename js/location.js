@@ -1,6 +1,6 @@
-(function isToken (){
+(function isTokenTrue (cookie){
   let userToken = Cookies.get('buy-user-token');
-  if (userToken) {
+  if (!userToken) {
     // locationURL('character.html');
   }
 })();
