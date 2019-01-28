@@ -1,0 +1,114 @@
+@import '../modules/color';
+@import '../modules/mediaQueries';
+@import '../modules/button';
+@import '../modules/clearFix';
+
+.headerNav {
+  line-height: 2;
+  max-width: 992px;
+  margin: auto;
+  padding-top: 30px;
+  border-bottom: 1px solid #eee;
+  @include clearFix;
+
+  h1 {
+    float: left;
+    margin-right: 50px;
+    line-height: 1.8;
+  }
+
+  i {
+    margin-right: 10px;
+  }
+
+  a {
+    color: $primaryColor;
+
+    &:hover{
+      color: $matureTomato;
+    }
+  }
+
+  ul, li {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    line-height: 1.5;
+  }
+
+  &__real {
+    @include clearFix;
+    > li {
+      float: left;
+      padding: 10px 15px;
+      min-width: 80px;
+      cursor: pointer;
+      padding-bottom: 15px;
+
+      &:hover{
+        > a {
+          color: $matureTomato;
+        }
+      }
+    }
+  }
+
+  // nav
+  .nav__dropdown {
+    position: relative;
+
+    &:hover {
+      .nav__dropdown__item {
+        display: block;
+      }
+
+      > a {
+        color: $matureTomato;
+      }
+    }
+
+    &__item {
+      display: none;
+      position: absolute;
+      top: 100%;
+      background: rgba(212, 212, 212, .5);
+      border-radius: 0 0 5px 5px;
+      border: 1px solid $lightGray;
+      padding: 10px;
+      min-width: 200px;
+      left: 5px;
+      
+      a {
+        color: $deepGray-2;
+        line-height: 2;
+        
+        &:hover {
+          color: $matureTomato;
+        }
+      }
+
+      .primaryFunction {
+        border-bottom: 1px solid $lightGray;
+        padding: 0px 0 5px;
+        margin-bottom: 5px;
+        
+        a {
+          color: $tomato;
+
+          &:hover {
+            color: $matureTomato;
+          }
+        }
+      }
+
+    }
+
+    &::after {
+      content: "\f107";
+      font-family: "Font Awesome 5 Free";
+      font-weight: 900;
+      color: $lightGray;
+    }
+
+  }
+}
