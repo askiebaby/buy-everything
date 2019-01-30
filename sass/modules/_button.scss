@@ -8,3 +8,9 @@
   background: linear-gradient(135deg, rgba(9,142,224,1) 0%, rgba(107,224,181,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#098ee0', endColorstr='#6be0b5', GradientType=1 );
 }
+
+@mixin functionButton {
+  color: $white;
+  padding: 1em;
+  border-radius: 5px;
+}

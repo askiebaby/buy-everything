@@ -19,7 +19,7 @@ header {
   border: 0;
   width: 70px;
   height: 70px;
-  background: $tomato;
+  background: $primaryColor;
   color: #fff;
   border-radius: 50%;
   cursor: pointer;
@@ -27,7 +27,7 @@ header {
   outline: 0;
 
   &:hover {
-    background: $matureTomato;
+    background: $secondaryColor;
   }
 }
 
@@ -76,7 +76,7 @@ header {
     &__cost {}
     &__price {
       font-weight: 700;
-      color: $tomato;
+      color: $primaryColor;
     }
 
     span + span {
@@ -86,6 +86,55 @@ header {
 
   &__product + &__product {
     margin-top: 15px;
+  }
+
+}
+
+.addProduct {
+
+  &__photo {
+    display: none;
+  }
+
+  &__photoFake {
+    float: left;
+    margin-right: 20px;
+  }
+
+  &__name {
+    width: 360px;
+  }
+
+  &__spec {
+    width: 100px;
+  }
+
+  &__amount {
+    width: 75px;
+  }
+
+  &__cost {
+    width: 75px;
+  }
+
+  &__price {
+    width: 100px;
+  }
+
+  &__submit {
+    padding: 15px 45px;
+    border: 0;
+    background: $primaryColor;
+    color: #fff;
+    border-radius: 30px;
+    margin-top: 30px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1em;
+
+    &:hover {
+      background: $secondaryColor;
+    }
   }
 }
 

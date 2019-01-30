@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Buy Everything Everywhere</title>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+  crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
   <link rel="stylesheet" href="./style/main.css">
 </head>
 <body>
@@ -23,22 +26,22 @@
     <div class="loginPage__banner"></div>
     <div class="loginPage__login__background">
       <div class="loginPage__login__titleBox">
-        <h1 class="loginPage__login__title">看直播做買賣</h1>
-        <p>登入臉書以便直接看直播購物/開直播上架</p>
-        <!-- <fb:login-button 
-        scope="public_profile,email"
-        onlogin="checkLoginState();">
-        </fb:login-button> -->
-        <div class="fb-login-button" data-width="200" data-size="large" data-button-type="continue_with" data-auto-logout-link="true" data-use-continue-as="true" scope="public_profile,email" onlogin="checkLoginState();"></div>
+        <h1 class="loginPage__login__title"><i class="fas fa-shopping-basket fa-fw"></i>好想逛街</h1>
+        <p>邊看直播邊購物 / 開直播銷售全世界</p>
+        <div class="loginPage__login__func"></div>
+
+        <!-- <div class="fb-login-button" data-width="150" data-size="large" data-button-type="continue_with" data-auto-logout-link="true" data-use-continue-as="true" scope="public_profile,email"></div> -->
+        <p class="login-button"></p>
+
         <p id="status"></p>
       </div>
     </div>
   </section>
+  <footer></footer>
 
   <!-- js area -->
   <script src="https://code.jquery.com/jquery-git.min.js"></script>
   <script src="./js/cookie.js"></script>
   <script src="./js/login-ajax.js"></script>
-  <script src="./js/location.js"></script>
 </body>
 </html>

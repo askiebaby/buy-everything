@@ -1,10 +1,11 @@
 // color set
-
 $white: #f1f2f3;
 $lightGray: #d4d4d4;
 $deepGray: #333;
 $deepGray-2: #666;
 $black: #000;
+$blue: #267abd;
+$deepBlue: #135282;
 $deepBlueGreen: #00A58F;
 $blueGreen: #41D3C0;
 $tomato: #F25757;
@@ -12,4 +13,5 @@ $matureTomato: darken($tomato, 20);
 
 // base
 $title-color: $deepGray;
-$primaryColor: $tomato;
+$primaryColor: $blue;
+$secondaryColor: $deepBlue;

@@ -22,15 +22,26 @@ input[type=text], input[type=number] {
   border: 1px solid #ddd;
 }
 
-.loginPage .loginPage__login__title, .character h1 {
+.loginPage__login__title, .character h1 {
   letter-spacing: .1em;
   font-size: 2em;
   color: #333;
 }
 @media all and (max-width: 768px) {
-  .loginPage .loginPage__login__title, .character h1 {
+  .loginPage__login__title, .character h1 {
     font-size: 1.5em;
   }
+}
+
+.character .character__choiceCard {
+  background: #098ee0;
+  background: -moz-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: -webkit-gradient(left top, right bottom, color-stop(0%, #098ee0), color-stop(100%, #6be0b5));
+  background: -webkit-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: -o-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: -ms-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: linear-gradient(135deg, #098ee0 0%, #6be0b5 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#098ee0', endColorstr='#6be0b5', GradientType=1 );
 }
 
 .loginPage {
@@ -41,28 +52,31 @@ input[type=text], input[type=number] {
   text-align: center;
   font-size: 16px;
 }
-.loginPage .loginPage__banner {
+.loginPage__banner {
   position: relative;
   background: url(../images/login-bg.jpg) center center/cover;
   min-height: 100vh;
   flex-basis: 50%;
 }
 @media all and (max-width: 768px) {
-  .loginPage .loginPage__banner {
+  .loginPage__banner {
     display: none;
   }
 }
-.loginPage .loginPage__banner::after {
+.loginPage__banner::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: #000;
+  background: #135282;
   opacity: .2;
 }
-.loginPage .loginPage__login__background {
+.loginPage__login__func > div {
+  margin-top: 20px;
+}
+.loginPage__login__background {
   background: #f1f2f3;
   flex-basis: 50%;
   display: flex;
@@ -72,12 +86,12 @@ input[type=text], input[type=number] {
   min-height: 100vh;
 }
 @media all and (max-width: 768px) {
-  .loginPage .loginPage__login__background {
+  .loginPage__login__background {
     background: url(../images/login-bg.jpg) center center/cover;
     flex-basis: 100%;
     position: relative;
   }
-  .loginPage .loginPage__login__background::after {
+  .loginPage__login__background::after {
     content: '';
     position: absolute;
     top: 0;
@@ -88,23 +102,57 @@ input[type=text], input[type=number] {
     opacity: .2;
   }
 }
-.loginPage .loginPage__login__titleBox {
+.loginPage__login__titleBox {
   flex-basis: 80%;
   background: #d4d4d4;
-  padding: 50px 0 80px;
+  padding: 50px 0;
   border-radius: 5px;
   min-height: 270px;
   z-index: 1;
 }
 @media all and (max-width: 768px) {
-  .loginPage .loginPage__login__titleBox {
+  .loginPage__login__titleBox {
     flex-basis: 90%;
   }
 }
 .loginPage p {
-  padding: 5px 0 20px;
+  padding: 5px 0 10px;
   font-size: .8em;
   color: #555;
+}
+.loginPage__function {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin: 20px auto;
+}
+.loginPage__function__buyer {
+  background: #267abd;
+}
+.loginPage__function__seller {
+  background: #135282;
+}
+.loginPage__function i {
+  margin-right: 10px;
+  font-size: 1.25em;
+}
+.loginPage__user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loginPage__user__photo {
+  border-radius: 50%;
+  width: 40px;
+  margin-right: 15px;
+}
+.loginPage .button {
+  color: #f1f2f3;
+  padding: 1em;
+  border-radius: 5px;
+}
+.loginPage .button + .button {
+  margin-top: 10px;
 }
 
 .character .character__choiceCard {
@@ -139,10 +187,10 @@ input[type=text], input[type=number] {
   margin-right: 10px;
 }
 .headerNav a {
-  color: #F25757;
+  color: #267abd;
 }
 .headerNav a:hover {
-  color: #d31010;
+  color: #135282;
 }
 .headerNav ul, .headerNav li {
   list-style: none;
@@ -163,7 +211,7 @@ input[type=text], input[type=number] {
   padding-bottom: 15px;
 }
 .headerNav__real > li:hover > a {
-  color: #d31010;
+  color: #135282;
 }
 .headerNav .nav__dropdown {
   position: relative;
@@ -172,7 +220,7 @@ input[type=text], input[type=number] {
   display: block;
 }
 .headerNav .nav__dropdown:hover > a {
-  color: #d31010;
+  color: #135282;
 }
 .headerNav .nav__dropdown__item {
   display: none;
@@ -191,7 +239,7 @@ input[type=text], input[type=number] {
   line-height: 2;
 }
 .headerNav .nav__dropdown__item a:hover {
-  color: #d31010;
+  color: #267abd;
 }
 .headerNav .nav__dropdown__item .primaryFunction {
   border-bottom: 1px solid #d4d4d4;
@@ -199,10 +247,10 @@ input[type=text], input[type=number] {
   margin-bottom: 5px;
 }
 .headerNav .nav__dropdown__item .primaryFunction a {
-  color: #F25757;
+  color: #267abd;
 }
 .headerNav .nav__dropdown__item .primaryFunction a:hover {
-  color: #d31010;
+  color: #135282;
 }
 .headerNav .nav__dropdown::after {
   content: "\f107";
@@ -350,43 +398,6 @@ input[type=text], input[type=number] {
   display: table;
 }
 
-.addProduct__photo {
-  display: none;
-}
-.addProduct__photoFake {
-  float: left;
-  margin-right: 20px;
-}
-.addProduct__name {
-  width: 360px;
-}
-.addProduct__spec {
-  width: 100px;
-}
-.addProduct__amount {
-  width: 75px;
-}
-.addProduct__cost {
-  width: 75px;
-}
-.addProduct__price {
-  width: 100px;
-}
-.addProduct__submit {
-  padding: 15px 45px;
-  border: 0;
-  background: #F25757;
-  color: #fff;
-  border-radius: 30px;
-  margin-top: 30px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 1em;
-}
-.addProduct__submit:hover {
-  background: #d31010;
-}
-
 header {
   position: relative;
   z-index: 1;
@@ -405,7 +416,7 @@ header {
   border: 0;
   width: 70px;
   height: 70px;
-  background: #F25757;
+  background: #267abd;
   color: #fff;
   border-radius: 50%;
   cursor: pointer;
@@ -413,7 +424,7 @@ header {
   outline: 0;
 }
 .addButton:hover {
-  background: #d31010;
+  background: #135282;
 }
 
 .contentHeader {
@@ -456,11 +467,48 @@ header {
 }
 .contentBody__product__price {
   font-weight: 700;
-  color: #F25757;
+  color: #267abd;
 }
 .contentBody__product span + span {
   margin-left: 10px;
 }
 .contentBody__product + .contentBody__product {
   margin-top: 15px;
+}
+
+.addProduct__photo {
+  display: none;
+}
+.addProduct__photoFake {
+  float: left;
+  margin-right: 20px;
+}
+.addProduct__name {
+  width: 360px;
+}
+.addProduct__spec {
+  width: 100px;
+}
+.addProduct__amount {
+  width: 75px;
+}
+.addProduct__cost {
+  width: 75px;
+}
+.addProduct__price {
+  width: 100px;
+}
+.addProduct__submit {
+  padding: 15px 45px;
+  border: 0;
+  background: #267abd;
+  color: #fff;
+  border-radius: 30px;
+  margin-top: 30px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1em;
+}
+.addProduct__submit:hover {
+  background: #135282;
 }

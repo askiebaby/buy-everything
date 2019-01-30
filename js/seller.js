@@ -3,7 +3,7 @@
 (function sellerInit (){
 
   let addProductForm = `
-  <form action="" class="form">
+  <form action="" class="form" name="">
     <h3>新增商品</h3>
     <!-- 商品照片 -->
     <label for="addProduct__photo" class="addProduct__photoFake">

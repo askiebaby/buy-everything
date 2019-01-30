@@ -15,7 +15,7 @@
 
 @mixin paragraph ($level: small) {
   @if ($level == small) {
-    padding: 5px 0 20px;
+    padding: 5px 0 10px;
     font-size: .8em;
     color: #555;
   }
