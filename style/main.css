@@ -16,6 +16,12 @@ a, a:hover {
   text-decoration: none;
 }
 
+input[type=text], input[type=number] {
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
 .loginPage .loginPage__login__title, .character h1 {
   letter-spacing: .1em;
   font-size: 2em;
@@ -264,6 +270,123 @@ a, a:hover {
   font-size: .7em;
 }
 
+.lightBox__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+.lightBox h3 {
+  margin-bottom: 15px;
+  text-align: left;
+}
+.lightBox label {
+  color: #666;
+  font-size: .8em;
+  min-width: 75px;
+  display: inline-block;
+  text-align: right;
+  margin-right: 10px;
+}
+.lightBox input + label {
+  margin-left: 15px;
+}
+.lightBox__layer {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+.lightBox__message {
+  text-align: center;
+  padding: 2em 0;
+  font-weight: 700;
+  color: #d31010;
+  font-size: 1.2em;
+}
+.lightBox__container {
+  max-width: 992px;
+  width: 75%;
+  min-width: 500px;
+  min-height: 300px;
+  background: white;
+  position: absolute;
+  z-index: 11;
+  border-radius: 5px;
+  padding: 40px 50px;
+  text-align: right;
+}
+.lightBox__breakBox {
+  line-height: 2;
+  margin-bottom: 14px;
+  text-align: left;
+}
+.lightBox__close {
+  position: absolute;
+  right: -3%;
+  top: -7%;
+  font-size: 1.5em;
+  background: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+.lightBox__close:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.form::after {
+  content: '';
+  clear: both;
+  display: table;
+}
+
+.addProduct__photo {
+  display: none;
+}
+.addProduct__photoFake {
+  float: left;
+  margin-right: 20px;
+}
+.addProduct__name {
+  width: 360px;
+}
+.addProduct__spec {
+  width: 100px;
+}
+.addProduct__amount {
+  width: 75px;
+}
+.addProduct__cost {
+  width: 75px;
+}
+.addProduct__price {
+  width: 100px;
+}
+.addProduct__submit {
+  padding: 15px 45px;
+  border: 0;
+  background: #F25757;
+  color: #fff;
+  border-radius: 30px;
+  margin-top: 30px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1em;
+}
+.addProduct__submit:hover {
+  background: #d31010;
+}
+
 header {
   position: relative;
   z-index: 1;
@@ -273,6 +396,24 @@ header {
   position: relative;
   max-width: 992px;
   margin: auto;
+}
+
+.addButton {
+  position: fixed;
+  right: 6%;
+  bottom: 7%;
+  border: 0;
+  width: 70px;
+  height: 70px;
+  background: #F25757;
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2em;
+  outline: 0;
+}
+.addButton:hover {
+  background: #d31010;
 }
 
 .contentHeader {
@@ -291,19 +432,6 @@ header {
 }
 .contentHeader__amount {
   font-weight: 700;
-}
-.contentHeader__addButton {
-  position: fixed;
-  right: 6%;
-  bottom: 7%;
-  border: 0;
-  width: 70px;
-  height: 70px;
-  background: #F25757;
-  color: #fff;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 16px;
 }
 
 .contentBody__product {

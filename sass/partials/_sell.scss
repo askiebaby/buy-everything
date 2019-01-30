@@ -1,4 +1,5 @@
 @import '../modules/clearFix';
+@import '../modules/lightbox';
 
 header {
   position: relative;
@@ -9,6 +10,25 @@ header {
   position: relative;
   max-width: $media-md;
   margin: auto;
+}
+
+.addButton {
+  position: fixed;
+  right: 6%;
+  bottom: 7%;
+  border: 0;
+  width: 70px;
+  height: 70px;
+  background: $tomato;
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2em;
+  outline: 0;
+
+  &:hover {
+    background: $matureTomato;
+  }
 }
 
 .contentHeader {
@@ -28,20 +48,6 @@ header {
 
   &__amount {
     font-weight: 700;
-  }
-
-  &__addButton {
-    position: fixed;
-    right: 6%;
-    bottom: 7%;
-    border: 0;
-    width: 70px;
-    height: 70px;
-    background: #F25757;
-    color: #fff;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
   }
 }
 

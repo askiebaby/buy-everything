@@ -13,8 +13,8 @@
 </head>
 
 <body>
-  <header>
-    <nav class="headerNav animated fadeInDown">
+  <header class="animated fadeInDown">
+    <nav class="headerNav">
       <h1><a href="../index.html"><i class="fas fa-shopping-basket"></i>好想逛街</a></h1>
       <ul class="headerNav__real">
         <li><a href="../index.html">首頁</a></li>
@@ -37,11 +37,11 @@
       </ul>
     </nav>
   </header>
-  <section class="content" id="content">
+  <button class="addButton"><i class="fas fa-plus"></i></button>
+  <section class="content animated fadeInDown" id="content">
     <div class="contentHeader">
       <h2>商品列表</h2>
       <p class="contentHeader__amountBox">共<span class="contentHeader__amount">5</span>項</p>
-      <button class="contentHeader__addButton"><i class="fas fa-plus"></i></button>
     </div>
     <div class="contentBody">
       <div class="contentBody__product">
@@ -61,8 +61,53 @@
         <span class="contentBody__product__price">$499</span>
       </div>
     </div>
+  </section>
+  <section class="lightBox"></section>
+  <section class="lightBox" style="display: none;">
+    <div class="lightBox__wrapper">
+      <div class="lightBox__layer"></div>
+      <div class="lightBox__container animated bounceIn" id="lightBoxContainer">
+        <div class="lightBox__close"><i class="fas fa-times"></i></div>
+        <h3>新增商品</h3>
+        <form action="" class="form">
+          <!-- 商品照片 -->
+          <label for="addProduct__photo" class="addProduct__photoFake">
+            <img src="https://fakeimg.pl/150x150" alt="上傳圖片">
+          </label>
+          <input type="file" id="addProduct__photo" class="addProduct__photo">
+          <div class="lightBox__breakBox">
+          <!-- 商品名稱 -->
+            <label for="addProduct__name">商品名稱</label>
+            <input type="text" class="addProduct__name" id="addProduct__name" placeholder="必填">
+          </div>
+          <div class="lightBox__breakBox">
+            <!-- 規格名稱 -->
+            <label for="addProduct__spec">規格名稱</label>
+            <input type="text" class="addProduct__spec" id="addProduct__spec" placeholder="必填">
+
+            <!-- 販售數量 -->
+            <label for="addProduct__amount">販售數量</label>
+            <input type="number" class="addProduct__amount" id="addProduct__amount" placeholder="必填">
+
+          </div>
+          <div class="lightBox__breakBox">
+            <!-- 成本 -->
+            <label for="addProduct__cost">成本</label>
+            <input type="number" class="addProduct__cost" id="addProduct__cost" placeholder="選填">
+
+            <!-- 價格 -->
+            <label for="addProduct__price">價格</label>
+            <input type="text" class="addProduct__price" id="addProduct__price" placeholder="必填">
+          </div>
+          <input type="submit" value="送出" class="addProduct__submit">
+        </form>
+      </div>
     </div>
   </section>
+
+  <script src="https://code.jquery.com/jquery-git.min.js"></script>
+  <script src="../js/lightbox.js"></script>
+  <script src="../js/seller.js"></script>
 </body>
 
 </html>
