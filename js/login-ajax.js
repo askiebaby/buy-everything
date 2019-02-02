@@ -4,6 +4,7 @@ $( document ).ready(function() {
   let userToken = Cookies.get('buy-user-token')
   let fbButton = document.querySelector('.login-button')
   let loginPageFunc = document.querySelector('.loginPage__login__func')
+
   fbButton.innerHTML = '確認登入狀態中...'
   
   // 檢驗 token 是否存在
@@ -29,7 +30,7 @@ $( document ).ready(function() {
       } else {
         console.log('User cancelled login or did not fully authorize.')
       }
-    });
+    })
   }
 
 
@@ -54,7 +55,7 @@ $( document ).ready(function() {
   }
 
   // 首先先確定 cookie 在不在
-  
+
   $.ajax({
       url: '//cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js',
       dataType: 'script',
@@ -190,9 +191,8 @@ $( document ).ready(function() {
         
         let userPhoto = response.response.avatar
         let userName = response.response.name
-        userLoginSuccess(userName, userPhoto);
+        userLoginSuccess(userName, userPhoto, checkSituation)
       }
-      
     })
 
     $.ajax(settings).fail(function (response) {
@@ -202,9 +202,26 @@ $( document ).ready(function() {
     })
   }
 
-  function userLoginSuccess(userName, userPhoto){
+  function userLoginSuccess(userName, userPhoto, callback){
 
-    let functions = `
+    if( typeof callback === 'function' ) {
+      callback(userName, userPhoto)
+    }
+
+  }
+
+
+  function checkSituation(userName, userPhoto) {
+    
+    let hrefNow = window.location.href
+    // 根目錄 or 服務首頁
+    let hrefOrigin = window.location.origin
+    let hrefSeller = hrefOrigin + '/seller/index.html'
+    let hrefBuyer = hrefOrigin + '/buyer/index.html'
+    
+    if ( hrefNow === hrefOrigin || hrefNow === hrefOrigin + '/index.html') {
+      console.log('現在是在首頁')
+      let functions = `
       <div class="loginPage__user">
         <div class="loginPage__user__photoBox">
           <img src="${ userPhoto }" alt="${ userName }" class="loginPage__user__photo">
@@ -223,8 +240,30 @@ $( document ).ready(function() {
       </div>
     `
     loginPageFunc.innerHTML = functions
-    fbButton.innerHTML = '登出'
-    fbButton.removeEventListener('click', buttonInit)
-    fbButton.addEventListener('click', buttonLogout)
+
+  } else if ( hrefNow === hrefSeller ) {
+
+    console.log('現在是賣家頁面')
+    let functions = `
+      <div class="loginPage__user">
+        <div class="loginPage__user__photoBox">
+          <img src="${ userPhoto }" alt="${ userName }" class="loginPage__user__photo">
+        </div>
+        <p class="loginPage__user__name">${ userName }</p>
+      </div>
+      `
+      loginPageFunc.innerHTML = functions
+  
+  } else if ( hrefNow === hrefBuyer ) {
+    console.log('現在是買家頁面')
+  } else {
+    // 外網
   }
+
+  console.log(hrefNow, hrefSeller)
+  fbButton.innerHTML = '登出'
+  fbButton.removeEventListener('click', buttonInit)
+  fbButton.addEventListener('click', buttonLogout)
+  }
+
 });
