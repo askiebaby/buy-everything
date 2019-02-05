@@ -9,8 +9,21 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#098ee0', endColorstr='#6be0b5', GradientType=1 );
 }
 
-@mixin functionButton {
-  color: $white;
-  padding: 1em;
+@mixin functionButton ($size: small){
+
+  @if ($size == small) {
+    padding: 2px 10px;
+  }
+  @if ($size == big) {
+    padding: 1em
+  }
+
   border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+@mixin buttonLogout {
+  background: $lightGray;
+  color: $deepGray-2;
 }

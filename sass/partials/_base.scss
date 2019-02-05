@@ -1,10 +1,29 @@
+@import '../modules/mediaQueries';
 a, a:hover {
   text-decoration: none;
 }
-
 
 input[type=text], input[type=number] {
   padding: 12px;
   border-radius: 5px;
   border: 1px solid #ddd;
+}
+
+.maxWidth {
+  position: relative;
+  max-width: 992px;
+  width: 100%;
+  margin: auto;
+
+  @include media($pc) {
+    max-width: 768px;
+  }
+
+  @include media($tablet) {
+    max-width: 576px;
+  }
+
+  @include media($mobile) {
+    max-width: 300px;
+  }
 }

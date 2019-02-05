@@ -22,6 +22,28 @@ input[type=text], input[type=number] {
   border: 1px solid #ddd;
 }
 
+.maxWidth {
+  position: relative;
+  max-width: 992px;
+  width: 100%;
+  margin: auto;
+}
+@media all and (max-width: 992px) {
+  .maxWidth {
+    max-width: 768px;
+  }
+}
+@media all and (max-width: 768px) {
+  .maxWidth {
+    max-width: 576px;
+  }
+}
+@media all and (max-width: 576px) {
+  .maxWidth {
+    max-width: 300px;
+  }
+}
+
 .loginPage__login__title, .character h1 {
   letter-spacing: .1em;
   font-size: 2em;
@@ -128,9 +150,11 @@ input[type=text], input[type=number] {
 }
 .loginPage__function__buyer {
   background: #267abd;
+  color: #f1f2f3;
 }
 .loginPage__function__seller {
   background: #135282;
+  color: #f1f2f3;
 }
 .loginPage__function i {
   margin-right: 10px;
@@ -143,16 +167,41 @@ input[type=text], input[type=number] {
 }
 .loginPage__user__photo {
   border-radius: 50%;
-  width: 40px;
+  width: 35px;
   margin-right: 15px;
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
 }
-.loginPage .button {
-  color: #f1f2f3;
+.loginPage__user__name {
+  color: #267abd;
+}
+
+.loginButton {
+  color: #666;
+}
+
+.buttonSmall {
+  padding: 2px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.buttonBig {
   padding: 1em;
   border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
 }
-.loginPage .button + .button {
+
+.buttonBig + .buttonBig {
   margin-top: 10px;
+}
+
+.buttonLogout {
+  background: #d4d4d4;
+  color: #666;
 }
 
 .character .character__choiceCard {
@@ -198,6 +247,10 @@ input[type=text], input[type=number] {
   padding-left: 0;
   line-height: 1.5;
 }
+.headerNav__real {
+  display: flex;
+  align-items: center;
+}
 .headerNav__real::after {
   content: '';
   clear: both;
@@ -212,6 +265,13 @@ input[type=text], input[type=number] {
 }
 .headerNav__real > li:hover > a {
   color: #135282;
+}
+.headerNav .nav__userState {
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-basis: 100%;
 }
 .headerNav .nav__dropdown {
   position: relative;
@@ -257,6 +317,10 @@ input[type=text], input[type=number] {
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
   color: #d4d4d4;
+}
+.headerNav .loginPage__login__func > div {
+  margin-top: 0;
+  margin-right: 10px;
 }
 
 .character .character__choiceCard {

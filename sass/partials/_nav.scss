@@ -38,6 +38,9 @@
 
   &__real {
     @include clearFix;
+    display: flex;
+    align-items: center;
+
     > li {
       float: left;
       padding: 10px 15px;
@@ -51,6 +54,15 @@
         }
       }
     }
+  }
+
+  // login
+  .nav__userState {
+    padding: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-basis: 100%;
   }
 
   // nav
@@ -110,6 +122,12 @@
       font-weight: 900;
       color: $lightGray;
     }
+  }
 
+  .loginPage__login__func {
+    > div {
+      margin-top: 0;
+      margin-right: 10px;
+    }
   }
 }

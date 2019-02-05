@@ -2,7 +2,7 @@ $( document ).ready(function() {
 
   // 初始畫面
   let userToken = Cookies.get('buy-user-token')
-  let fbButton = document.querySelector('.login-button')
+  let fbButton = document.querySelector('.loginButton')
   let loginPageFunc = document.querySelector('.loginPage__login__func')
 
   fbButton.innerHTML = '確認登入狀態中...'
@@ -229,11 +229,11 @@ $( document ).ready(function() {
         <p class="loginPage__user__name">${ userName } 登入中</p>
       </div>
       <div class="loginPage__function">
-        <a href="buyer/index.html" class="button loginPage__function__buyer">
+        <a href="buyer/index.html" class="buttonBig loginPage__function__buyer">
           <i class="fas fa-cart-plus fa-fw"></i>
           Buy Something
         </a>
-        <a href="seller/index.html" class="button loginPage__function__seller">
+        <a href="seller/index.html" class="buttonBig loginPage__function__seller">
           <i class="fas fa-hand-holding-usd fa-fw"></i>
           Sell Something
         </a>
@@ -244,6 +244,7 @@ $( document ).ready(function() {
   } else if ( hrefNow === hrefSeller ) {
 
     console.log('現在是賣家頁面')
+
     let functions = `
       <div class="loginPage__user">
         <div class="loginPage__user__photoBox">
@@ -261,7 +262,7 @@ $( document ).ready(function() {
   }
 
   console.log(hrefNow, hrefSeller)
-  fbButton.innerHTML = '登出'
+  fbButton.innerHTML = '<div class="buttonSmall buttonLogout">登出</div>'
   fbButton.removeEventListener('click', buttonInit)
   fbButton.addEventListener('click', buttonLogout)
   }
