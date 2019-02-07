@@ -13,16 +13,28 @@ $( document ).ready(function() {
   // ====> 無效 => 背景重新存取 token
   // => 不存在需要使用者登入及授權
 
-  if(userToken) {
-    api_user(userToken, '')
-  } else {
-    fbSDK()
-    fbButton.addEventListener('click', buttonInit)
-  }
 
+// 首先先確定 cookie 在不在
+
+  $.ajax({
+    url: '//cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js',
+    dataType: 'script',
+    success: function() {
+
+      // 驗 token 是否有效
+      if(userToken) {
+        api_get_user(userToken, '')
+      }else{
+        fbSDK()
+        fbButton.addEventListener('click', buttonInit)
+      }
+    },
+    error: function(){
+      console.log('user 檢驗錯誤')
+    }
+  })
 
   // 登入：賦予按鈕登入事件
-
   function buttonInit () {
     FB.login(function(response) {
       if (response.authResponse) {
@@ -33,9 +45,7 @@ $( document ).ready(function() {
     })
   }
 
-
   // 登出
-
   function buttonLogout () {
     FB.init({
       appId  : '326735094614431',
@@ -54,28 +64,6 @@ $( document ).ready(function() {
     })
   }
 
-  // 首先先確定 cookie 在不在
-
-  $.ajax({
-      url: '//cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js',
-      dataType: 'script',
-      success: function() {
-        
-        // 驗 token 是否存在
-        let userToken = Cookies.get('buy-user-token')
-
-        // 驗 token 是否有效
-        if(userToken) {
-          api_user(userToken, '')
-        }else{
-          fbSDK()
-        }
-      },
-      error: function(){
-        console.log('user 檢驗錯誤')
-      }
-  })
-
 
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
@@ -93,7 +81,7 @@ $( document ).ready(function() {
       let userTokenExpiresInString = JSON.stringify({'expiresIn': userTokenExpiresIn})
 
       saveToken(response.authResponse.accessToken)
-      api_token(userToken, userTokenExpiresInString)
+      api_post_user(userToken, userTokenExpiresInString)
     } 
     else {
       // The person is not logged into your app or we are unable to tell.
@@ -137,72 +125,12 @@ $( document ).ready(function() {
     })
   }
 
-
   function saveToken (fbToken) {
     Cookies.set('buy-user-token', fbToken);
     console.log('拿到使用者token，存到 cookie中')
   }
 
-
-  // POST, API
-  // 更新或建立新 token / Update or insert a new tokenPOST/token
-  function api_token (userToken, data){
-
-    var settings = {
-      'url': 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space/api/token',
-      'method': 'POST',
-      'headers': {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Authorization': 'Bearer ' + userToken,
-      },
-      'data': data
-    }
-    
-    $.ajax(settings).done(function (response) {
-      if (response.result ===  true) {
-        console.log('token', response)
-        // 執行 get.user data
-        api_user(userToken, '')
-      }
-    })
-
-    $.ajax(settings).fail(function (jqXHR, textStatus, errorThrown) {
-      console.log('userToken: ' + errorThrown)
-    })
-  }
-
-  function api_user(userToken, data){
-
-    var settings = {
-      'url': 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space/api/users',
-      'method': 'GET',
-      'headers': {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Authorization': 'Bearer ' + userToken,
-      },
-      'data': data
-    }
-
-    $.ajax(settings).done(function (response) {
-      if (response.result === true) {
-        console.log('api_user: Success ', response);
-        
-        let userPhoto = response.response.avatar
-        let userName = response.response.name
-        userLoginSuccess(userName, userPhoto, checkSituation)
-      }
-    })
-
-    $.ajax(settings).fail(function (response) {
-      console.log('api_user: Fail ', response)
-      fbButton.innerHTML = '登入' // 未登入的初始畫面
-      fbSDK()
-    })
-  }
-
-  function userLoginSuccess(userName, userPhoto, callback){
+  function userLoginSuccess (userName, userPhoto, callback) {
 
     if( typeof callback === 'function' ) {
       callback(userName, userPhoto)
@@ -245,6 +173,8 @@ $( document ).ready(function() {
 
     console.log('現在是賣家頁面')
 
+    sellerInit ()
+
     let functions = `
       <div class="loginPage__user">
         <div class="loginPage__user__photoBox">
@@ -254,6 +184,8 @@ $( document ).ready(function() {
       </div>
       `
       loginPageFunc.innerHTML = functions
+
+      api_get_items()
   
   } else if ( hrefNow === hrefBuyer ) {
     console.log('現在是買家頁面')
@@ -261,10 +193,175 @@ $( document ).ready(function() {
     // 外網
   }
 
-  console.log(hrefNow, hrefSeller)
+  // console.log(hrefNow, hrefSeller)
   fbButton.innerHTML = '<div class="buttonSmall buttonLogout">登出</div>'
   fbButton.removeEventListener('click', buttonInit)
   fbButton.addEventListener('click', buttonLogout)
   }
 
-});
+  function sellerInit (){
+
+    let addProductForm = `
+      <form action="" class="form" name="">
+        <h3>新增商品</h3>
+        <!-- 商品照片 -->
+        <label for="addProduct__photo" class="addProduct__photoFake">
+          <img src="https://fakeimg.pl/150x150" alt="上傳圖片">
+        </label>
+        <input type="file" id="addProduct__photo" class="addProduct__photo">
+        <div class="lightBox__breakBox">
+        <!-- 商品名稱 -->
+          <label for="addProduct__name">商品名稱</label>
+          <input type="text" class="addProduct__name" id="addProduct__name" placeholder="必填">
+        </div>
+        <div class="lightBox__breakBox">
+          <!-- 規格名稱 -->
+          <label for="addProduct__spec">規格名稱</label>
+          <input type="text" class="addProduct__spec" id="addProduct__spec" placeholder="必填">
+      
+          <!-- 販售數量 -->
+          <label for="addProduct__amount">販售數量</label>
+          <input type="number" class="addProduct__amount" id="addProduct__amount" placeholder="必填">
+      
+        </div>
+        <div class="lightBox__breakBox">
+          <!-- 成本 -->
+          <label for="addProduct__cost">成本</label>
+          <input type="number" class="addProduct__cost" id="addProduct__cost" placeholder="選填">
+      
+          <!-- 價格 -->
+          <label for="addProduct__price">價格</label>
+          <input type="text" class="addProduct__price" id="addProduct__price" placeholder="必填">
+        </div>
+        <input type="submit" value="送出" class="addProduct__submit">
+      </form>
+    `
+
+    let addButton = document.querySelector('.addButton')
+
+    addButton.addEventListener('click', function(){
+      // callback
+      lightBox(addProductForm)
+    })
+
+  }
+
+  // API, POST
+  // 更新或建立新 token / Update or insert a new tokenPOST/token
+  function api_post_user (userToken, data) {
+
+    var settings = {
+      'url': 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space/api/token',
+      'method': 'POST',
+      'headers': {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer ' + userToken,
+      },
+      'data': data
+    }
+    
+    $.ajax(settings).done(function (response) {
+      if (response.result ===  true) {
+        console.log('token', response)
+        // 執行 get.user data
+        api_get_user(userToken, '')
+      }
+    })
+
+    $.ajax(settings).fail(function (jqXHR, textStatus, errorThrown) {
+      console.log('api_post_user: ' + jqXHR, textStatus, errorThrown)
+    })
+  }
+
+  // API, GET
+  // 取得User資訊 / get user information
+  function api_get_user (userToken, data) {
+
+    var settings = {
+      'url': 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space/api/users',
+      'method': 'GET',
+      'headers': {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer ' + userToken,
+      },
+      'data': data
+    }
+
+    $.ajax(settings).done(function (response) {
+      if (response.result === true) {
+        console.log('api_get_user: Success ', response);
+        
+        let userPhoto = response.response.avatar
+        let userName = response.response.name
+        userLoginSuccess(userName, userPhoto, checkSituation)
+      }
+    })
+
+    $.ajax(settings).fail(function (response) {
+      console.log('api_get_user: Fail ', response)
+      fbButton.innerHTML = '登入' // 未登入的初始畫面
+      fbSDK()
+    })
+  }
+
+  // API, GET
+  // 取得已建立商品資訊 / Get uploaded items information
+  function api_get_items () {
+
+    let productsData = {
+      'url': 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space/api/items',
+      'method': 'GET',
+      'headers': {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': `Bearer ${ userToken }`
+      }
+    }
+
+    $.ajax(productsData).done(function (response) {
+      
+      let productList = response.response
+      let contentBody = document.querySelector('.contentBody')
+      let productAmountContainer = document.querySelector('.contentHeader__amountBox')
+      let item = '', productAmount = 0
+
+      for (let i = 0; i < productList.length; i++) {
+
+        let name = productList[i].name
+        let cost = productList[i].cost
+        let description = productList[i].description
+        let stock = productList[i].stock
+        let unit_price = productList[i].unit_price
+        let productPhoto = productList[i].images
+
+        item += `
+        <div class="contentBody__product">
+          <img src=" ${ productPhoto } " alt="" class="contentBody__product__photo">
+          <div class="contentBody__product__name"> ${ name } </div>
+          <span class="contentBody__product__amount">數量：${ stock }</span>
+          <span class="contentBody__product__cost">成本：$ ${ cost }</span>
+          <div class="contentBody__product__spec">${ description }</div>
+          <span class="contentBody__product__price">$ ${ unit_price }</span>
+        </div>
+        `
+
+        productAmount ++
+
+      }
+
+      console.log(response)
+      contentBody.innerHTML = item
+      productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
+
+    })
+
+    $.ajax(productsData).fail(function (response) {
+      console.log('api_get_items: Fail ', response)
+    })
+    
+  }
+
+
+})

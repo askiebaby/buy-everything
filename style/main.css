@@ -272,6 +272,7 @@ input[type=text], input[type=number] {
   justify-content: flex-end;
   align-items: center;
   flex-basis: 100%;
+  cursor: default;
 }
 .headerNav .nav__dropdown {
   position: relative;
@@ -286,7 +287,7 @@ input[type=text], input[type=number] {
   display: none;
   position: absolute;
   top: 100%;
-  background: rgba(212, 212, 212, 0.5);
+  background: #f3f3f3;
   border-radius: 0 0 5px 5px;
   border: 1px solid #d4d4d4;
   padding: 10px;
@@ -514,6 +515,7 @@ header {
   border: 1px solid #eee;
   border-radius: 5px;
   line-height: 1.8;
+  position: relative;
 }
 .contentBody__product::after {
   content: '';
@@ -523,15 +525,29 @@ header {
 .contentBody__product__photo {
   float: left;
   margin-right: 10px;
+  max-width: 150px;
 }
 .contentBody__product__name {
   font-weight: 700;
   font-size: 1.2em;
   color: #333;
 }
+.contentBody__product__spec {
+  background: #eee;
+  border-left: 5px solid #ddd;
+  display: inline-block;
+  width: calc(100% - 160px);
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 0 3px 3px 0;
+}
 .contentBody__product__price {
   font-weight: 700;
   color: #267abd;
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  font-size: 1.5em;
 }
 .contentBody__product span + span {
   margin-left: 10px;

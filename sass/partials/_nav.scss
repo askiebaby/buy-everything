@@ -63,6 +63,7 @@
     justify-content: flex-end;
     align-items: center;
     flex-basis: 100%;
+    cursor: default;
   }
 
   // nav
@@ -83,7 +84,7 @@
       display: none;
       position: absolute;
       top: 100%;
-      background: rgba(212, 212, 212, .5);
+      background: #f3f3f3;
       border-radius: 0 0 5px 5px;
       border: 1px solid $lightGray;
       padding: 10px;
