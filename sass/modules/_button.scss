@@ -24,6 +24,10 @@
 }
 
 @mixin buttonLogout {
-  background: $lightGray;
+  background: $lightGray-2;
   color: $deepGray-2;
+
+  &:hover {
+    background: $lightGray;
+  }
 }

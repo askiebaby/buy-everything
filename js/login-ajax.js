@@ -2,9 +2,12 @@ $( document ).ready(function() {
 
   // 初始畫面
   let userToken = Cookies.get('buy-user-token')
+  console.log('Global: ', userToken)
   let fbButton = document.querySelector('.loginButton')
   let loginPageFunc = document.querySelector('.loginPage__login__func')
-
+  let server = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
+  // let server = 'https://5a31303f.ngrok.io'
+  
   fbButton.innerHTML = '確認登入狀態中...'
   
   // 檢驗 token 是否存在
@@ -19,26 +22,27 @@ $( document ).ready(function() {
   $.ajax({
     url: '//cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js',
     dataType: 'script',
-    success: function() {
+    success: function () {
 
       // 驗 token 是否有效
-      if(userToken) {
+      if (userToken) {
         api_get_user(userToken, '')
-      }else{
-        fbSDK()
+      } else {
+        fbSDK('login')
         fbButton.addEventListener('click', buttonInit)
       }
     },
-    error: function(){
+    error: function (){
       console.log('user 檢驗錯誤')
     }
   })
 
   // 登入：賦予按鈕登入事件
   function buttonInit () {
-    FB.login(function(response) {
+    console.log('login click')
+    FB.login(function (response) {
       if (response.authResponse) {
-          statusChangeCallback(response)
+          statusChangeCallback(response, 'login')
       } else {
         console.log('User cancelled login or did not fully authorize.')
       }
@@ -47,26 +51,12 @@ $( document ).ready(function() {
 
   // 登出
   function buttonLogout () {
-    FB.init({
-      appId  : '326735094614431',
-      xfbml  : true,
-      version: 'v2.8'
-    })
-    checkLoginState()
-    FB.logout(function(response) {
-      // user is now logged out
-      statusChangeCallback(response)
-
-      fbButton.innerHTML = '登入'
-      fbButton.removeEventListener('click', buttonLogout)
-      fbButton.addEventListener('click', buttonInit)
-      Cookies.remove('buy-user-token')
-    })
+    fbSDK('logout')
   }
 
 
   // This is called with the results from from FB.getLoginStatus().
-  function statusChangeCallback(response) {
+  function statusChangeCallback (response, action) {
     console.log('step 4: statusChangeCallback is called!', response)
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
@@ -76,35 +66,44 @@ $( document ).ready(function() {
       console.log('step 4.1: statusChangeCallback: connected')
       // Logged into your app and Facebook.
       // cookies
-      let userToken = response.authResponse.accessToken
-      let userTokenExpiresIn = response.authResponse.expiresIn
-      let userTokenExpiresInString = JSON.stringify({'expiresIn': userTokenExpiresIn})
+      if (action === 'login') {
 
-      saveToken(response.authResponse.accessToken)
-      api_post_user(userToken, userTokenExpiresInString)
+        let userToken = response.authResponse.accessToken
+        let userTokenExpiresIn = response.authResponse.expiresIn
+        let userTokenExpiresInString = JSON.stringify({'expiresIn': userTokenExpiresIn})
+        console.log('statusChangeCallback: ', userToken)
+        saveToken(userToken)
+        api_post_user(userToken, userTokenExpiresInString)
+
+      } else if (action === 'logout') {
+
+        console.log('你登出了')
+        checkSituation('logout')
+        Cookies.remove('buy-user-token')
+
+        FB.logout(function (response) {
+          // user is now logged out
+          console.log(response)
+        })
+        
+      }
     } 
     else {
-      // The person is not logged into your app or we are unable to tell.
-
-      fbButton.innerHTML = '登入'
-      fbButton.removeEventListener('click', buttonLogout)
-      fbButton.addEventListener('click', buttonInit)
-      loginPageFunc.innerHTML = ''
-
+      checkSituation('logout')
     }
   }
 
   // This function is called when someone finishes with the Login
   // Button.  See the onlogin handler attached to it in the sample
   // code below.
-  function checkLoginState() {
+  function checkLoginState(action) {
     console.log('step 3: 確認使用者登入狀態')
     FB.getLoginStatus(function(response) {
-      statusChangeCallback(response)
+      statusChangeCallback(response, action)
     })
   }
 
-  function fbSDK (){
+  function fbSDK (action){
     // make sure SDK is loaded.
     // https://www.nivas.hr/blog/2016/10/29/proper-way-include-facebook-sdk-javascript-jquery/
 
@@ -112,7 +111,7 @@ $( document ).ready(function() {
       url: '//connect.facebook.net/en_US/sdk.js',
       dataType: 'script',
       cache: true,
-      success:function() {
+      success: function () {
         console.log('step 1: 確保 SDK 已經載入完成')
         FB.init({
           appId  : '326735094614431',
@@ -120,118 +119,141 @@ $( document ).ready(function() {
           version: 'v2.8'
         },
         console.log('step 2: FB 物件存在，所以初始化'))
-        checkLoginState()
+        checkLoginState(action)
       }
     })
   }
 
   function saveToken (fbToken) {
-    Cookies.set('buy-user-token', fbToken);
-    console.log('拿到使用者token，存到 cookie中')
+    Cookies.remove('buy-user-token')
+    Cookies.set('buy-user-token', fbToken)
+    // userToken = Cookies.get('buy-user-token')
+    console.log('saveToken: ', fbToken)
   }
 
-  function userLoginSuccess (userName, userPhoto, callback) {
-
-    if( typeof callback === 'function' ) {
-      callback(userName, userPhoto)
-    }
-
-  }
-
-
-  function checkSituation(userName, userPhoto) {
+  function checkSituation (action, userName, userPhoto) {
     
     let hrefNow = window.location.href
     // 根目錄 or 服務首頁
-    let hrefOrigin = window.location.origin
-    let hrefSeller = hrefOrigin + '/seller/index.html'
-    let hrefBuyer = hrefOrigin + '/buyer/index.html'
+    let hrefOrigin = window.location.origin + '/'
+    let hrefSeller = hrefOrigin + 'seller/index.html'
+    let hrefBuyer = hrefOrigin + 'buyer/index.html'
+    let functions
+    console.log(hrefNow, hrefOrigin)
     
-    if ( hrefNow === hrefOrigin || hrefNow === hrefOrigin + '/index.html') {
+    if (hrefNow === hrefOrigin || hrefNow === hrefOrigin + 'index.html') {
       console.log('現在是在首頁')
-      let functions = `
-      <div class="loginPage__user">
-        <div class="loginPage__user__photoBox">
-          <img src="${ userPhoto }" alt="${ userName }" class="loginPage__user__photo">
+
+      if (action === 'logout') {
+        functions = ''
+        fbButton.innerHTML = '登入'
+        fbButton.removeEventListener('click', buttonLogout)
+        fbButton.addEventListener('click', buttonInit)
+
+      } else if (action === 'login') {
+
+        functions = `
+        <div class="loginPage__user">
+          <div class="loginPage__user__photoBox">
+            <img src="${ userPhoto }" alt="${ userName }" class="loginPage__user__photo">
+          </div>
+          <p class="loginPage__user__name">${ userName } 登入中</p>
         </div>
-        <p class="loginPage__user__name">${ userName } 登入中</p>
-      </div>
-      <div class="loginPage__function">
-        <a href="buyer/index.html" class="buttonBig loginPage__function__buyer">
-          <i class="fas fa-cart-plus fa-fw"></i>
-          Buy Something
-        </a>
-        <a href="seller/index.html" class="buttonBig loginPage__function__seller">
-          <i class="fas fa-hand-holding-usd fa-fw"></i>
-          Sell Something
-        </a>
-      </div>
-    `
-    loginPageFunc.innerHTML = functions
-
-  } else if ( hrefNow === hrefSeller ) {
-
-    console.log('現在是賣家頁面')
-
-    sellerInit ()
-
-    let functions = `
-      <div class="loginPage__user">
-        <div class="loginPage__user__photoBox">
-          <img src="${ userPhoto }" alt="${ userName }" class="loginPage__user__photo">
+        <div class="loginPage__function">
+          <a href="buyer/index.html" class="buttonBig loginPage__function__buyer">
+            <i class="fas fa-cart-plus fa-fw"></i>
+            Buy Something
+          </a>
+          <a href="seller/index.html" class="buttonBig loginPage__function__seller">
+            <i class="fas fa-hand-holding-usd fa-fw"></i>
+            Sell Something
+          </a>
         </div>
-        <p class="loginPage__user__name">${ userName }</p>
-      </div>
-      `
+        `
+
+        fbButton.innerHTML = '<div class="buttonSmall buttonLogout">登出</div>'
+        fbButton.removeEventListener('click', buttonInit)
+        fbButton.addEventListener('click', buttonLogout)
+
+      }
+
       loginPageFunc.innerHTML = functions
 
-      api_get_items()
-  
-  } else if ( hrefNow === hrefBuyer ) {
-    console.log('現在是買家頁面')
-  } else {
-    // 外網
+    } else if ( hrefNow === hrefSeller ) {
+
+        console.log('現在是賣家頁面')
+
+        if (action === 'logout') {
+          window.location.assign(hrefOrigin)
+        } else if (action === 'login') {
+
+          sellerInit()
+
+          let functions = `
+            <div class="loginPage__user">
+              <div class="loginPage__user__photoBox">
+                <img src="${ userPhoto }" alt="${ userName }" class="loginPage__user__photo">
+              </div>
+              <p class="loginPage__user__name">${ userName }</p>
+            </div>
+            `
+            loginPageFunc.innerHTML = functions
+            fbButton.innerHTML = '<div class="buttonSmall buttonLogout">登出</div>'
+            fbButton.removeEventListener('click', buttonInit)
+            fbButton.addEventListener('click', buttonLogout)
+            api_get_items()
+          }
+
+    } else if ( hrefNow === hrefBuyer ) {
+
+      console.log('現在是買家頁面')
+
+      if (!boolean) {
+        window.location.assign(hrefOrigin)
+      } else {
+        // do something
+      }
+    } else {
+      // 外網
+    }
   }
 
-  // console.log(hrefNow, hrefSeller)
-  fbButton.innerHTML = '<div class="buttonSmall buttonLogout">登出</div>'
-  fbButton.removeEventListener('click', buttonInit)
-  fbButton.addEventListener('click', buttonLogout)
-  }
-
+  // 賣家登入後的預設畫面
   function sellerInit (){
 
     let addProductForm = `
-      <form action="" class="form" name="">
+      <form action="${ server }/api/items" class="productForm" name="productForm" enctype="multipart/form-data" method="POST">
         <h3>新增商品</h3>
         <!-- 商品照片 -->
-        <label for="addProduct__photo" class="addProduct__photoFake">
-          <img src="https://fakeimg.pl/150x150" alt="上傳圖片">
-        </label>
-        <input type="file" id="addProduct__photo" class="addProduct__photo">
+        <div class="lightBox__breakBox">
+          <label for="addProduct__photo" class="addProduct__photoFake">
+            <img src="https://fakeimg.pl/150x150" alt="上傳圖片" class="addProduct__photoPreview">
+          </label>
+          <input type="file" id="addProduct__photo" class="addProduct__photo" name="files">
+        </div>
         <div class="lightBox__breakBox">
         <!-- 商品名稱 -->
           <label for="addProduct__name">商品名稱</label>
-          <input type="text" class="addProduct__name" id="addProduct__name" placeholder="必填">
+          <input type="text" class="addProduct__name" id="addProduct__name" placeholder="必填" required>
         </div>
         <div class="lightBox__breakBox">
           <!-- 規格名稱 -->
           <label for="addProduct__spec">規格名稱</label>
-          <input type="text" class="addProduct__spec" id="addProduct__spec" placeholder="必填">
+          <input type="text" class="addProduct__spec" id="addProduct__spec" placeholder="必填" required>
       
           <!-- 販售數量 -->
           <label for="addProduct__amount">販售數量</label>
-          <input type="number" class="addProduct__amount" id="addProduct__amount" placeholder="必填">
+          <input type="number" min="1" class="addProduct__amount" id="addProduct__amount" placeholder="必填" required>
       
         </div>
         <div class="lightBox__breakBox">
           <!-- 成本 -->
           <label for="addProduct__cost">成本</label>
-          <input type="number" class="addProduct__cost" id="addProduct__cost" placeholder="選填">
+          <input type="number" min="1" class="addProduct__cost" id="addProduct__cost" placeholder="選填">
       
           <!-- 價格 -->
           <label for="addProduct__price">價格</label>
-          <input type="text" class="addProduct__price" id="addProduct__price" placeholder="必填">
+          <input type="number" min="1" class="addProduct__price" id="addProduct__price" placeholder="必填" required>
         </div>
         <input type="submit" value="送出" class="addProduct__submit">
       </form>
@@ -242,68 +264,102 @@ $( document ).ready(function() {
     addButton.addEventListener('click', function(){
       // callback
       lightBox(addProductForm)
+
+      let photoReal = document.getElementById('addProduct__photo')
+      photoReal.addEventListener('change', function(){
+        preview_image(event)
+      })
+
+      let productForm = document.forms.namedItem('productForm')
+
+      productForm.addEventListener('submit', function(event){
+        api_post_items(event, productForm)
+        // abc()
+      })
+
     })
 
+  }
+
+  // 商品圖片預覽
+  function preview_image (event) {
+    // 多個檔案的做法
+    // https://www.html5rocks.com/zh/tutorials/file/dndfiles/
+    let files = value = event.target.files[0] // FileList object
+    let preview = document.querySelector('.addProduct__photoPreview')
+    let reader = new FileReader()
+
+    // Closure to capture the file information.
+    reader.onload = (function(theFile) {
+      return function(e) {
+        // Render thumbnail.
+        preview.setAttribute('src',  e.target.result)
+        preview.setAttribute('title',  theFile.name)
+      }
+    })(files)
+
+    // Read in the image file as a data URL.
+    reader.readAsDataURL(files)
   }
 
   // API, POST
   // 更新或建立新 token / Update or insert a new tokenPOST/token
   function api_post_user (userToken, data) {
 
-    var settings = {
-      'url': 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space/api/token',
+    var userData = {
+      'url': `${ server }/api/token`,
       'method': 'POST',
       'headers': {
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
-        'Authorization': 'Bearer ' + userToken,
+        'Authorization': `Bearer ${ userToken }`,
       },
       'data': data
     }
     
-    $.ajax(settings).done(function (response) {
-      if (response.result ===  true) {
-        console.log('token', response)
-        // 執行 get.user data
-        api_get_user(userToken, '')
-      }
-    })
+    $.ajax(userData)
+      .done(function (response) {
+        if (response.result ===  true) {
+          api_get_user(userToken, '')
+        }
+      })
 
-    $.ajax(settings).fail(function (jqXHR, textStatus, errorThrown) {
-      console.log('api_post_user: ' + jqXHR, textStatus, errorThrown)
-    })
+      .fail(function (response) {
+        console.log('api_post_user: Fail ' + response.responseText)
+      })
   }
 
   // API, GET
   // 取得User資訊 / get user information
   function api_get_user (userToken, data) {
 
-    var settings = {
-      'url': 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space/api/users',
+    var userData = {
+      'url': `${ server }/api/users`,
       'method': 'GET',
       'headers': {
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
-        'Authorization': 'Bearer ' + userToken,
+        'Authorization': `Bearer ${ userToken }`,
       },
       'data': data
     }
 
-    $.ajax(settings).done(function (response) {
-      if (response.result === true) {
-        console.log('api_get_user: Success ', response);
-        
-        let userPhoto = response.response.avatar
-        let userName = response.response.name
-        userLoginSuccess(userName, userPhoto, checkSituation)
-      }
-    })
+    $.ajax(userData)
 
-    $.ajax(settings).fail(function (response) {
-      console.log('api_get_user: Fail ', response)
-      fbButton.innerHTML = '登入' // 未登入的初始畫面
-      fbSDK()
-    })
+      .done(function (response) {
+        if (response.result === true) {
+          console.log('api_get_user: Success ', response)
+          let userPhoto = response.response.avatar
+          let userName = response.response.name
+          checkSituation('login', userName, userPhoto)
+        }
+      })
+
+      .fail(function (response) {
+        console.log('api_get_user: Fail ', response.responseText)
+        fbButton.innerHTML = '登入' // 未登入的初始畫面
+        fbSDK('login')
+      })
   }
 
   // API, GET
@@ -311,7 +367,7 @@ $( document ).ready(function() {
   function api_get_items () {
 
     let productsData = {
-      'url': 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space/api/items',
+      'url': `${ server }/api/items`,
       'method': 'GET',
       'headers': {
         'Content-Type': 'application/json',
@@ -320,48 +376,102 @@ $( document ).ready(function() {
       }
     }
 
-    $.ajax(productsData).done(function (response) {
-      
-      let productList = response.response
-      let contentBody = document.querySelector('.contentBody')
-      let productAmountContainer = document.querySelector('.contentHeader__amountBox')
-      let item = '', productAmount = 0
+    $.ajax(productsData)
 
-      for (let i = 0; i < productList.length; i++) {
+      .done(function (response) {
+        let productList = response.response
+        let contentBody = document.querySelector('.contentBody')
+        let productAmountContainer = document.querySelector('.contentHeader__amountBox')
+        let item = '', productAmount = 0
 
-        let name = productList[i].name
-        let cost = productList[i].cost
-        let description = productList[i].description
-        let stock = productList[i].stock
-        let unit_price = productList[i].unit_price
-        let productPhoto = productList[i].images
+        for (let i = 0; i < productList.length; i++) {
 
-        item += `
-        <div class="contentBody__product">
-          <img src=" ${ productPhoto } " alt="" class="contentBody__product__photo">
-          <div class="contentBody__product__name"> ${ name } </div>
-          <span class="contentBody__product__amount">數量：${ stock }</span>
-          <span class="contentBody__product__cost">成本：$ ${ cost }</span>
-          <div class="contentBody__product__spec">${ description }</div>
-          <span class="contentBody__product__price">$ ${ unit_price }</span>
-        </div>
-        `
+          let name = productList[i].name
+          let cost = productList[i].cost
+          let description = productList[i].description
+          let stock = productList[i].stock
+          let unit_price = productList[i].unit_price
+          let productPhoto = productList[i].images
 
-        productAmount ++
+          item += `
+          <div class="contentBody__product">
+            <img src=" ${ productPhoto } " alt="" class="contentBody__product__photo">
+            <div class="contentBody__product__name"> ${ name } </div>
+            <span class="contentBody__product__amount">數量：${ stock }</span>
+            <span class="contentBody__product__cost">成本：$ ${ cost }</span>
+            <div class="contentBody__product__spec">
+              <div class="contentBody__product__spec__title">商品敘述</div>
+              ${ description }
+            </div>
+            <span class="contentBody__product__price">$ ${ unit_price }</span>
+          </div>
+          `
 
-      }
+          productAmount ++
 
-      console.log(response)
-      contentBody.innerHTML = item
-      productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
+        }
 
-    })
+        contentBody.innerHTML = item
+        productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
-    $.ajax(productsData).fail(function (response) {
-      console.log('api_get_items: Fail ', response)
-    })
-    
+      })
+
+      .fail(function (response) {
+        console.log('api_get_items: Fail ', response.responseText)
+      })
   }
 
+  // API, POST
+  // 建立商品/Add new items
+  function api_post_items (event, form){
+    
+    event.preventDefault()
+
+    let name = document.querySelector('.addProduct__name').value
+    let description = document.querySelector('.addProduct__spec').value
+    let stock = document.querySelector('.addProduct__amount').value
+    let cost = document.querySelector('.addProduct__cost').value
+    let unit_price = document.querySelector('.addProduct__price').value
+    let images = $('.addProduct__photo')[0].files[0]
+
+    let formData = new FormData(form)
+
+    formData.append('name', name)
+    formData.append('description', description)
+    formData.append('stock', stock)
+    formData.append('cost', cost)
+    formData.append('unit_price', unit_price)
+    formData.append('images', images)
+
+    let item = {
+      'url': `${ server }/api/items`,
+      'type': 'POST',
+      'headers': {
+        // 'Content-Type': 'multipart/form-data',
+        // 使用 multipart/form-data 在此不需要設定 Content-Type。
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': `Bearer ${ userToken }`,
+      },
+      'cache': false,
+      'contentType': false, //required
+      'processData': false, // required
+      'mimeType': 'multipart/form-data',
+      'data': formData
+    }
+
+    // console.log(formData, $('.addProduct__photo')[0], images)
+
+
+    $.ajax(item)
+
+      .done(function (response) {
+        closeLightBox()
+        api_get_items()
+      })
+
+      .fail(function (response) {
+        console.log('api_post_user: Fail ' + response.responseText)
+      })
+  }
 
 })

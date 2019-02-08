@@ -25,6 +25,7 @@ header {
   cursor: pointer;
   font-size: 1.2em;
   outline: 0;
+  z-index: 10;
 
   &:hover {
     background: $secondaryColor;
@@ -52,10 +53,11 @@ header {
 }
 
 .contentBody {
+  margin-bottom: 50px;
 
   &__product {
     padding: 10px;
-    border: 1px solid #eee;
+    border: 1px solid $lightGray-2;
     border-radius: 5px;
     line-height: 1.8;
     position: relative;
@@ -75,14 +77,20 @@ header {
     }
 
     &__spec {
-      background: #eee;
-      border-left: 5px solid #ddd;
+      background: $lightGray-2;
+      border-left: 5px solid $lightGray;
       display: inline-block;
       width: calc(100% - 160px);
       padding: 10px;
       margin-top: 10px;
       border-radius: 0 3px 3px 0;
+
+        &__title {
+          font-size: .9em;
+          color: $deepGray-2;
+        }
     }
+
     &__cost {}
     &__price {
       font-weight: 700;
@@ -113,6 +121,10 @@ header {
   &__photoFake {
     float: left;
     margin-right: 20px;
+  }
+
+  &__photoPreview {
+    max-width: 150px;
   }
 
   &__name {

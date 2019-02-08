@@ -25,4 +25,3 @@ function closeLightBox () {
   let wholeContent = document.querySelector('.lightBox__wrapper')
   if (wholeContent) root.removeChild(wholeContent)
 }
-

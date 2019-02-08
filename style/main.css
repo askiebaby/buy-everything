@@ -200,8 +200,11 @@ input[type=text], input[type=number] {
 }
 
 .buttonLogout {
-  background: #d4d4d4;
+  background: #eee;
   color: #666;
+}
+.buttonLogout:hover {
+  background: #d4d4d4;
 }
 
 .character .character__choiceCard {
@@ -487,6 +490,7 @@ header {
   cursor: pointer;
   font-size: 1.2em;
   outline: 0;
+  z-index: 10;
 }
 .addButton:hover {
   background: #135282;
@@ -510,6 +514,9 @@ header {
   font-weight: 700;
 }
 
+.contentBody {
+  margin-bottom: 50px;
+}
 .contentBody__product {
   padding: 10px;
   border: 1px solid #eee;
@@ -534,12 +541,16 @@ header {
 }
 .contentBody__product__spec {
   background: #eee;
-  border-left: 5px solid #ddd;
+  border-left: 5px solid #d4d4d4;
   display: inline-block;
   width: calc(100% - 160px);
   padding: 10px;
   margin-top: 10px;
   border-radius: 0 3px 3px 0;
+}
+.contentBody__product__spec__title {
+  font-size: .9em;
+  color: #666;
 }
 .contentBody__product__price {
   font-weight: 700;
@@ -562,6 +573,9 @@ header {
 .addProduct__photoFake {
   float: left;
   margin-right: 20px;
+}
+.addProduct__photoPreview {
+  max-width: 150px;
 }
 .addProduct__name {
   width: 360px;
