@@ -385,7 +385,7 @@ $( document ).ready(function() {
         let item = '', productAmount = 0
 
         for (let i = 0; i < productList.length; i++) {
-
+          let id = productList[i].id
           let name = productList[i].name
           let cost = productList[i].cost
           let description = productList[i].description
@@ -394,8 +394,8 @@ $( document ).ready(function() {
           let productPhoto = productList[i].images
 
           item += `
-          <div class="contentBody__product">
-            <img src=" ${ productPhoto } " alt="" class="contentBody__product__photo">
+          <div class="contentBody__product" data-key="${ id }">
+            <img src=" ${ productPhoto } " alt="${ name }" class="contentBody__product__photo">
             <div class="contentBody__product__name"> ${ name } </div>
             <span class="contentBody__product__amount">數量：${ stock }</span>
             <span class="contentBody__product__cost">成本：$ ${ cost }</span>
@@ -404,6 +404,8 @@ $( document ).ready(function() {
               ${ description }
             </div>
             <span class="contentBody__product__price">$ ${ unit_price }</span>
+            <span class="contentBody__product__update">更新</span>
+            <span class="contentBody__product__delete">刪除</span>
           </div>
           `
 
@@ -414,6 +416,22 @@ $( document ).ready(function() {
         contentBody.innerHTML = item
         productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
+        // 共同父層
+        let myItem = document.querySelector('.contentBody__product')
+
+        // 更新
+        let productUpdate = document.querySelector('.contentBody__product__update')
+
+        productUpdate.addEventListener('click', function(){
+
+        })
+
+        // 刪除
+        let productDelete = document.querySelector('.contentBody__product__delete')
+
+        productDelete.addEventListener('click', function(){
+          api_delete_items()
+        })
       })
 
       .fail(function (response) {
@@ -471,6 +489,35 @@ $( document ).ready(function() {
 
       .fail(function (response) {
         console.log('api_post_user: Fail ' + response.responseText)
+      })
+  }
+
+  function api_delete_items () {
+    let key = []
+    key.push(myItem.dataset.key)
+
+    let itemData = {
+      'url': `${ server }/api/items`,
+      'method': 'DELETE',
+      'headers': {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': `Bearer ${ userToken }`
+      },
+      'data': JSON.stringify({
+        items: key
+      })
+    }
+    
+    $.ajax(itemData)
+
+      .done(function (res) {
+        console.log('work', res)
+        api_get_items()
+      })
+
+      .fail(function (res) {
+        console.log('fail', res.responseText)
       })
   }
 
