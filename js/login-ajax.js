@@ -308,12 +308,12 @@ $( document ).ready(function() {
     let updateAmount = item.querySelector('.amount').textContent
     let updateCost = item.querySelector('.cost').textContent
     let updatePrice = item.querySelector('.price').textContent
+    let updatePhoto = item.getElementsByTagName('img')[0].src
 
     let key = []
     key.push(item.dataset.key)
 
 
-    // let updateForm = 'test'
     let updateForm = `
     <form action="${ server }/api/items" class="productForm" name="productForm" enctype="multipart/form-data" method="POST">
     <h3>修改商品</h3>
@@ -355,7 +355,7 @@ $( document ).ready(function() {
     // console.log(callback, updateName, updateDescription, updateAmount, updateCost, updatePrice, updatePhoto, key)
 
     callback(key, updateForm)
-
+    console.log(key)
   }
 
   function listenUpdateProduct (key, form) {
@@ -491,25 +491,34 @@ $( document ).ready(function() {
         productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
         // 共同父層
-        let myItem = document.querySelector('.contentBody__product')
+        let myItem = document.querySelectorAll('.contentBody__product')
 
+        // console.log(myItem, myItem[0])
 
-        // 更新
-        let productUpdate = document.querySelector('.contentBody__product__update')
+        for (let i = 0; i < myItem.length; i++) {
 
+          // 更新
+          let productUpdate = myItem[i].querySelector('.contentBody__product__update')
 
-        productUpdate.addEventListener('click', function(){
-          editProduct(myItem, listenUpdateProduct)
-        })
+          productUpdate.addEventListener('click', function(){
+            editProduct(myItem[i], listenUpdateProduct)
+          })
+
+          let productDelete = myItem[i].querySelector('.contentBody__product__delete')
+
+          productDelete.addEventListener('click', function(){
+            api_delete_items(myItem[i]) //key失效
+          })
+
+        }
 
         // 刪除
-        let productDelete = document.querySelector('.contentBody__product__delete')
 
-        productDelete.addEventListener('click', function(){
-          api_delete_items(myItem) //key失效
-        console.log(myItem)
+        // productDelete.addEventListener('click', function(){
+        //   api_delete_items(myItem) //key失效
+        // console.log(myItem)
 
-        })
+        // })
       })
 
       .fail(function (response) {
