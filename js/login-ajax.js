@@ -127,7 +127,7 @@ $( document ).ready(function() {
   function saveToken (fbToken) {
     Cookies.remove('buy-user-token')
     Cookies.set('buy-user-token', fbToken)
-    // userToken = Cookies.get('buy-user-token')
+    userToken = Cookies.get('buy-user-token')
     console.log('saveToken: ', fbToken)
   }
 
@@ -227,9 +227,9 @@ $( document ).ready(function() {
         <!-- 商品照片 -->
         <div class="lightBox__breakBox">
           <label for="addProduct__photo" class="addProduct__photoFake">
-            <img src="https://fakeimg.pl/150x150" alt="上傳圖片" class="addProduct__photoPreview">
+            <img src="https://fakeimg.pl/150x150" alt="上傳圖片" class="addProduct__photoPreview" alt="請上傳圖片">
           </label>
-          <input type="file" id="addProduct__photo" class="addProduct__photo" name="files">
+          <input type="file" id="addProduct__photo" class="addProduct__photo" name="files" accept="image/gif, image/jpeg, image/png">
         </div>
         <div class="lightBox__breakBox">
         <!-- 商品名稱 -->
@@ -238,19 +238,18 @@ $( document ).ready(function() {
         </div>
         <div class="lightBox__breakBox">
           <!-- 規格名稱 -->
-          <label for="addProduct__spec">規格名稱</label>
+          <label for="addProduct__spec">規格說明</label>
           <input type="text" class="addProduct__spec" id="addProduct__spec" placeholder="必填" required>
-      
+        </div>
+        <div class="lightBox__breakBox">
           <!-- 販售數量 -->
           <label for="addProduct__amount">販售數量</label>
           <input type="number" min="1" class="addProduct__amount" id="addProduct__amount" placeholder="必填" required>
-      
-        </div>
-        <div class="lightBox__breakBox">
+
           <!-- 成本 -->
           <label for="addProduct__cost">成本</label>
           <input type="number" min="1" class="addProduct__cost" id="addProduct__cost" placeholder="選填">
-      
+
           <!-- 價格 -->
           <label for="addProduct__price">價格</label>
           <input type="number" min="1" class="addProduct__price" id="addProduct__price" placeholder="必填" required>
@@ -274,7 +273,6 @@ $( document ).ready(function() {
 
       productForm.addEventListener('submit', function(event){
         api_post_items(event, productForm)
-        // abc()
       })
 
     })
@@ -302,32 +300,76 @@ $( document ).ready(function() {
     reader.readAsDataURL(files)
   }
 
-  // API, POST
-  // 更新或建立新 token / Update or insert a new tokenPOST/token
-  function api_post_user (userToken, data) {
+  function editProduct (item, callback) {
+    // 原資料
+    // let item = item
+    let updateName = item.querySelector('.contentBody__product__name').textContent
+    let updateDescription = item.querySelector('.spec').textContent
+    let updateAmount = item.querySelector('.amount').textContent
+    let updateCost = item.querySelector('.cost').textContent
+    let updatePrice = item.querySelector('.price').textContent
 
-    var userData = {
-      'url': `${ server }/api/token`,
-      'method': 'POST',
-      'headers': {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Authorization': `Bearer ${ userToken }`,
-      },
-      'data': data
-    }
-    
-    $.ajax(userData)
-      .done(function (response) {
-        if (response.result ===  true) {
-          api_get_user(userToken, '')
-        }
-      })
+    let key = []
+    key.push(item.dataset.key)
 
-      .fail(function (response) {
-        console.log('api_post_user: Fail ' + response.responseText)
-      })
+
+    // let updateForm = 'test'
+    let updateForm = `
+    <form action="${ server }/api/items" class="productForm" name="productForm" enctype="multipart/form-data" method="POST">
+    <h3>修改商品</h3>
+    <!-- 商品照片 -->
+    <div class="lightBox__breakBox">
+      <label for="addProduct__photo" class="addProduct__photoFake">
+        <img src="${ updatePhoto }" alt="上傳圖片" class="addProduct__photoPreview">
+      </label>
+      <input type="file" id="addProduct__photo" class="addProduct__photo" name="files" accept="image/gif, image/jpeg, image/png">
+    </div>
+    <div class="lightBox__breakBox">
+    <!-- 商品名稱 -->
+      <label for="addProduct__name">商品名稱</label>
+      <input type="text" class="addProduct__name" id="addProduct__name" placeholder="必填" value="${ updateName }" required>
+    </div>
+    <div class="lightBox__breakBox">
+      <!-- 規格名稱 -->
+      <label for="addProduct__spec">規格說明</label>
+      <input type="text" class="addProduct__spec" id="addProduct__spec" placeholder="必填" value="${ updateDescription }" required>
+    </div>
+    <div class="lightBox__breakBox">
+      <!-- 販售數量 -->
+      <label for="addProduct__amount">販售數量</label>
+      <input type="number" min="1" class="addProduct__amount" id="addProduct__amount" placeholder="必填" value="${ updateAmount }" required>
+
+      <!-- 成本 -->
+      <label for="addProduct__cost">成本</label>
+      <input type="number" min="1" class="addProduct__cost" id="addProduct__cost" placeholder="選填" value="${ updateCost }">
+  
+      <!-- 價格 -->
+      <label for="addProduct__price">價格</label>
+      <input type="number" min="1" class="addProduct__price" id="addProduct__price" placeholder="必填" value="${ updatePrice }" required>
+    </div>
+    <input type="submit" value="送出" class="addProduct__submit">
+  </form>
+    `
+    lightBox(updateForm)
+
+    // console.log(callback, updateName, updateDescription, updateAmount, updateCost, updatePrice, updatePhoto, key)
+
+    callback(key, updateForm)
+
   }
+
+  function listenUpdateProduct (key, form) {
+
+    let updateProductForm = document.querySelector('.productForm')
+
+    updateProductForm.addEventListener('submit', function(event){
+      api_update_items(event, key, form)
+    })
+  }
+
+  /*---------------------- 
+  user
+  -----------------------*/
 
   // API, GET
   // 取得User資訊 / get user information
@@ -362,6 +404,38 @@ $( document ).ready(function() {
       })
   }
 
+  // API, POST
+  // 更新或建立新 token / Update or insert a new tokenPOST/token
+  function api_post_user (userToken, data) {
+
+    var userData = {
+      'url': `${ server }/api/token`,
+      'method': 'POST',
+      'headers': {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': `Bearer ${ userToken }`,
+      },
+      'data': data
+    }
+    
+    $.ajax(userData)
+      .done(function (response) {
+        if (response.result ===  true) {
+          api_get_user(userToken, '')
+        }
+      })
+
+      .fail(function (response) {
+        console.log('api_post_user: Fail ' + response.responseText)
+      })
+  }
+
+
+  /*---------------------- 
+  product
+  -----------------------*/
+
   // API, GET
   // 取得已建立商品資訊 / Get uploaded items information
   function api_get_items () {
@@ -395,16 +469,16 @@ $( document ).ready(function() {
 
           item += `
           <div class="contentBody__product" data-key="${ id }">
-            <img src=" ${ productPhoto } " alt="${ name }" class="contentBody__product__photo">
-            <div class="contentBody__product__name"> ${ name } </div>
-            <span class="contentBody__product__amount">數量：${ stock }</span>
-            <span class="contentBody__product__cost">成本：$ ${ cost }</span>
+            <img src="${ productPhoto }" alt="${ name }" class="contentBody__product__photo">
+            <div class="contentBody__product__name">${ name }</div>
+            <span class="contentBody__product__amount">數量：<span class="amount">${ stock }</span></span>
+            <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span></span>
             <div class="contentBody__product__spec">
               <div class="contentBody__product__spec__title">商品敘述</div>
-              ${ description }
+              <span class="spec">${ description }</span>
             </div>
-            <span class="contentBody__product__price">$ ${ unit_price }</span>
-            <span class="contentBody__product__update">更新</span>
+            <span class="contentBody__product__price">$ <span class="price">${ unit_price }</span></span>
+            <span class="contentBody__product__update">修改</span>
             <span class="contentBody__product__delete">刪除</span>
           </div>
           `
@@ -419,18 +493,22 @@ $( document ).ready(function() {
         // 共同父層
         let myItem = document.querySelector('.contentBody__product')
 
+
         // 更新
         let productUpdate = document.querySelector('.contentBody__product__update')
 
-        productUpdate.addEventListener('click', function(){
 
+        productUpdate.addEventListener('click', function(){
+          editProduct(myItem, listenUpdateProduct)
         })
 
         // 刪除
         let productDelete = document.querySelector('.contentBody__product__delete')
 
         productDelete.addEventListener('click', function(){
-          api_delete_items()
+          api_delete_items(myItem) //key失效
+        console.log(myItem)
+
         })
       })
 
@@ -477,7 +555,7 @@ $( document ).ready(function() {
       'data': formData
     }
 
-    // console.log(formData, $('.addProduct__photo')[0], images)
+    console.log(images)
 
 
     $.ajax(item)
@@ -492,9 +570,67 @@ $( document ).ready(function() {
       })
   }
 
-  function api_delete_items () {
+  // API, POST
+  // 更新已建立商品/update uploaded items
+  function api_update_items (event, key, form) {
+    
+    event.preventDefault()
+
+    let formData = new FormData(form)
+
+    let name = document.querySelector('.addProduct__name').value
+    let description = document.querySelector('.addProduct__spec').value
+    let stock = document.querySelector('.addProduct__amount').value
+    let cost = document.querySelector('.addProduct__cost').value
+    let unit_price = document.querySelector('.addProduct__price').value
+
+    // 若使用者有上傳圖片，再綁進資料裡
+    let images = $('.addProduct__photo')[0].files[0]
+    images = (images) ? images : ''
+    if (images) {
+      formData.append('images', images)
+    }
+    
+    formData.append('name', name)
+    formData.append('description', description)
+    formData.append('stock', stock)
+    formData.append('cost', cost)
+    formData.append('unit_price', unit_price)
+    formData.append('_method', 'PATCH')
+
+    let itemData = {
+      'url': `${ server }/api/items/${ key }`,
+      'method': 'POST',
+      'headers': {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': `Bearer ${ userToken }`
+      },
+      'cache': false,
+      'contentType': false, //required
+      'processData': false, // required
+      'mimeType': 'multipart/form-data',
+      'data': formData
+    }
+    
+    $.ajax(itemData)
+
+      .done(function (res) {
+        console.log('work', res)
+        closeLightBox()
+        api_get_items()
+      })
+
+      .fail(function (res) {
+        console.log('fail', res.responseText)
+      })
+  }
+
+  // API, DELETE
+  // 刪除已建立商品/Delete uploaded items
+  function api_delete_items (item) {
+
     let key = []
-    key.push(myItem.dataset.key)
+    key.push(item.dataset.key)
 
     let itemData = {
       'url': `${ server }/api/items`,
