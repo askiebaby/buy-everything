@@ -4,6 +4,9 @@ $( document ).ready(function() {
   let userToken = Cookies.get('buy-user-token')
   console.log('Global: ', userToken)
   let fbButton = document.querySelector('.loginButton')
+  let hrefNow = window.location.href
+    // 根目錄 or 服務首頁
+  let hrefOrigin = window.location.origin + '/'
   let loginPageFunc = document.querySelector('.loginPage__login__func')
   let server = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
   // let server = 'https://5a31303f.ngrok.io'
@@ -132,10 +135,7 @@ $( document ).ready(function() {
   }
 
   function checkSituation (action, userName, userPhoto) {
-    
-    let hrefNow = window.location.href
-    // 根目錄 or 服務首頁
-    let hrefOrigin = window.location.origin + '/'
+
     let hrefSeller = hrefOrigin + 'seller/index.html'
     let hrefBuyer = hrefOrigin + 'buyer/index.html'
     let functions
@@ -405,7 +405,13 @@ $( document ).ready(function() {
       .fail(function (response) {
         console.log('api_get_user: Fail ', response.responseText)
         fbButton.innerHTML = '登入' // 未登入的初始畫面
+        
         fbSDK('login')
+        fbButton.addEventListener('click', buttonInit)
+
+        if (hrefNow !== hrefOrigin) {
+          window.location.assign(hrefOrigin)
+        }
       })
   }
 
