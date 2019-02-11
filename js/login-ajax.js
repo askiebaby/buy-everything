@@ -354,8 +354,13 @@ $( document ).ready(function() {
 
     // console.log(callback, updateName, updateDescription, updateAmount, updateCost, updatePrice, updatePhoto, key)
 
+    let photoReal = document.getElementById('addProduct__photo')
+    photoReal.addEventListener('change', function(){
+      preview_image(event)
+    })
+
     callback(key, updateForm)
-    console.log(key)
+
   }
 
   function listenUpdateProduct (key, form) {
@@ -493,8 +498,6 @@ $( document ).ready(function() {
         // 共同父層
         let myItem = document.querySelectorAll('.contentBody__product')
 
-        // console.log(myItem, myItem[0])
-
         for (let i = 0; i < myItem.length; i++) {
 
           // 更新
@@ -512,13 +515,6 @@ $( document ).ready(function() {
 
         }
 
-        // 刪除
-
-        // productDelete.addEventListener('click', function(){
-        //   api_delete_items(myItem) //key失效
-        // console.log(myItem)
-
-        // })
       })
 
       .fail(function (response) {
