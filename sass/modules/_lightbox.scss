@@ -11,9 +11,31 @@
     height: 100%;
   }
 
+  &__layout__vertical {
+    display: flex;
+  }
+
   h3 {
-    margin-bottom: 15px;
-    text-align: left;
+    margin-bottom: 35px;
+    font-size: 1.25em;
+    letter-spacing: .25em;
+    text-align: center;
+    position: relative;
+
+    &::after {
+      content: '';
+      border-bottom: 1px solid #ccc;
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 50%;
+      z-index: -1;
+    }
+
+    span {
+      background: #fff;
+      padding: 0 1.5em;
+    }
   }
 
   label {
@@ -56,6 +78,17 @@
     line-height: 2;
     margin-bottom: 14px;
     text-align: left;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__layout {
+    &__vertical {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   &__close {
@@ -76,6 +109,9 @@
     &:hover {
       background: rgba(0,0,0,.5);
     }
+  }
+  .addForm__photoFake {
+    font-size: 0;
   }
 }
 

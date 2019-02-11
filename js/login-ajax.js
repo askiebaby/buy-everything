@@ -5,8 +5,11 @@ $( document ).ready(function() {
   console.log('Global: ', userToken)
   let fbButton = document.querySelector('.loginButton')
   let hrefNow = window.location.href
-    // 根目錄 or 服務首頁
-  let hrefOrigin = window.location.origin + '/'
+  // 根目錄 or 服務首頁
+  let hrefRealOrigin = window.location.origin
+  let hrefOrigin = hrefRealOrigin + '/'
+  let contentHeader = document.querySelector('.contentHeader')
+  let contentBody = document.querySelector('.contentBody')
   let loginPageFunc = document.querySelector('.loginPage__login__func')
   let server = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
   // let server = 'https://5a31303f.ngrok.io'
@@ -40,6 +43,77 @@ $( document ).ready(function() {
     }
   })
 
+
+  // 賣家登入後的預設畫面
+  function sellerInit (){
+
+    let addForm = `
+      <form action="${ server }/api/items" class="productForm" name="productForm" enctype="multipart/form-data" method="POST">
+        <h3><span>新增商品</span></h3>
+        <!-- 商品照片 -->
+        <div class="lightBox__layout__vertical">
+          <div>
+            <label for="addForm__photo" class="addForm__photoFake">
+              <span>選擇圖片</span>
+              <img src="https://fakeimg.pl/150x150" alt="上傳圖片" class="addForm__photoPreview" alt="請上傳圖片">
+            </label>
+            <input type="file" id="addForm__photo" class="addForm__photo" name="files" accept="image/gif, image/jpeg, image/png">
+          </div>
+          <div>
+            <div class="lightBox__breakBox">
+            <!-- 商品名稱 -->
+              <label for="addForm__name">商品名稱</label>
+              <input type="text" class="addForm__name" id="addForm__name" placeholder="必填" required>
+            </div>
+            <div class="lightBox__breakBox">
+              <!-- 規格名稱 -->
+              <label for="addForm__spec">規格說明</label>
+              <input type="text" class="addForm__spec" id="addForm__spec" placeholder="必填" required>
+            </div>
+            <div class="lightBox__breakBox">
+              <!-- 販售數量 -->
+              <label for="addForm__amount">販售數量</label>
+              <input type="number" min="1" class="addForm__amount" id="addForm__amount" placeholder="必填" required>
+
+              <!-- 成本 -->
+              <label for="addForm__cost">成本</label>
+              <input type="number" min="1" class="addForm__cost" id="addForm__cost" placeholder="選填">
+
+              <!-- 價格 -->
+              <label for="addForm__price">價格</label>
+              <input type="number" min="1" class="addForm__price" id="addForm__price" placeholder="必填" required>
+            </div>
+          </div>
+        </div>
+        <input type="submit" value="送出" class="addForm__submit">
+      </form>
+    `
+
+    let addButton = document.querySelector('.addButton')
+
+    addButton.addEventListener('click', function(){
+      // callback
+      lightBox(addForm, true)
+
+      let photoReal = document.getElementById('addForm__photo')
+      photoReal.addEventListener('change', function(){
+        preview_image(event)
+      })
+
+      let productForm = document.forms.namedItem('productForm')
+
+      productForm.addEventListener('submit', function(event){
+        api_post_items(event, productForm)
+      })
+
+    })
+
+  }
+
+  /*---------------------- 
+  Facebook login API and functions
+  -----------------------*/
+
   // 登入：賦予按鈕登入事件
   function buttonInit () {
     console.log('login click')
@@ -56,7 +130,6 @@ $( document ).ready(function() {
   function buttonLogout () {
     fbSDK('logout')
   }
-
 
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback (response, action) {
@@ -127,12 +200,6 @@ $( document ).ready(function() {
     })
   }
 
-  function saveToken (fbToken) {
-    Cookies.remove('buy-user-token')
-    Cookies.set('buy-user-token', fbToken)
-    userToken = Cookies.get('buy-user-token')
-    console.log('saveToken: ', fbToken)
-  }
 
   function checkSituation (action, userName, userPhoto) {
 
@@ -218,73 +285,24 @@ $( document ).ready(function() {
     }
   }
 
-  // 賣家登入後的預設畫面
-  function sellerInit (){
-
-    let addProductForm = `
-      <form action="${ server }/api/items" class="productForm" name="productForm" enctype="multipart/form-data" method="POST">
-        <h3>新增商品</h3>
-        <!-- 商品照片 -->
-        <div class="lightBox__breakBox">
-          <label for="addProduct__photo" class="addProduct__photoFake">
-            <img src="https://fakeimg.pl/150x150" alt="上傳圖片" class="addProduct__photoPreview" alt="請上傳圖片">
-          </label>
-          <input type="file" id="addProduct__photo" class="addProduct__photo" name="files" accept="image/gif, image/jpeg, image/png">
-        </div>
-        <div class="lightBox__breakBox">
-        <!-- 商品名稱 -->
-          <label for="addProduct__name">商品名稱</label>
-          <input type="text" class="addProduct__name" id="addProduct__name" placeholder="必填" required>
-        </div>
-        <div class="lightBox__breakBox">
-          <!-- 規格名稱 -->
-          <label for="addProduct__spec">規格說明</label>
-          <input type="text" class="addProduct__spec" id="addProduct__spec" placeholder="必填" required>
-        </div>
-        <div class="lightBox__breakBox">
-          <!-- 販售數量 -->
-          <label for="addProduct__amount">販售數量</label>
-          <input type="number" min="1" class="addProduct__amount" id="addProduct__amount" placeholder="必填" required>
-
-          <!-- 成本 -->
-          <label for="addProduct__cost">成本</label>
-          <input type="number" min="1" class="addProduct__cost" id="addProduct__cost" placeholder="選填">
-
-          <!-- 價格 -->
-          <label for="addProduct__price">價格</label>
-          <input type="number" min="1" class="addProduct__price" id="addProduct__price" placeholder="必填" required>
-        </div>
-        <input type="submit" value="送出" class="addProduct__submit">
-      </form>
-    `
-
-    let addButton = document.querySelector('.addButton')
-
-    addButton.addEventListener('click', function(){
-      // callback
-      lightBox(addProductForm)
-
-      let photoReal = document.getElementById('addProduct__photo')
-      photoReal.addEventListener('change', function(){
-        preview_image(event)
-      })
-
-      let productForm = document.forms.namedItem('productForm')
-
-      productForm.addEventListener('submit', function(event){
-        api_post_items(event, productForm)
-      })
-
-    })
-
+  function saveToken (fbToken) {
+    Cookies.remove('buy-user-token')
+    Cookies.set('buy-user-token', fbToken)
+    userToken = Cookies.get('buy-user-token')
+    console.log('saveToken: ', fbToken)
   }
+
+
+  /*---------------------- 
+  Product Functions
+  -----------------------*/
 
   // 商品圖片預覽
   function preview_image (event) {
     // 多個檔案的做法
     // https://www.html5rocks.com/zh/tutorials/file/dndfiles/
     let files = value = event.target.files[0] // FileList object
-    let preview = document.querySelector('.addProduct__photoPreview')
+    let preview = document.querySelector('.addForm__photoPreview')
     let reader = new FileReader()
 
     // Closure to capture the file information.
@@ -300,6 +318,7 @@ $( document ).ready(function() {
     reader.readAsDataURL(files)
   }
 
+  // 修改商品 UI
   function editProduct (item, callback) {
     // 原資料
     // let item = item
@@ -316,45 +335,50 @@ $( document ).ready(function() {
 
     let updateForm = `
     <form action="${ server }/api/items" class="productForm" name="productForm" enctype="multipart/form-data" method="POST">
-    <h3>修改商品</h3>
+    <h3><span>修改商品</span></h3>
     <!-- 商品照片 -->
-    <div class="lightBox__breakBox">
-      <label for="addProduct__photo" class="addProduct__photoFake">
-        <img src="${ updatePhoto }" alt="上傳圖片" class="addProduct__photoPreview">
-      </label>
-      <input type="file" id="addProduct__photo" class="addProduct__photo" name="files" accept="image/gif, image/jpeg, image/png">
-    </div>
-    <div class="lightBox__breakBox">
-    <!-- 商品名稱 -->
-      <label for="addProduct__name">商品名稱</label>
-      <input type="text" class="addProduct__name" id="addProduct__name" placeholder="必填" value="${ updateName }" required>
-    </div>
-    <div class="lightBox__breakBox">
-      <!-- 規格名稱 -->
-      <label for="addProduct__spec">規格說明</label>
-      <input type="text" class="addProduct__spec" id="addProduct__spec" placeholder="必填" value="${ updateDescription }" required>
-    </div>
-    <div class="lightBox__breakBox">
-      <!-- 販售數量 -->
-      <label for="addProduct__amount">販售數量</label>
-      <input type="number" min="1" class="addProduct__amount" id="addProduct__amount" placeholder="必填" value="${ updateAmount }" required>
+    <div class="lightBox__layout__vertical">
+      <div>
+        <label for="addForm__photo" class="addForm__photoFake">
+          <span>修改圖片</span>
+          <img src="${ updatePhoto }" alt="修改圖片" class="addForm__photoPreview">
+        </label>
+        <input type="file" id="addForm__photo" class="addForm__photo" name="files" accept="image/gif, image/jpeg, image/png">
+      </div>
+      <div>
+        <div class="lightBox__breakBox">
+        <!-- 商品名稱 -->
+          <label for="addForm__name">商品名稱</label>
+          <input type="text" class="addForm__name" id="addForm__name" placeholder="必填" value="${ updateName }" required>
+        </div>
+        <div class="lightBox__breakBox">
+          <!-- 規格名稱 -->
+          <label for="addForm__spec">規格說明</label>
+          <input type="text" class="addForm__spec" id="addForm__spec" placeholder="必填" value="${ updateDescription }" required>
+        </div>
+        <div class="lightBox__breakBox">
+          <!-- 販售數量 -->
+          <label for="addForm__amount">販售數量</label>
+          <input type="number" min="1" class="addForm__amount" id="addForm__amount" placeholder="必填" value="${ updateAmount }" required>
 
-      <!-- 成本 -->
-      <label for="addProduct__cost">成本</label>
-      <input type="number" min="1" class="addProduct__cost" id="addProduct__cost" placeholder="選填" value="${ updateCost }">
-  
-      <!-- 價格 -->
-      <label for="addProduct__price">價格</label>
-      <input type="number" min="1" class="addProduct__price" id="addProduct__price" placeholder="必填" value="${ updatePrice }" required>
+          <!-- 成本 -->
+          <label for="addForm__cost">成本</label>
+          <input type="number" min="1" class="addForm__cost" id="addForm__cost" placeholder="選填" value="${ updateCost }">
+      
+          <!-- 價格 -->
+          <label for="addForm__price">價格</label>
+          <input type="number" min="1" class="addForm__price" id="addForm__price" placeholder="必填" value="${ updatePrice }" required>
+        </div>
+      </div>
     </div>
-    <input type="submit" value="送出" class="addProduct__submit">
+    <input type="submit" value="送出" class="addForm__submit">
   </form>
     `
-    lightBox(updateForm)
+    lightBox(updateForm, true)
 
     // console.log(callback, updateName, updateDescription, updateAmount, updateCost, updatePrice, updatePhoto, key)
 
-    let photoReal = document.getElementById('addProduct__photo')
+    let photoReal = document.getElementById('addForm__photo')
     photoReal.addEventListener('change', function(){
       preview_image(event)
     })
@@ -373,14 +397,67 @@ $( document ).ready(function() {
   }
 
   /*---------------------- 
-  user
+  Streaming Functions
+  -----------------------*/
+
+  // 詢問直播
+  function askForStreamUrl () {
+    let streamInput = `
+      <form type="post" class="streamForm" name="streamForm">
+        <h3><span>輸入您的直播網址</span></h3>
+        <div class="lightBox__breakBox lightBox__url">
+          <label for="streamUrl__input">直播網址</label>
+          <input type="text" placeholder="例如：https://www.facebook.com/your-id/videos/397282194432699/" class="streamUrl__input" id="streamUrl__input">
+          <label for="streamUrl__description">直播說明</label>
+          <textarea type="text" placeholder="介紹一下這場直播吧！" class="streamUrl__description" id="streamUrl__description" rows="4"></textarea>
+          </div>
+          <input type="button" value="送出" class="addForm__submit">
+      </form>
+    `
+    lightBox(streamInput, true)
+
+    let submit = document.querySelector('.addForm__submit')
+    submit.addEventListener('click', api_post_channel)
+    
+  }
+
+  // 渲染賣家直播畫面
+  function continueStream (url, id) {
+    closeLightBox()
+
+    if (hrefNow === hrefOrigin || hrefNow === hrefRealOrigin) {
+      window.location.assign(hrefOrigin + 'seller/index.html')
+    } else {
+      let streamUI = `
+      <div id="fb-root"></div>
+      <div class="fb-video" data-href="${ url }" data-width="500" data-show-text="false"></div>
+      `
+      contentBody.innerHTML = streamUI
+      videoSdk(document, 'script', 'facebook-jssdk')
+    }
+  }
+  function videoSdk (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
+    fjs.parentNode.insertBefore(js, fjs);
+  }
+
+  function stopStream () {
+    
+  }
+
+
+  /*---------------------- 
+  User API
   -----------------------*/
 
   // API, GET
   // 取得User資訊 / get user information
   function api_get_user (userToken, data) {
 
-    var userData = {
+    let userData = {
       'url': `${ server }/api/users`,
       'method': 'GET',
       'headers': {
@@ -399,6 +476,7 @@ $( document ).ready(function() {
           let userPhoto = response.response.avatar
           let userName = response.response.name
           checkSituation('login', userName, userPhoto)
+          api_get_userStatus()
         }
       })
 
@@ -419,7 +497,7 @@ $( document ).ready(function() {
   // 更新或建立新 token / Update or insert a new tokenPOST/token
   function api_post_user (userToken, data) {
 
-    var userData = {
+    let userData = {
       'url': `${ server }/api/token`,
       'method': 'POST',
       'headers': {
@@ -444,7 +522,7 @@ $( document ).ready(function() {
 
 
   /*---------------------- 
-  product
+  Product API
   -----------------------*/
 
   // API, GET
@@ -465,38 +543,57 @@ $( document ).ready(function() {
 
       .done(function (response) {
         let productList = response.response
-        let contentBody = document.querySelector('.contentBody')
         let productAmountContainer = document.querySelector('.contentHeader__amountBox')
         let item = '', productAmount = 0
 
-        for (let i = 0; i < productList.length; i++) {
-          let id = productList[i].id
-          let name = productList[i].name
-          let cost = productList[i].cost
-          let description = productList[i].description
-          let stock = productList[i].stock
-          let unit_price = productList[i].unit_price
-          let productPhoto = productList[i].images
+        // 監聽每一個直播按鈕
+        let startStreamingButtons = document.querySelectorAll('.startStreaming')
 
-          item += `
-          <div class="contentBody__product" data-key="${ id }">
-            <img src="${ productPhoto }" alt="${ name }" class="contentBody__product__photo">
-            <div class="contentBody__product__name">${ name }</div>
-            <span class="contentBody__product__amount">數量：<span class="amount">${ stock }</span></span>
-            <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span></span>
-            <div class="contentBody__product__spec">
-              <div class="contentBody__product__spec__title">商品敘述</div>
-              <span class="spec">${ description }</span>
+        if (productList.length !== 0) {
+          for (let i = 0; i < productList.length; i++) {
+            let id = productList[i].id
+            let name = productList[i].name
+            let cost = productList[i].cost
+            let description = productList[i].description
+            let stock = productList[i].stock
+            let unit_price = productList[i].unit_price
+            let productPhoto = productList[i].images
+
+            item += `
+            <div class="contentBody__product" data-key="${ id }">
+              <img src="${ productPhoto }" alt="${ name }" class="contentBody__product__photo">
+              <div class="contentBody__product__name">${ name }</div>
+              <span class="contentBody__product__amount">數量：<span class="amount">${ stock }</span></span>
+              <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span></span>
+              <div class="contentBody__product__spec">
+                <div class="contentBody__product__spec__title">商品敘述</div>
+                <span class="spec">${ description }</span>
+              </div>
+              <span class="contentBody__product__price">$ <span class="price">${ unit_price }</span></span>
+              <div class="contentBody__product__function">
+                <span class="contentBody__product__update">修改</span>
+                <span class="contentBody__product__delete">刪除</span>
+              </div>
             </div>
-            <span class="contentBody__product__price">$ <span class="price">${ unit_price }</span></span>
-            <span class="contentBody__product__update">修改</span>
-            <span class="contentBody__product__delete">刪除</span>
-          </div>
-          `
+            `
 
-          productAmount ++
+            productAmount ++
 
+            for (let i = 0; i < startStreamingButtons.length; i++) {
+              startStreamingButtons[i].addEventListener('click', askForStreamUrl)
+              startStreamingButtons[i].classList.remove('disabled')
+            }
+
+          }
+        } else {
+          item = '您尚未新增商品。'
+
+          for (let i = 0; i < startStreamingButtons.length; i++) {
+            startStreamingButtons[i].removeEventListener('click', askForStreamUrl)
+            startStreamingButtons[i].classList.add('disabled')
+          }
         }
+
 
         contentBody.innerHTML = item
         productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
@@ -534,12 +631,12 @@ $( document ).ready(function() {
     
     event.preventDefault()
 
-    let name = document.querySelector('.addProduct__name').value
-    let description = document.querySelector('.addProduct__spec').value
-    let stock = document.querySelector('.addProduct__amount').value
-    let cost = document.querySelector('.addProduct__cost').value
-    let unit_price = document.querySelector('.addProduct__price').value
-    let images = $('.addProduct__photo')[0].files[0]
+    let name = document.querySelector('.addForm__name').value
+    let description = document.querySelector('.addForm__spec').value
+    let stock = document.querySelector('.addForm__amount').value
+    let cost = document.querySelector('.addForm__cost').value
+    let unit_price = document.querySelector('.addForm__price').value
+    let images = $('.addForm__photo')[0].files[0]
 
     let formData = new FormData(form)
 
@@ -589,14 +686,14 @@ $( document ).ready(function() {
 
     let formData = new FormData(form)
 
-    let name = document.querySelector('.addProduct__name').value
-    let description = document.querySelector('.addProduct__spec').value
-    let stock = document.querySelector('.addProduct__amount').value
-    let cost = document.querySelector('.addProduct__cost').value
-    let unit_price = document.querySelector('.addProduct__price').value
+    let name = document.querySelector('.addForm__name').value
+    let description = document.querySelector('.addForm__spec').value
+    let stock = document.querySelector('.addForm__amount').value
+    let cost = document.querySelector('.addForm__cost').value
+    let unit_price = document.querySelector('.addForm__price').value
 
     // 若使用者有上傳圖片，再綁進資料裡
-    let images = $('.addProduct__photo')[0].files[0]
+    let images = $('.addForm__photo')[0].files[0]
     images = (images) ? images : ''
     if (images) {
       formData.append('images', images)
@@ -665,6 +762,95 @@ $( document ).ready(function() {
 
       .fail(function (res) {
         console.log('fail', res.responseText)
+      })
+  }
+
+
+  /*---------------------- 
+  Streaming API
+  -----------------------*/
+
+  // API, GET
+  // 取得使用者狀態/GET USER STATUS
+  function api_get_userStatus () {
+    let getUserStatus = {
+      'url': `${ server }/api/user-status`,
+      'method': 'GET',
+      'headers': {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': `Bearer ${ userToken }`
+      }
+    }
+
+    $.ajax(getUserStatus)
+
+    .done(function (response) {
+      console.log('api_get_userStatus: Success', response)
+      if (response.result === true) {
+        let alertMsg = `
+        <h3><span>您似乎未正確關閉直播</span></h3>
+        <span class="continueStreaming">繼續直播</span>
+        <span class="stopStreaming">結束直播</span>
+      `
+      lightBox(alertMsg, false)
+
+      let continueStreamBtn = document.querySelector('.continueStreaming')
+      let stopStreamBtn = document.querySelector('.stopStreaming')
+
+      continueStreamBtn.addEventListener('click', function () {
+        let url = response.iFrame
+        let channelToken = response.channel_token
+        let isInChannel = response.host
+        continueStream(url, channelToken, isInChannel)
+      })
+      stopStreamBtn.addEventListener('click', stopStream)
+      } else {
+        api_get_items()
+      }
+
+    })
+
+    .fail(function (res) {
+      console.log('api_get_userStatus: Fail', res.responseText)
+    })
+  }
+
+
+  // API, POST
+  // 開始直播/START A LIVE-STREAM
+  function api_post_channel () {
+    console.log('有東西')
+
+    let streamUrl = document.querySelector('.streamUrl__input').value
+    let streamDescription = document.querySelector('.streamUrl__description').value
+
+    let streamData = {
+      'url': `${ server }/api/channel`,
+      'method': 'POST',
+      'headers': {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': `Bearer ${ userToken }`,
+      },
+      'data': JSON.stringify({
+        'iFrame': streamUrl,
+        'channel_description': streamDescription
+      })
+    }
+
+    $.ajax(streamData)
+      .done(function (response) {
+        if (response.result === true) {
+          closeLightBox()
+          let streamToken = response.channel_token
+          let streamId = response.channel_id
+          continueStream(streamToken, streamId)
+        }
+      })
+
+      .fail(function (response) {
+        console.log('api_post_user: Fail ' + response.responseText)
       })
   }
 

@@ -12,7 +12,7 @@
 @mixin functionButton ($size: small){
 
   @if ($size == small) {
-    padding: 2px 10px;
+    padding: 5px 10px;
   }
   @if ($size == big) {
     padding: 1em
@@ -31,3 +31,36 @@
     background: $lightGray;
   }
 }
+
+.loginButton {
+  color: $deepGray-2;
+}
+
+.buttonSmall {
+  @include functionButton(small);
+}
+
+.buttonBig {
+  @include functionButton(big);
+}
+
+.buttonBig + .buttonBig {
+  margin-top: 10px;
+}
+
+.buttonLogout {
+  @include buttonLogout;
+}
+
+.buttonStreaming {
+  font-size: .9em;
+  font-weight: 400;
+  background: $callToActionColor;
+  color: $white;
+  margin-left: 10px;
+
+  &:hover {
+    background: darken($callToActionColor, 20);
+  }
+}
+

@@ -19,19 +19,19 @@
       <ul class="headerNav__real">
         <li><a href="../index.html">首頁</a></li>
         <li class="nav__dropdown">
-          <a href="#" class="nav__dropdown__head">買家</a>
+          <span class="nav__dropdown__head">買家</span>
           <ul class="nav__dropdown__item">
-            <li class="primaryFunction"><a href="#">觀看直播</a></li>
-            <li><a href="#">更新個人資訊</a></li>
-            <li><a href="#">查看訂單</a></li>
+            <li class="primaryFunction"><span>觀看直播</span></li>
+            <li><span>更新個人資訊</span></li>
+            <li><span>查看訂單</span></li>
           </ul>
         </li>
         <li class="nav__dropdown">
-          <a href="#" class="nav__dropdown__head">賣家</a>
+          <span class="nav__dropdown__head">賣家</span>
           <ul class="nav__dropdown__item">
-            <li class="primaryFunction"><a href="#">開始直播</a></li>
-            <li><a href="#">商品資訊</a></li>
-            <li><a href="#">管理訂單</a></li>
+            <li class="primaryFunction disabled startStreaming"><span>開始直播</span></li>
+            <li><span>商品資訊</span></li>
+            <li><span>管理訂單</span></li>
           </ul>
         </li>
         <li class="nav__userState">
@@ -44,7 +44,7 @@
   <button class="addButton"><i class="fas fa-plus"></i></button>
   <section class="maxWidth animated fadeInDown" id="content">
     <div class="contentHeader">
-      <h2>賣家商品列表</h2>
+      <h2>賣家商品列表<span class="buttonSmall buttonStreaming startStreaming">開始直播</span></h2>
       <p class="contentHeader__amountBox"></p>
     </div>
     <div class="contentBody">
@@ -52,48 +52,8 @@
     </div>
   </section>
 
+
   <section class="lightBox"></section>
-  <section class="lightBox" style="display: none;">
-    <div class="lightBox__wrapper">
-      <div class="lightBox__layer"></div>
-      <div class="lightBox__container animated bounceIn" id="lightBoxContainer">
-        <div class="lightBox__close"><i class="fas fa-times"></i></div>
-        <h3>新增商品</h3>
-        <form action="" class="form">
-          <!-- 商品照片 -->
-          <label for="addProduct__photo" class="addProduct__photoFake">
-            <img src="https://fakeimg.pl/150x150" alt="上傳圖片">
-          </label>
-          <input type="file" id="addProduct__photo" class="addProduct__photo">
-          <div class="lightBox__breakBox">
-          <!-- 商品名稱 -->
-            <label for="addProduct__name">商品名稱</label>
-            <input type="text" class="addProduct__name" id="addProduct__name" placeholder="必填">
-          </div>
-          <div class="lightBox__breakBox">
-            <!-- 規格名稱 -->
-            <label for="addProduct__spec">規格名稱</label>
-            <input type="text" class="addProduct__spec" id="addProduct__spec" placeholder="必填">
-
-            <!-- 販售數量 -->
-            <label for="addProduct__amount">販售數量</label>
-            <input type="number" class="addProduct__amount" id="addProduct__amount" placeholder="必填">
-
-          </div>
-          <div class="lightBox__breakBox">
-            <!-- 成本 -->
-            <label for="addProduct__cost">成本</label>
-            <input type="number" class="addProduct__cost" id="addProduct__cost" placeholder="選填">
-
-            <!-- 價格 -->
-            <label for="addProduct__price">價格</label>
-            <input type="text" class="addProduct__price" id="addProduct__price" placeholder="必填">
-          </div>
-          <input type="submit" value="送出" class="addProduct__submit">
-        </form>
-      </div>
-    </div>
-  </section>
   <script src="https://code.jquery.com/jquery-git.min.js"></script>
   <script src="../js/cookie.js"></script>
   <script src="../js/lightbox.js"></script>

@@ -50,6 +50,16 @@ header {
   &__amount {
     font-weight: 700;
   }
+
+  .disabled {
+    background: $lightGray-2;
+    color: $deepGray-3;
+    cursor: no-drop;
+  
+    &:hover {
+      background: $lightGray-2;
+    }
+  }
 }
 
 .contentBody {
@@ -82,7 +92,7 @@ header {
       display: inline-block;
       width: calc(100% - 160px);
       padding: 10px;
-      margin-top: 10px;
+      margin: 10px 0;
       border-radius: 0 3px 3px 0;
 
         &__title {
@@ -91,7 +101,6 @@ header {
         }
     }
 
-    &__cost {}
     &__price {
       font-weight: 700;
       color: $primaryColor;
@@ -101,8 +110,27 @@ header {
       font-size: 1.5em;
     }
 
+    &__update {
+      @include functionButton(small);
+      @include buttonLogout;
+    }
+
+    &__delete {
+      @include functionButton(small);
+      background: $callToActionColor;
+      color: $white;
+
+      &:hover {
+        background: darken($callToActionColor, 20);
+      }
+    }
+
+    &__function {
+      text-align: right;
+    }
+
     span + span {
-      margin-left: 10px;
+      margin-left: 5px;
     }
   }
 
@@ -112,19 +140,37 @@ header {
 
 }
 
-.addProduct {
+.addForm {
 
   &__photo {
     display: none;
   }
 
   &__photoFake {
-    float: left;
-    margin-right: 20px;
+    display: flex;
+    cursor: pointer;
+    position: relative;
+    flex-flow: row nowrap;
+    align-items: center;
+    width: 150px;
+    height: 150px;
+
+    span {
+      font-size: .8rem;
+      position: absolute;
+      background: rgba(255,255,255,.8);
+      top: 3px;
+      left: 5px;
+      border-radius: 1px;
+      padding: 1px 3px;
+      border: 1px solid #ddd;
+    }
   }
 
   &__photoPreview {
-    max-width: 150px;
+    width: 100%;
+    height: 150px;
+    object-fit: fill;
   }
 
   &__name {
@@ -157,10 +203,25 @@ header {
     cursor: pointer;
     font-weight: 700;
     font-size: 1em;
+    margin-right: 25px;
 
     &:hover {
       background: $secondaryColor;
     }
+  }
+}
+
+.streamUrl{
+  &__input, &__description {
+    display: block;
+    margin-left: 25px;
+    width: calc(100% - 50px);
+    margin-bottom: 10px;
+  }
+
+  &__description {
+    max-width: calc(100% - 50px);
+    max-height: 120px;
   }
 }
 

@@ -16,7 +16,7 @@ a, a:hover {
   text-decoration: none;
 }
 
-input[type=text], input[type=number] {
+input[type=text], input[type=number], textarea {
   padding: 12px;
   border-radius: 5px;
   border: 1px solid #ddd;
@@ -64,6 +64,47 @@ input[type=text], input[type=number] {
   background: -ms-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
   background: linear-gradient(135deg, #098ee0 0%, #6be0b5 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#098ee0', endColorstr='#6be0b5', GradientType=1 );
+}
+
+.loginButton {
+  color: #666;
+}
+
+.buttonSmall {
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.buttonBig {
+  padding: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.buttonBig + .buttonBig {
+  margin-top: 10px;
+}
+
+.buttonLogout {
+  background: #eee;
+  color: #666;
+}
+.buttonLogout:hover {
+  background: #d4d4d4;
+}
+
+.buttonStreaming {
+  font-size: .9em;
+  font-weight: 400;
+  background: #F25757;
+  color: #f1f2f3;
+  margin-left: 10px;
+}
+.buttonStreaming:hover {
+  background: #d31010;
 }
 
 .loginPage {
@@ -177,12 +218,23 @@ input[type=text], input[type=number] {
   color: #267abd;
 }
 
+.character .character__choiceCard {
+  background: #098ee0;
+  background: -moz-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: -webkit-gradient(left top, right bottom, color-stop(0%, #098ee0), color-stop(100%, #6be0b5));
+  background: -webkit-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: -o-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: -ms-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
+  background: linear-gradient(135deg, #098ee0 0%, #6be0b5 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#098ee0', endColorstr='#6be0b5', GradientType=1 );
+}
+
 .loginButton {
   color: #666;
 }
 
 .buttonSmall {
-  padding: 2px 10px;
+  padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
@@ -207,15 +259,15 @@ input[type=text], input[type=number] {
   background: #d4d4d4;
 }
 
-.character .character__choiceCard {
-  background: #098ee0;
-  background: -moz-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
-  background: -webkit-gradient(left top, right bottom, color-stop(0%, #098ee0), color-stop(100%, #6be0b5));
-  background: -webkit-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
-  background: -o-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
-  background: -ms-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
-  background: linear-gradient(135deg, #098ee0 0%, #6be0b5 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#098ee0', endColorstr='#6be0b5', GradientType=1 );
+.buttonStreaming {
+  font-size: .9em;
+  font-weight: 400;
+  background: #F25757;
+  color: #f1f2f3;
+  margin-left: 10px;
+}
+.buttonStreaming:hover {
+  background: #d31010;
 }
 
 .headerNav {
@@ -238,10 +290,10 @@ input[type=text], input[type=number] {
 .headerNav i {
   margin-right: 10px;
 }
-.headerNav a {
+.headerNav a, .headerNav span {
   color: #267abd;
 }
-.headerNav a:hover {
+.headerNav a:hover, .headerNav span:hover {
   color: #135282;
 }
 .headerNav ul, .headerNav li {
@@ -266,7 +318,7 @@ input[type=text], input[type=number] {
   cursor: pointer;
   padding-bottom: 15px;
 }
-.headerNav__real > li:hover > a {
+.headerNav__real > li:hover > span {
   color: #135282;
 }
 .headerNav .nav__userState {
@@ -283,7 +335,7 @@ input[type=text], input[type=number] {
 .headerNav .nav__dropdown:hover .nav__dropdown__item {
   display: block;
 }
-.headerNav .nav__dropdown:hover > a {
+.headerNav .nav__dropdown:hover > a, .headerNav .nav__dropdown:hover span {
   color: #135282;
 }
 .headerNav .nav__dropdown__item {
@@ -298,11 +350,11 @@ input[type=text], input[type=number] {
   left: 5px;
   z-index: 10;
 }
-.headerNav .nav__dropdown__item a {
+.headerNav .nav__dropdown__item span {
   color: #666;
   line-height: 2;
 }
-.headerNav .nav__dropdown__item a:hover {
+.headerNav .nav__dropdown__item span:hover {
   color: #267abd;
 }
 .headerNav .nav__dropdown__item .primaryFunction {
@@ -310,11 +362,18 @@ input[type=text], input[type=number] {
   padding: 0px 0 5px;
   margin-bottom: 5px;
 }
-.headerNav .nav__dropdown__item .primaryFunction a {
-  color: #267abd;
+.headerNav .nav__dropdown__item .primaryFunction span {
+  color: #F25757;
 }
-.headerNav .nav__dropdown__item .primaryFunction a:hover {
-  color: #135282;
+.headerNav .nav__dropdown__item .primaryFunction span:hover {
+  color: #d31010;
+}
+.headerNav .nav__dropdown__item .disabled a {
+  cursor: no-drop;
+  color: #999;
+}
+.headerNav .nav__dropdown__item .disabled a:hover {
+  color: #999;
 }
 .headerNav .nav__dropdown::after {
   content: "\f107";
@@ -336,6 +395,47 @@ input[type=text], input[type=number] {
   background: -ms-linear-gradient(-45deg, #098ee0 0%, #6be0b5 100%);
   background: linear-gradient(135deg, #098ee0 0%, #6be0b5 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#098ee0', endColorstr='#6be0b5', GradientType=1 );
+}
+
+.loginButton {
+  color: #666;
+}
+
+.buttonSmall {
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.buttonBig {
+  padding: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.buttonBig + .buttonBig {
+  margin-top: 10px;
+}
+
+.buttonLogout {
+  background: #eee;
+  color: #666;
+}
+.buttonLogout:hover {
+  background: #d4d4d4;
+}
+
+.buttonStreaming {
+  font-size: .9em;
+  font-weight: 400;
+  background: #F25757;
+  color: #f1f2f3;
+  margin-left: 10px;
+}
+.buttonStreaming:hover {
+  background: #d31010;
 }
 
 .character {
@@ -397,9 +497,28 @@ input[type=text], input[type=number] {
   width: 100%;
   height: 100%;
 }
+.lightBox__layout__vertical {
+  display: flex;
+}
 .lightBox h3 {
-  margin-bottom: 15px;
-  text-align: left;
+  margin-bottom: 35px;
+  font-size: 1.25em;
+  letter-spacing: .25em;
+  text-align: center;
+  position: relative;
+}
+.lightBox h3::after {
+  content: '';
+  border-bottom: 1px solid #ccc;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 50%;
+  z-index: -1;
+}
+.lightBox h3 span {
+  background: #fff;
+  padding: 0 1.5em;
 }
 .lightBox label {
   color: #666;
@@ -438,6 +557,14 @@ input[type=text], input[type=number] {
   margin-bottom: 14px;
   text-align: left;
 }
+.lightBox__breakBox:last-child {
+  margin-bottom: 0;
+}
+.lightBox__layout__vertical {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .lightBox__close {
   position: absolute;
   right: -3%;
@@ -455,6 +582,9 @@ input[type=text], input[type=number] {
 }
 .lightBox__close:hover {
   background: rgba(0, 0, 0, 0.5);
+}
+.lightBox .addForm__photoFake {
+  font-size: 0;
 }
 
 .form::after {
@@ -510,6 +640,14 @@ header {
 .contentHeader__amount {
   font-weight: 700;
 }
+.contentHeader .disabled {
+  background: #eee;
+  color: #999;
+  cursor: no-drop;
+}
+.contentHeader .disabled:hover {
+  background: #eee;
+}
 
 .contentBody {
   margin-bottom: 50px;
@@ -542,7 +680,7 @@ header {
   display: inline-block;
   width: calc(100% - 160px);
   padding: 10px;
-  margin-top: 10px;
+  margin: 10px 0;
   border-radius: 0 3px 3px 0;
 }
 .contentBody__product__spec__title {
@@ -557,39 +695,81 @@ header {
   top: 10px;
   font-size: 1.5em;
 }
+.contentBody__product__update {
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+  background: #eee;
+  color: #666;
+}
+.contentBody__product__update:hover {
+  background: #d4d4d4;
+}
+.contentBody__product__delete {
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+  background: #F25757;
+  color: #f1f2f3;
+}
+.contentBody__product__delete:hover {
+  background: #d31010;
+}
+.contentBody__product__function {
+  text-align: right;
+}
 .contentBody__product span + span {
-  margin-left: 10px;
+  margin-left: 5px;
 }
 .contentBody__product + .contentBody__product {
   margin-top: 15px;
 }
 
-.addProduct__photo {
+.addForm__photo {
   display: none;
 }
-.addProduct__photoFake {
-  float: left;
-  margin-right: 20px;
+.addForm__photoFake {
+  display: flex;
+  cursor: pointer;
+  position: relative;
+  flex-flow: row nowrap;
+  align-items: center;
+  width: 150px;
+  height: 150px;
 }
-.addProduct__photoPreview {
-  max-width: 150px;
+.addForm__photoFake span {
+  font-size: .8rem;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+  top: 3px;
+  left: 5px;
+  border-radius: 1px;
+  padding: 1px 3px;
+  border: 1px solid #ddd;
 }
-.addProduct__name {
+.addForm__photoPreview {
+  width: 100%;
+  height: 150px;
+  object-fit: fill;
+}
+.addForm__name {
   width: 360px;
 }
-.addProduct__spec {
+.addForm__spec {
   width: 480px;
 }
-.addProduct__amount {
+.addForm__amount {
   width: 75px;
 }
-.addProduct__cost {
+.addForm__cost {
   width: 75px;
 }
-.addProduct__price {
+.addForm__price {
   width: 100px;
 }
-.addProduct__submit {
+.addForm__submit {
   padding: 15px 45px;
   border: 0;
   background: #267abd;
@@ -599,7 +779,19 @@ header {
   cursor: pointer;
   font-weight: 700;
   font-size: 1em;
+  margin-right: 25px;
 }
-.addProduct__submit:hover {
+.addForm__submit:hover {
   background: #135282;
+}
+
+.streamUrl__input, .streamUrl__description {
+  display: block;
+  margin-left: 25px;
+  width: calc(100% - 50px);
+  margin-bottom: 10px;
+}
+.streamUrl__description {
+  max-width: calc(100% - 50px);
+  max-height: 120px;
 }
