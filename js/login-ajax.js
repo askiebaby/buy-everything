@@ -1,18 +1,24 @@
 $( document ).ready(function() {
 
-  // 初始畫面
+  // login
   let userToken = Cookies.get('buy-user-token')
   console.log('Global: ', userToken)
   let fbButton = document.querySelector('.loginButton')
+
+  // domain
   let hrefNow = window.location.href
-  // 根目錄 or 服務首頁
   let hrefRealOrigin = window.location.origin
   let hrefOrigin = hrefRealOrigin + '/'
+  let isHome = (hrefNow === hrefOrigin || hrefNow === hrefRealOrigin || hrefNow === hrefOrigin + 'index.html')
+
+  // main global variables
   let contentHeader = document.querySelector('.contentHeader')
   let contentBody = document.querySelector('.contentBody')
   let loginPageFunc = document.querySelector('.loginPage__login__func')
+  let startStreamingButtons = document.querySelectorAll('.startStreaming')
+
   let server = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
-  // let server = 'https://5a31303f.ngrok.io'
+  
   
   fbButton.innerHTML = '確認登入狀態中...'
   
@@ -206,9 +212,8 @@ $( document ).ready(function() {
     let hrefSeller = hrefOrigin + 'seller/index.html'
     let hrefBuyer = hrefOrigin + 'buyer/index.html'
     let functions
-    console.log(hrefNow, hrefOrigin)
     
-    if (hrefNow === hrefOrigin || hrefNow === hrefOrigin + 'index.html') {
+    if (isHome) {
       console.log('現在是在首頁')
 
       if (action === 'logout') {
@@ -422,20 +427,37 @@ $( document ).ready(function() {
   }
 
   // 渲染賣家直播畫面
-  function continueStream (url, id) {
+  function continueStream (url, token, id) {
     closeLightBox()
 
-    if (hrefNow === hrefOrigin || hrefNow === hrefRealOrigin) {
+    if (isHome) {
       window.location.assign(hrefOrigin + 'seller/index.html')
     } else {
+      let streamHeader = `
+      直播包廂：${ token }<span class="buttonSmall buttonCallToAction stopStreaming" data-key="${ id }">結束直播</span>
+      `
       let streamUI = `
       <div id="fb-root"></div>
       <div class="fb-video" data-href="${ url }" data-width="500" data-show-text="false"></div>
       `
+      let addButton = document.querySelector('.addButton')
+      addButton.remove()
+
+      contentHeader.firstElementChild.innerHTML = streamHeader
       contentBody.innerHTML = streamUI
+
+      // 正在直播
+      for (let i = 0; i < startStreamingButtons.length; i++) {
+        startStreamingButtons[i].removeEventListener('click', askForStreamUrl)
+        startStreamingButtons[i].classList.add('disabled')
+      }
+
+      stopStreamingButtonsStatus()
+
       videoSdk(document, 'script', 'facebook-jssdk')
     }
   }
+
   function videoSdk (d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
@@ -445,7 +467,19 @@ $( document ).ready(function() {
   }
 
   function stopStream () {
-    
+    console.log('可以開始結束直播囉！')
+  }
+
+  function stopStreamingButtonsStatus (status) {
+
+  }
+
+  function stopStreamingButtonsStatus() {
+    // 因為樣板代入才有結束直播按鈕，所以再取一次
+    let stopStreamingButtons = document.querySelectorAll('.stopStreaming')
+    for (let i = 0; i < stopStreamingButtons.length; i++) {
+      stopStreamingButtons[i].addEventListener('click', stopStream)
+    }
   }
 
 
@@ -472,7 +506,7 @@ $( document ).ready(function() {
 
       .done(function (response) {
         if (response.result === true) {
-          console.log('api_get_user: Success ', response)
+          // console.log('api_get_user: Success ', response)
           let userPhoto = response.response.avatar
           let userName = response.response.name
           checkSituation('login', userName, userPhoto)
@@ -546,8 +580,7 @@ $( document ).ready(function() {
         let productAmountContainer = document.querySelector('.contentHeader__amountBox')
         let item = '', productAmount = 0
 
-        // 監聽每一個直播按鈕
-        let startStreamingButtons = document.querySelectorAll('.startStreaming')
+
 
         if (productList.length !== 0) {
           for (let i = 0; i < productList.length; i++) {
@@ -786,28 +819,32 @@ $( document ).ready(function() {
     $.ajax(getUserStatus)
 
     .done(function (response) {
-      console.log('api_get_userStatus: Success', response)
+      // console.log('api_get_userStatus: Success', response)
       if (response.result === true) {
         let alertMsg = `
         <h3><span>您似乎未正確關閉直播</span></h3>
-        <span class="continueStreaming">繼續直播</span>
-        <span class="stopStreaming">結束直播</span>
-      `
-      lightBox(alertMsg, false)
+        <div class="lightBox__centerBox">
+          <span class="buttonSmall buttonNormal continueStreaming">繼續直播</span>
+          <span class="buttonSmall buttonCallToAction stopStreaming">結束直播</span>
+        </div>
+        `
+        lightBox(alertMsg, false)
 
-      let continueStreamBtn = document.querySelector('.continueStreaming')
-      let stopStreamBtn = document.querySelector('.stopStreaming')
+        
+        let url = response.response.iFrame
+        let channelToken = response.response.channel_token
+        let isInChannel = response.response.host
+        let continueStreamBtn = document.querySelector('.continueStreaming')
 
-      continueStreamBtn.addEventListener('click', function () {
-        let url = response.iFrame
-        let channelToken = response.channel_token
-        let isInChannel = response.host
-        continueStream(url, channelToken, isInChannel)
-      })
-      stopStreamBtn.addEventListener('click', stopStream)
-      } else {
-        api_get_items()
-      }
+        continueStreamBtn.addEventListener('click', function () {
+          continueStream(url, channelToken, isInChannel)
+        })
+
+        stopStreamingButtonsStatus()
+
+        } else {
+          api_get_items()
+        }
 
     })
 
@@ -843,9 +880,9 @@ $( document ).ready(function() {
       .done(function (response) {
         if (response.result === true) {
           closeLightBox()
-          let streamToken = response.channel_token
-          let streamId = response.channel_id
-          continueStream(streamToken, streamId)
+          let streamToken = response.response.channel_token
+          let streamId = response.response.channel_id
+          continueStream(streamUrl, streamToken, streamId)
         }
       })
 

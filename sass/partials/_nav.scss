@@ -75,7 +75,7 @@
         display: block;
       }
 
-      > a, span {
+      > a, > span {
         color: $secondaryColor;
       }
     }
@@ -116,7 +116,7 @@
       }
 
       .disabled {
-        a {
+        span {
           cursor: no-drop;
           color: $deepGray-3;
 

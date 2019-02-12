@@ -15,7 +15,7 @@
     padding: 5px 10px;
   }
   @if ($size == big) {
-    padding: 1em
+    padding: 1em;
   }
 
   border-radius: 5px;
@@ -52,7 +52,19 @@
   @include buttonLogout;
 }
 
-.buttonStreaming {
+.buttonNormal {
+  font-size: .9em;
+  font-weight: 400;
+  border: 1px solid $lightGray;
+  border-radius: 5px;
+  color: $deepGray;
+
+  &:hover {
+    color: darken($deepGray, 20);
+  }
+}
+
+.buttonCallToAction {
   font-size: .9em;
   font-weight: 400;
   background: $callToActionColor;

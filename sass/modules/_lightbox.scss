@@ -65,7 +65,7 @@
     max-width: $media-md;
     width: 75%;
     min-width: 500px;
-    min-height: 300px;
+    min-height: 250px;
     background: white;
     position: absolute;
     z-index: 11;
@@ -81,6 +81,12 @@
     &:last-child {
       margin-bottom: 0;
     }
+  }
+
+  &__centerBox {
+    line-height: 2;
+    margin-bottom: 14px;
+    text-align: center;
   }
 
   &__layout {

@@ -96,14 +96,25 @@ input[type=text], input[type=number], textarea {
   background: #d4d4d4;
 }
 
-.buttonStreaming {
+.buttonNormal {
+  font-size: .9em;
+  font-weight: 400;
+  border: 1px solid #d4d4d4;
+  border-radius: 5px;
+  color: #333;
+}
+.buttonNormal:hover {
+  color: black;
+}
+
+.buttonCallToAction {
   font-size: .9em;
   font-weight: 400;
   background: #F25757;
   color: #f1f2f3;
   margin-left: 10px;
 }
-.buttonStreaming:hover {
+.buttonCallToAction:hover {
   background: #d31010;
 }
 
@@ -215,7 +226,7 @@ input[type=text], input[type=number], textarea {
   display: flex;
 }
 .loginPage__user__name {
-  color: #267abd;
+  color: #333;
 }
 
 .character .character__choiceCard {
@@ -259,14 +270,25 @@ input[type=text], input[type=number], textarea {
   background: #d4d4d4;
 }
 
-.buttonStreaming {
+.buttonNormal {
+  font-size: .9em;
+  font-weight: 400;
+  border: 1px solid #d4d4d4;
+  border-radius: 5px;
+  color: #333;
+}
+.buttonNormal:hover {
+  color: black;
+}
+
+.buttonCallToAction {
   font-size: .9em;
   font-weight: 400;
   background: #F25757;
   color: #f1f2f3;
   margin-left: 10px;
 }
-.buttonStreaming:hover {
+.buttonCallToAction:hover {
   background: #d31010;
 }
 
@@ -335,7 +357,7 @@ input[type=text], input[type=number], textarea {
 .headerNav .nav__dropdown:hover .nav__dropdown__item {
   display: block;
 }
-.headerNav .nav__dropdown:hover > a, .headerNav .nav__dropdown:hover span {
+.headerNav .nav__dropdown:hover > a, .headerNav .nav__dropdown:hover > span {
   color: #135282;
 }
 .headerNav .nav__dropdown__item {
@@ -368,11 +390,11 @@ input[type=text], input[type=number], textarea {
 .headerNav .nav__dropdown__item .primaryFunction span:hover {
   color: #d31010;
 }
-.headerNav .nav__dropdown__item .disabled a {
+.headerNav .nav__dropdown__item .disabled span {
   cursor: no-drop;
   color: #999;
 }
-.headerNav .nav__dropdown__item .disabled a:hover {
+.headerNav .nav__dropdown__item .disabled span:hover {
   color: #999;
 }
 .headerNav .nav__dropdown::after {
@@ -427,14 +449,25 @@ input[type=text], input[type=number], textarea {
   background: #d4d4d4;
 }
 
-.buttonStreaming {
+.buttonNormal {
+  font-size: .9em;
+  font-weight: 400;
+  border: 1px solid #d4d4d4;
+  border-radius: 5px;
+  color: #333;
+}
+.buttonNormal:hover {
+  color: black;
+}
+
+.buttonCallToAction {
   font-size: .9em;
   font-weight: 400;
   background: #F25757;
   color: #f1f2f3;
   margin-left: 10px;
 }
-.buttonStreaming:hover {
+.buttonCallToAction:hover {
   background: #d31010;
 }
 
@@ -544,7 +577,7 @@ input[type=text], input[type=number], textarea {
   max-width: 992px;
   width: 75%;
   min-width: 500px;
-  min-height: 300px;
+  min-height: 250px;
   background: white;
   position: absolute;
   z-index: 11;
@@ -559,6 +592,11 @@ input[type=text], input[type=number], textarea {
 }
 .lightBox__breakBox:last-child {
   margin-bottom: 0;
+}
+.lightBox__centerBox {
+  line-height: 2;
+  margin-bottom: 14px;
+  text-align: center;
 }
 .lightBox__layout__vertical {
   display: flex;
