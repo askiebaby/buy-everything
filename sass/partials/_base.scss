@@ -11,7 +11,7 @@ input[type=text], input[type=number], textarea {
 
 .maxWidth {
   position: relative;
-  max-width: 992px;
+  max-width: $media-lg;
   width: 100%;
   margin: auto;
 

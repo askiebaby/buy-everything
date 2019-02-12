@@ -24,7 +24,7 @@ input[type=text], input[type=number], textarea {
 
 .maxWidth {
   position: relative;
-  max-width: 992px;
+  max-width: 1200px;
   width: 100%;
   margin: auto;
 }
@@ -294,7 +294,6 @@ input[type=text], input[type=number], textarea {
 
 .headerNav {
   line-height: 2;
-  max-width: 992px;
   margin: 0 auto 30px;
   padding-top: 30px;
   border-bottom: 1px solid #eee;
@@ -678,6 +677,19 @@ header {
 .contentHeader__amount {
   font-weight: 700;
 }
+.contentHeader__description {
+  background: #eee;
+  font-size: .9em;
+  padding: 10px;
+  margin-top: 15px;
+  border-left: 5px solid #d4d4d4;
+}
+.contentHeader__description > div {
+  font-size: .8em;
+  color: #666;
+  font-weight: 400;
+  line-height: 1.8;
+}
 .contentHeader .disabled {
   background: #eee;
   color: #999;
@@ -832,4 +844,53 @@ header {
 .streamUrl__description {
   max-width: calc(100% - 50px);
   max-height: 120px;
+}
+
+.streamContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.stream__frame {
+  width: 65%;
+}
+.stream__products {
+  width: 34%;
+  max-height: 439px;
+  border: 1px solid #999;
+  background: #eee;
+  overflow-y: auto;
+}
+.stream__product {
+  background: #fff;
+  border-radius: 0;
+}
+.stream__product__photo {
+  max-width: 60px;
+}
+.stream__product__function {
+  position: absolute;
+  right: 10px;
+}
+.stream__product__mainInfo {
+  display: flex;
+  align-items: center;
+  flex-flow: row wrap;
+  font-size: .9em;
+}
+.stream__product__name {
+  width: 100%;
+}
+.stream__product__price {
+  position: relative;
+  top: auto;
+  right: auto;
+  font-size: initial;
+}
+.stream__product__spec {
+  width: 100%;
+}
+.stream__product + .stream__product {
+  margin-top: 1px;
 }

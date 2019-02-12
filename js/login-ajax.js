@@ -15,7 +15,6 @@ $( document ).ready(function() {
   let contentHeader = document.querySelector('.contentHeader')
   let contentBody = document.querySelector('.contentBody')
   let loginPageFunc = document.querySelector('.loginPage__login__func')
-  let startStreamingButtons = document.querySelectorAll('.startStreaming')
 
   let server = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
   
@@ -273,7 +272,7 @@ $( document ).ready(function() {
             fbButton.innerHTML = '<div class="buttonSmall buttonLogout">登出</div>'
             fbButton.removeEventListener('click', buttonInit)
             fbButton.addEventListener('click', buttonLogout)
-            api_get_items()
+            api_get_items('init')
           }
 
     } else if ( hrefNow === hrefBuyer ) {
@@ -427,7 +426,7 @@ $( document ).ready(function() {
   }
 
   // 渲染賣家直播畫面
-  function continueStream (url, token, id) {
+  function continueStream (url, token, id, description) {
     closeLightBox()
 
     if (isHome) {
@@ -435,11 +434,24 @@ $( document ).ready(function() {
     } else {
       let streamHeader = `
       直播包廂：${ token }<span class="buttonSmall buttonCallToAction stopStreaming" data-key="${ id }">結束直播</span>
+      <div class="contentHeader__description">
+      <div>直播描述</div>
+      ${ description }</div>
       `
       let streamUI = `
-      <div id="fb-root"></div>
-      <div class="fb-video" data-href="${ url }" data-width="500" data-show-text="false"></div>
+      <div class="streamContainer">
+        <div class="stream__frame">
+          <div id="fb-root"></div>
+          <div class="fb-video"
+            data-href="${ url }"
+            data-width="auto"
+            data-show-text="false"
+            data-autoplay="true"></div>
+        </div>
+        <div class="stream__products"></div>
+      </div>
       `
+
       let addButton = document.querySelector('.addButton')
       addButton.remove()
 
@@ -447,14 +459,10 @@ $( document ).ready(function() {
       contentBody.innerHTML = streamUI
 
       // 正在直播
-      for (let i = 0; i < startStreamingButtons.length; i++) {
-        startStreamingButtons[i].removeEventListener('click', askForStreamUrl)
-        startStreamingButtons[i].classList.add('disabled')
-      }
-
-      stopStreamingButtonsStatus()
+      startStreamingButtonsStatus(false)
 
       videoSdk(document, 'script', 'facebook-jssdk')
+      api_get_items('stream')
     }
   }
 
@@ -467,20 +475,30 @@ $( document ).ready(function() {
   }
 
   function stopStream () {
-    console.log('可以開始結束直播囉！')
+    console.log('已經結束直撥啦！開始渲染！')
   }
 
-  function stopStreamingButtonsStatus (status) {
-
-  }
-
-  function stopStreamingButtonsStatus() {
-    // 因為樣板代入才有結束直播按鈕，所以再取一次
+  function startStreamingButtonsStatus (status) {
+    let startStreamingButtons = document.querySelectorAll('.startStreaming')
     let stopStreamingButtons = document.querySelectorAll('.stopStreaming')
-    for (let i = 0; i < stopStreamingButtons.length; i++) {
-      stopStreamingButtons[i].addEventListener('click', stopStream)
+
+    if(!status) {
+      for (let i = 0; i < startStreamingButtons.length; i++) {
+        startStreamingButtons[i].removeEventListener('click', askForStreamUrl)
+        startStreamingButtons[i].classList.add('disabled')
+      }
+      // 因為樣板代入才有結束直播按鈕，所以再取一次
+      for (let i = 0; i < stopStreamingButtons.length; i++) {
+        stopStreamingButtons[i].addEventListener('click', api_put_usersChannelId)
+      }
+    } else {
+      for (let i = 0; i < startStreamingButtons.length; i++) {
+        startStreamingButtons[i].addEventListener('click', askForStreamUrl)
+        startStreamingButtons[i].classList.remove('disabled')
+      }
     }
   }
+
 
 
   /*---------------------- 
@@ -510,7 +528,7 @@ $( document ).ready(function() {
           let userPhoto = response.response.avatar
           let userName = response.response.name
           checkSituation('login', userName, userPhoto)
-          api_get_userStatus()
+          api_get_userStatus('init')
         }
       })
 
@@ -561,7 +579,7 @@ $( document ).ready(function() {
 
   // API, GET
   // 取得已建立商品資訊 / Get uploaded items information
-  function api_get_items () {
+  function api_get_items (action) { //分情境
 
     let productsData = {
       'url': `${ server }/api/items`,
@@ -578,9 +596,10 @@ $( document ).ready(function() {
       .done(function (response) {
         let productList = response.response
         let productAmountContainer = document.querySelector('.contentHeader__amountBox')
-        let item = '', productAmount = 0
 
+        let productListContainer
 
+        let item = '<div class="stream__onAir"></div>', productAmount = 0
 
         if (productList.length !== 0) {
           for (let i = 0; i < productList.length; i++) {
@@ -592,65 +611,96 @@ $( document ).ready(function() {
             let unit_price = productList[i].unit_price
             let productPhoto = productList[i].images
 
-            item += `
-            <div class="contentBody__product" data-key="${ id }">
-              <img src="${ productPhoto }" alt="${ name }" class="contentBody__product__photo">
-              <div class="contentBody__product__name">${ name }</div>
-              <span class="contentBody__product__amount">數量：<span class="amount">${ stock }</span></span>
-              <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span></span>
-              <div class="contentBody__product__spec">
-                <div class="contentBody__product__spec__title">商品敘述</div>
-                <span class="spec">${ description }</span>
+            if (action === 'init') {
+              productListContainer = contentBody
+              item += `
+              <div class="contentBody__product" data-key="${ id }">
+                <img src="${ productPhoto }" alt="${ name }" class="contentBody__product__photo">
+                <div class="contentBody__product__name">${ name }</div>
+                <span class="contentBody__product__amount">數量：<span class="amount">${ stock }</span></span>
+                <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span></span>
+                <div class="contentBody__product__spec">
+                  <div class="contentBody__product__spec__title">商品敘述</div>
+                  <span class="spec">${ description }</span>
+                </div>
+                <span class="contentBody__product__price">$ <span class="price">${ unit_price }</span></span>
+                <div class="contentBody__product__function">
+                  <span class="contentBody__product__update">修改</span>
+                  <span class="contentBody__product__delete">刪除</span>
+                </div>
               </div>
-              <span class="contentBody__product__price">$ <span class="price">${ unit_price }</span></span>
-              <div class="contentBody__product__function">
-                <span class="contentBody__product__update">修改</span>
-                <span class="contentBody__product__delete">刪除</span>
+              `
+              productAmount ++
+
+              if (!isHome) {
+                productListContainer.innerHTML = item
+                productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
+      
+                // 共同父層
+                let myItem = document.querySelectorAll('.contentBody__product')
+                for (let i = 0; i < myItem.length; i++) {
+                  // 更新
+                  let productUpdate = myItem[i].querySelector('.contentBody__product__update')
+      
+                  productUpdate.addEventListener('click', function(){
+                    editProduct(myItem[i], listenUpdateProduct)
+                  })
+      
+                  // 刪除
+                  let productDelete = myItem[i].querySelector('.contentBody__product__delete')
+                  productDelete.addEventListener('click', function(){
+                    api_delete_items(myItem[i])
+                  })
+                }
+              }
+
+            } else if (action === 'stream') {
+              productListContainer = document.querySelector('.stream__products')
+
+              item += `
+              <div class="contentBody__product stream__product" data-key="${ id }">
+                <img src="${ productPhoto }" alt="${ name }" class="contentBody__product__photo stream__product__photo">
+                <div class="contentBody__product__function stream__product__function">
+                  <span class="contentBody__product__update">推播</span>
+                </div>
+                <div class="stream__product__mainInfo">
+                  <div class="contentBody__product__name stream__product__name">${ name }</div>
+                  <span class="contentBody__product__price stream__product__price">$ <span class="price">${ unit_price }</span></span>
+                  <span class="contentBody__product__amount">（數量：<span class="amount">${ stock }</span></span>
+                  <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span>）</span>
+                </div>
+                <div class="contentBody__product__spec stream__product__spec">
+                  <div class="contentBody__product__spec__title">商品敘述</div>
+                  <span class="spec">${ description }</span>
+                </div>
+                
               </div>
-            </div>
-            `
+              `
+              productAmount ++
 
-            productAmount ++
+              if (!isHome) {
+                productListContainer.innerHTML = item
+                productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
+      
+                // 共同父層
+                // let myItem = document.querySelectorAll('.contentBody__product')
+                // for (let i = 0; i < myItem.length; i++) {
 
-            for (let i = 0; i < startStreamingButtons.length; i++) {
-              startStreamingButtons[i].addEventListener('click', askForStreamUrl)
-              startStreamingButtons[i].classList.remove('disabled')
+                // }
+              }
             }
-
           }
+
+          startStreamingButtonsStatus(false)
+
         } else {
+
           item = '您尚未新增商品。'
-
-          for (let i = 0; i < startStreamingButtons.length; i++) {
-            startStreamingButtons[i].removeEventListener('click', askForStreamUrl)
-            startStreamingButtons[i].classList.add('disabled')
-          }
-        }
-
-
-        contentBody.innerHTML = item
-        productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
-
-        // 共同父層
-        let myItem = document.querySelectorAll('.contentBody__product')
-
-        for (let i = 0; i < myItem.length; i++) {
-
-          // 更新
-          let productUpdate = myItem[i].querySelector('.contentBody__product__update')
-
-          productUpdate.addEventListener('click', function(){
-            editProduct(myItem[i], listenUpdateProduct)
-          })
-
-          let productDelete = myItem[i].querySelector('.contentBody__product__delete')
-
-          productDelete.addEventListener('click', function(){
-            api_delete_items(myItem[i]) //key失效
-          })
+          startStreamingButtonsStatus(false)
 
         }
 
+        
       })
 
       .fail(function (response) {
@@ -703,7 +753,7 @@ $( document ).ready(function() {
 
       .done(function (response) {
         closeLightBox()
-        api_get_items()
+        api_get_items('init')
       })
 
       .fail(function (response) {
@@ -758,7 +808,7 @@ $( document ).ready(function() {
       .done(function (res) {
         console.log('work', res)
         closeLightBox()
-        api_get_items()
+        api_get_items(init)
       })
 
       .fail(function (res) {
@@ -790,7 +840,7 @@ $( document ).ready(function() {
 
       .done(function (res) {
         console.log('work', res)
-        api_get_items()
+        api_get_items('init')
       })
 
       .fail(function (res) {
@@ -805,7 +855,7 @@ $( document ).ready(function() {
 
   // API, GET
   // 取得使用者狀態/GET USER STATUS
-  function api_get_userStatus () {
+  function api_get_userStatus (action, productId) {
     let getUserStatus = {
       'url': `${ server }/api/user-status`,
       'method': 'GET',
@@ -819,32 +869,35 @@ $( document ).ready(function() {
     $.ajax(getUserStatus)
 
     .done(function (response) {
-      // console.log('api_get_userStatus: Success', response)
+      console.log('api_get_userStatus: Success', response)
       if (response.result === true) {
-        let alertMsg = `
-        <h3><span>您似乎未正確關閉直播</span></h3>
-        <div class="lightBox__centerBox">
-          <span class="buttonSmall buttonNormal continueStreaming">繼續直播</span>
-          <span class="buttonSmall buttonCallToAction stopStreaming">結束直播</span>
-        </div>
-        `
-        lightBox(alertMsg, false)
-
-        
         let url = response.response.iFrame
         let channelToken = response.response.channel_token
         let isInChannel = response.response.host
-        let continueStreamBtn = document.querySelector('.continueStreaming')
+        let channelDescription = response.response.channel_description
+        if (action === 'stream') {
+          continueStream(url, channelToken, productId, channelDescription)
+        } else if (action === 'init') {
+          let alertMsg = `
+          <h3><span>您似乎未正確關閉直播</span></h3>
+          <div class="lightBox__centerBox">
+            <span class="buttonSmall buttonNormal continueStreaming">繼續直播</span>
+            <span class="buttonSmall buttonCallToAction stopStreaming">結束直播</span>
+          </div>
+          `
+          lightBox(alertMsg, false)
 
-        continueStreamBtn.addEventListener('click', function () {
-          continueStream(url, channelToken, isInChannel)
-        })
+          let continueStreamBtn = document.querySelector('.continueStreaming')
 
-        stopStreamingButtonsStatus()
-
-        } else {
-          api_get_items()
+          continueStreamBtn.addEventListener('click', function () {
+            continueStream(url, channelToken, isInChannel, channelDescription)
+            // startStreamingButtonsStatus(false)
+          })
         }
+
+      } else {
+        api_get_items('init')
+      }
 
     })
 
@@ -857,7 +910,6 @@ $( document ).ready(function() {
   // API, POST
   // 開始直播/START A LIVE-STREAM
   function api_post_channel () {
-    console.log('有東西')
 
     let streamUrl = document.querySelector('.streamUrl__input').value
     let streamDescription = document.querySelector('.streamUrl__description').value
@@ -868,7 +920,7 @@ $( document ).ready(function() {
       'headers': {
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
-        'Authorization': `Bearer ${ userToken }`,
+        'Authorization': `Bearer ${ userToken }`
       },
       'data': JSON.stringify({
         'iFrame': streamUrl,
@@ -880,9 +932,38 @@ $( document ).ready(function() {
       .done(function (response) {
         if (response.result === true) {
           closeLightBox()
-          let streamToken = response.response.channel_token
-          let streamId = response.response.channel_id
-          continueStream(streamUrl, streamToken, streamId)
+          let productId = response.response.channel_id
+          api_get_userStatus('stream', productId)
+        }
+      })
+
+      .fail(function (response) {
+        console.log('api_post_user: Fail ' + response.responseText)
+      })
+  }
+
+  // API, PUT
+  // 結束直播
+  function api_put_usersChannelId () {
+    let usersChannelData = {
+      'url': `${ server }/api/users-channel-id`,
+      'method': 'PUT',
+      'headers': {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': `Bearer ${ userToken }`
+      }
+    }
+
+    $.ajax(usersChannelData)
+      .done(function (response) {
+        if (response.result === true) {
+          console.log(response)
+          closeLightBox()
+          stopStream()
+          // let streamToken = response.response.channel_token
+          // let streamId = response.response.channel_id
+          // continueStream(streamUrl, streamToken, streamId)
         }
       })
 
