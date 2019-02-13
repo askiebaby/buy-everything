@@ -682,7 +682,6 @@ header {
   font-size: .9em;
   padding: 10px;
   margin-top: 15px;
-  border-left: 5px solid #d4d4d4;
 }
 .contentHeader__description > div {
   font-size: .8em;
@@ -766,6 +765,14 @@ header {
 }
 .contentBody__product__delete:hover {
   background: #d31010;
+}
+.contentBody__product__push {
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+  background: #267abd;
+  color: #f1f2f3;
 }
 .contentBody__product__function {
   text-align: right;
@@ -854,17 +861,46 @@ header {
 
 .stream__frame {
   width: 65%;
+  border: 1px solid #999;
+  max-height: calc(1200px * 0.65 * 0.5625);
+}
+.stream__onAir {
+  position: absolute;
+  position: sticky;
+  width: 100%;
+  top: 0;
+  z-index: 1;
+}
+.stream__onAir .stream__product {
+  background: #e0e5e9;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+}
+.stream__onAir .stream__product__spec {
+  background: #fff;
+  border-left-color: #e6e6e6;
+}
+.stream__onAir .stream__status {
+  position: absolute;
+  right: 20px;
+  color: #d20500;
+  font-weight: 700;
+  text-shadow: 1px 1px 0px #fff, 2px 2px 0px #fff, 3px 3px 10px #fff;
 }
 .stream__products {
   width: 34%;
-  max-height: 439px;
+  max-height: calc( 1200px * 0.65 * 0.5625);
   border: 1px solid #999;
   background: #eee;
   overflow-y: auto;
+  position: relative;
 }
 .stream__product {
   background: #fff;
   border-radius: 0;
+  border: 0;
+}
+.stream__product:first-child {
+  margin-bottom: 2px;
 }
 .stream__product__photo {
   max-width: 60px;
@@ -892,5 +928,5 @@ header {
   width: 100%;
 }
 .stream__product + .stream__product {
-  margin-top: 1px;
+  margin-top: 2px;
 }

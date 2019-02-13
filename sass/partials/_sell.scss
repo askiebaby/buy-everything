@@ -1,3 +1,4 @@
+@import '../modules/mediaQueries';
 @import '../modules/clearFix';
 @import '../modules/lightbox';
 
@@ -57,7 +58,6 @@ header {
     font-size: .9em;
     padding: 10px;
     margin-top: 15px;
-    border-left: 5px solid $lightGray;
 
     > div {
       font-size: .8em;
@@ -139,6 +139,12 @@ header {
       &:hover {
         background: darken($callToActionColor, 20);
       }
+    }
+
+    &__push {
+      @include functionButton(small);
+      background: $primaryColor;
+      color: $white;
     }
 
     &__function {
@@ -250,19 +256,51 @@ header {
 .stream {
   &__frame {
     width: 65%;
+    border: 1px solid #999;
+    max-height: calc(#{$media-lg} * 0.65 * 0.5625);
+  }
+
+  &__onAir {
+    position: absolute;
+    position: sticky;
+    width: 100%;
+    top: 0;
+    z-index: 1;
+
+    .stream__product{
+      background: #e0e5e9;
+      box-shadow: 0px 2px 10px rgba(0,0,0,.2);
+    }
+    .stream__product__spec {
+      background: #fff;
+      border-left-color: darken(#fff, 10);
+    }
+    .stream__status {
+      position: absolute;
+      right: 20px;
+      color: #d20500;
+      font-weight: 700;
+      text-shadow: 1px 1px 0px #fff, 2px 2px 0px #fff, 3px 3px 10px #fff;
+    }
   }
 
   &__products {
     width: 34%;
-    max-height: 439px;
+    max-height: calc( #{$media-lg} * 0.65 * 0.5625);
     border: 1px solid $deepGray-3;
     background: $lightGray-2;
     overflow-y: auto;
+    position: relative;
   }
 
   &__product {
     background: #fff;
     border-radius: 0;
+    border: 0;
+
+    &:first-child {
+      margin-bottom: 2px;
+    }
   }
 
   &__product__photo {
@@ -297,7 +335,7 @@ header {
   }
 
   &__product + &__product {
-    margin-top: 1px;
+    margin-top: 2px;
   }
 }
 
