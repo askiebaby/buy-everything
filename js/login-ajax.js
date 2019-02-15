@@ -1,7 +1,10 @@
 ((lightBox, API) => {
   let userToken = Cookies.get('buy-user-token')
-  console.log('Global: ', userToken)
   let server = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
+  // let server = 'https://43ff638a.ngrok.io'
+
+  let host
+  console.log('Global: ', userToken, host)
 
   // domain
   let hrefNow = window.location.href
@@ -11,7 +14,6 @@
 
   $(document).ready(function () {
 
-   
     // login
     let fbButton = document.querySelector('.loginButton')
 
@@ -19,9 +21,6 @@
     let contentHeader = document.querySelector('.contentHeader')
     let contentBody = document.querySelector('.contentBody')
     let loginPageFunc = document.querySelector('.loginPage__login__func')
-
-
-
 
     fbButton.innerHTML = '確認登入狀態中...'
 
@@ -58,7 +57,6 @@
 
       // 結束直播後把新增商品按鈕放回來
       let addButtonContainer = document.querySelector('.addButton__container')
-      console.log(addButtonContainer,addButtonContainer.innerHTML)
 
       if (addButtonContainer.innerHTML === '') {
         addButtonContainer.innerHTML = `<button class="addButton"><i class="fas fa-plus"></i></button>`
@@ -417,10 +415,10 @@
     Streaming Functions
     -----------------------*/
 
-    // 詢問直播
+    // 詢問直播網址
     function askForStreamUrl() {
       let streamInput = `
-        <form type="post" class="streamForm" name="streamForm">
+        <form type="POST" class="streamForm" name="streamForm">
           <h3><span>輸入您的直播網址</span></h3>
           <div class="lightBox__breakBox lightBox__url">
             <label for="streamUrl__input">直播網址</label>
@@ -438,48 +436,129 @@
 
     }
 
-    // 渲染賣家直播畫面
-    function continueStream(url, token, id, description) {
+    // 詢問直播id
+    function askForStreamID() {
+      console.log('輸入id')
+      // let streamInput = `
+      //   <form type="POST" class="streamForm" name="streamForm" action="${ server }/api/users-channel-id" enctype="multipart/form-data">
+      //     <h3><span>輸入您的直播ID</span></h3>
+      //     <div class="lightBox__breakBox lightBox__url">
+      //       <label for="streamID__input">直播ID</label>
+      //       <input type="text" placeholder="例如：8uhiVL" class="streamID__input" id="streamID__input" value="8uhiVL">
+      //     </div>
+      //     <input type="submit" value="送出" class="addForm__submit">
+      //   </form>
+      // `
+      let streamInput = `
+        <form type="POST" class="streamForm" name="streamForm">
+          <h3><span>輸入您的直播ID</span></h3>
+          <div class="lightBox__breakBox lightBox__url">
+            <label for="streamID__input">直播ID</label>
+            <input type="text" placeholder="例如：8uhiVL" class="streamID__input" id="streamID__input" value="8uhiVL">
+          </div>
+          <input type="button" value="送出" class="addForm__submit">
+        </form>
+      `
+      lightBox.open(streamInput, true)
+
+      
+      let submit = document.querySelector('.addForm__submit')
+      let streamForm = document.forms.namedItem('streamForm')
+      // streamForm.addEventListener('submit', function (event) {
+      //   api_patch_userChannelID(event, streamForm)
+      // })
+      submit.addEventListener('click', function (event) {
+        api_patch_userChannelID(event)
+      })
+      // ***** 先做 UI
+
+    }
+
+    // 渲染買賣家直播畫面
+    function continueStream(userStatus) {
+      let streamHeader, streamUI
       lightBox.close()
 
       if (isHome) {
         window.location.assign(hrefOrigin + 'seller/index.html')
       } else {
-        let streamHeader = `
-        直播包廂：${ token }<span class="buttonSmall buttonCallToAction stopStreaming" data-key="${ id }">結束直播</span>
-        <div class="contentHeader__description">
-        <div>直播說明</div>
-        ${ description }</div>
-        `
-        let streamUI = `
-        <div class="streamContainer">
-          <div class="stream__frame">
-            <div id="fb-root"></div>
-            <div class="fb-video"
-              data-href="${ url }"
-              data-width="auto"
-              data-show-text="false"
-              data-autoplay="true"></div>
-          </div>
-          <div class="stream__products"></div>
-        </div>
-        `
+        console.log(userStatus)
+        switch (userStatus.host) {
+          case 0:
+          // 買家
+          console.log('買家')
+            streamHeader = `
+            <h2>
+              親愛的買家：您正在直播包廂（${ userStatus.channelToken }）<span class="buttonSmall buttonCallToAction stopStreaming" data-key="${ userStatus.productId }">離開直播</span>
+              <div class="contentHeader__description">
+              <div>直播說明</div>
+              ${ userStatus.channelDescription }</div>
+            </h2>
+            `
+            streamUI = `
+            <div class="streamContainer">
+              <div class="stream__frame">
+                <div id="fb-root"></div>
+                <div class="fb-video"
+                  data-href="${ userStatus.url }"
+                  data-width="auto"
+                  data-show-text="false"
+                  data-autoplay="true"></div>
+              </div>
+              <div class="stream__products"></div>
+            </div>
+            `
+
+
+            contentHeader.innerHTML = streamHeader
+            contentBody.innerHTML = streamUI
+
+            videoSdk(document, 'script', 'facebook-jssdk')
+            api_get_streamingItem('stream', userStatus.host)
+            break
+
+          case 1:
+
+          // 賣家
+          console.log('賣家')
+            streamHeader = `
+            直播包廂：${ userStatus.channelToken }<span class="buttonSmall buttonCallToAction stopStreaming" data-key="${ userStatus.productId }">結束直播</span>
+            <div class="contentHeader__description">
+            <div>直播說明</div>
+            ${ userStatus.channelDescription }</div>
+            `
+            streamUI = `
+            <div class="streamContainer">
+              <div class="stream__frame">
+                <div id="fb-root"></div>
+                <div class="fb-video"
+                  data-href="${ userStatus.url }"
+                  data-width="auto"
+                  data-show-text="false"
+                  data-autoplay="true"></div>
+              </div>
+              <div class="stream__products"></div>
+            </div>
+            `
+            contentHeader.firstElementChild.innerHTML = streamHeader
+            contentBody.innerHTML = streamUI
+
+            videoSdk(document, 'script', 'facebook-jssdk')
+            api_get_items('stream', userStatus.host)
+            break
+        }
 
         let addButton = document.querySelector('.addButton')
         addButton.remove()
+        host = userStatus.host
 
-        contentHeader.firstElementChild.innerHTML = streamHeader
-        contentBody.innerHTML = streamUI
-
-        // 正在直播
+        // 正在包廂
         startStreamingButtonsStatus(false)
-
-        videoSdk(document, 'script', 'facebook-jssdk')
-        api_get_items('stream')
       }
     }
 
-    function addStreamItem(data) {
+    // 推播商品
+    function pushStreamItem(data) {
       let onAirBox = document.querySelector('.stream__onAir')
 
       let streamItem = `
@@ -509,31 +588,46 @@
       fjs.parentNode.insertBefore(js, fjs);
     }
 
-    function stopStream() {
-      console.log('已經結束直撥啦！開始渲染！')
-    }
-
+    // 按鈕狀態
     function startStreamingButtonsStatus(status) {
+      let watchStreamingButtons = document.querySelectorAll('.watchStreaming')
       let startStreamingButtons = document.querySelectorAll('.startStreaming')
       let stopStreamingButtons = document.querySelectorAll('.stopStreaming')
 
       if (!status) {
+
+        // 買賣家在包廂中就不可以開或去另一個包廂
+        // 包廂中，關閉按鈕功能
         for (let i = 0; i < startStreamingButtons.length; i++) {
           startStreamingButtons[i].removeEventListener('click', askForStreamUrl)
           startStreamingButtons[i].classList.add('disabled')
         }
+
+        for (let i = 0; i < watchStreamingButtons.length; i++) {
+          watchStreamingButtons[i].removeEventListener('click', askForStreamID)
+          watchStreamingButtons[i].classList.add('disabled')
+        }
+
         // 因為樣板代入才有結束直播按鈕，所以再取一次
         for (let i = 0; i < stopStreamingButtons.length; i++) {
           stopStreamingButtons[i].addEventListener('click', api_put_usersChannelId)
         }
+
       } else {
+
+        // 離開包廂，開啟按鈕功能
         for (let i = 0; i < startStreamingButtons.length; i++) {
           startStreamingButtons[i].addEventListener('click', askForStreamUrl)
           startStreamingButtons[i].classList.remove('disabled')
         }
+
+        for (let i = 0; i < watchStreamingButtons.length; i++) {
+          watchStreamingButtons[i].addEventListener('click', askForStreamID)
+          watchStreamingButtons[i].classList.remove('disabled')
+        }
+
       }
     }
-
 
 
     /*---------------------- 
@@ -602,7 +696,7 @@
 
     // API, GET 取得已建立商品資訊
     // Get uploaded items information
-    function api_get_items(action) { //分情境
+    function api_get_items(action, host) { //分情境
 
       API.GET('/api/items')
         .done(function (response) {
@@ -674,67 +768,65 @@
                 startStreamingButtonsStatus(true)
 
               } else if (action === 'stream') {
-                // 直播產品列表
+
                 productListContainer = document.querySelector('.stream__products')
 
-                item += `
-                <div class="contentBody__product stream__product" data-key="${ id }">
-                  <img src="${ photo }" alt="${ name }" class="contentBody__product__photo stream__product__photo">
-                  <div class="contentBody__product__function stream__product__function">
-                    <span class="contentBody__product__push">推播</span>
+                  // 賣家直播產品列表
+                  item += `
+                  <div class="contentBody__product stream__product" data-key="${ id }">
+                    <img src="${ photo }" alt="${ name }" class="contentBody__product__photo stream__product__photo">
+                    <div class="contentBody__product__function stream__product__function">
+                      <span class="contentBody__product__push">推播</span>
+                    </div>
+                    <div class="stream__product__mainInfo">
+                      <div class="contentBody__product__name stream__product__name">${ name }</div>
+                      <span class="contentBody__product__price stream__product__price">$ <span class="price">${ unit_price }</span></span>
+                      <span class="contentBody__product__amount">（數量：<span class="amount">${ stock }</span></span>
+                      <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span>）</span>
+                    </div>
+                    <div class="contentBody__product__spec stream__product__spec">
+                      <span class="spec">${ description }</span>
+                    </div>
                   </div>
-                  <div class="stream__product__mainInfo">
-                    <div class="contentBody__product__name stream__product__name">${ name }</div>
-                    <span class="contentBody__product__price stream__product__price">$ <span class="price">${ unit_price }</span></span>
-                    <span class="contentBody__product__amount">（數量：<span class="amount">${ stock }</span></span>
-                    <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span>）</span>
-                  </div>
-                  <div class="contentBody__product__spec stream__product__spec">
-                    <span class="spec">${ description }</span>
-                  </div>
-                </div>
-                `
-                productAmount++
+                  `
+                  productAmount++
 
-                if (!isHome) {
-                  productListContainer.innerHTML = item
-                  productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
+                  if (!isHome) {
+                    productListContainer.innerHTML = item
+                    productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
-                  // 共同父層
-                  let myItem = document.querySelectorAll('.contentBody__product')
+                    // 共同父層
+                    let myItem = document.querySelectorAll('.contentBody__product')
 
-                  for (let i = 0; i < myItem.length; i++) {
-                    // 推播
-                    let productPush = myItem[i].querySelector('.contentBody__product__push')
+                    for (let i = 0; i < myItem.length; i++) {
+                      // 推播
+                      let productPush = myItem[i].querySelector('.contentBody__product__push')
 
-                    productPush.addEventListener('click', function () {
-                      let key = myItem[i].dataset.key
-                      let name = myItem[i].querySelector('.stream__product__name').textContent
-                      let photo = myItem[i].querySelector('.stream__product__photo').src
-                      let unit_price = myItem[i].querySelector('.price').textContent
-                      let stock = myItem[i].querySelector('.amount').textContent
-                      let cost = myItem[i].querySelector('.cost').textContent
-                      let description = myItem[i].querySelector('.spec').textContent
-                      let pushItemData = {
-                        key: key,
-                        name: name,
-                        photo: photo,
-                        unit_price: unit_price,
-                        stock: stock,
-                        cost: cost,
-                        description: description
-                      }
+                      productPush.addEventListener('click', function () {
+                        let key = myItem[i].dataset.key
+                        let name = myItem[i].querySelector('.stream__product__name').textContent
+                        let photo = myItem[i].querySelector('.stream__product__photo').src
+                        let unit_price = myItem[i].querySelector('.price').textContent
+                        let stock = myItem[i].querySelector('.amount').textContent
+                        let cost = myItem[i].querySelector('.cost').textContent
+                        let description = myItem[i].querySelector('.spec').textContent
+                        let pushItemData = {
+                          key: key,
+                          name: name,
+                          photo: photo,
+                          unit_price: unit_price,
+                          stock: stock,
+                          cost: cost,
+                          description: description
+                        }
 
-                      api_post_streamingItems(pushItemData)
-                    })
+                        api_post_streamingItems(pushItemData)
+                      })
+                    }
                   }
-                }
-                startStreamingButtonsStatus(false)
+                  startStreamingButtonsStatus(false)
               }
             }
-
-
-
           } else {
 
             item = '您尚未新增商品。'
@@ -902,29 +994,61 @@
       API.GET('/api/user-status')
         .done(function (response) {
           console.log('api_get_userStatus: Success', response)
+
           if (response.result === true) {
+
+            host = response.response.host
             let url = response.response.iFrame
             let channelToken = response.response.channel_token
-            let isInChannel = response.response.host
             let channelDescription = response.response.channel_description
+
+            let userStatus = {
+              host: host,
+              url: url,
+              channelToken: channelToken,
+              channelDescription: channelDescription,
+              productId: productId
+            }
+
+            // console.log(userStatus)
+            console.log(host)
             if (action === 'stream') {
-              continueStream(url, channelToken, productId, channelDescription)
+              if (!host) {
+                // 買家加入直播
+                continueStream(userStatus)
+                console.log(host, '買家', userStatus)
+              } else {
+                // 賣家開始直播
+                console.log(host, '賣家')
+                // continueStream(host, url, channelToken, productId, channelDescription)
+
+                // continueStream(userStatus)
+              }
+
             } else if (action === 'init') {
-              let alertMsg = `
-            <h3><span>您似乎未正確結束直播</span></h3>
-            <div class="lightBox__centerBox">
-              <span class="buttonSmall buttonNormal continueStreaming">繼續直播</span>
-              <span class="buttonSmall buttonCallToAction stopStreaming">結束直播</span>
-            </div>
-            `
-              lightBox.open(alertMsg, false)
+              console.log(host, !host)
+              if (!host) {
+                // 買家角色
+                // ***** 買家若未正確離開包廂也要提醒
+              } else {
+                // 賣家角色
+                let alertMsg = `
+              <h3><span>您似乎未正確結束直播</span></h3>
+              <div class="lightBox__centerBox">
+                <span class="buttonSmall buttonNormal continueStreaming">繼續直播</span>
+                <span class="buttonSmall buttonCallToAction stopStreaming">結束直播</span>
+              </div>
+              `
+                lightBox.open(alertMsg, false)
 
-              let continueStreamBtn = document.querySelector('.continueStreaming')
+                let continueStreamBtn = document.querySelector('.continueStreaming')
 
-              continueStreamBtn.addEventListener('click', function () {
-                continueStream(url, channelToken, isInChannel, channelDescription)
-                // startStreamingButtonsStatus(false)
-              })
+                continueStreamBtn.addEventListener('click', function () {
+                  continueStream(userStatus)
+                })
+
+                startStreamingButtonsStatus(false)
+              }
             }
 
           } else {
@@ -990,7 +1114,7 @@
         .done(function (response) {
           if (response.result === true) {
             console.log('push了')
-            // 記得改買家的 data 不傳 cost
+            // ***** 記得改買家的 data 不傳 cost
             api_get_streamingItem(data)
           }
         })
@@ -1001,14 +1125,57 @@
         })
     }
 
-    // 取得推播中商品資訊
+    // API, GET 取得推播中商品資訊
     // Get streaming item's information
-    function api_get_streamingItem(data) {
+    function api_get_streamingItem(data, userStatus) {
 
       API.GET('/api/streaming-items')
         .done(function (response) {
           console.log('api_get_streamingItem: Success', response)
-          addStreamItem(data)
+          console.log('全玉：' + host, '傳入的值：'+ userStatus)
+
+          let description = response.response.description
+          let image = response.response.image
+          let item_id = response.response.item_id
+          let name = response.response.name
+          let remainingQuantity = response.response.remaining_quantity
+          let soldQuantity = response.response.sold_quantity
+          let unitPrice = response.response.unit_price
+
+          if(!host){
+            console.log('我是買家')
+            console.log(remainingQuantity)
+            let buyProduct =`
+              <div class="contentBody__product stream__product" data-key="${ item_id }">
+                <span class="stream__status">On Air</span>
+                <img src="${ image }" alt="${ name }" class="contentBody__product__photo stream__product__photo">
+                <div class="stream__product__mainInfo">
+                  <div class="contentBody__product__name stream__product__name">${ name }</div>
+                  <span class="contentBody__product__price stream__product__price">$ <span class="price">${ unitPrice }</span></span>
+                  <span class="contentBody__product__amount">（數量：<span class="amount">${ soldQuantity }</span></span>
+                  <span class="contentBody__product__cost">剩餘數量： <span class="remain">${ remainingQuantity }</span>）</span>
+                </div>
+                <div class="contentBody__product__spec stream__product__spec">
+                  <span class="spec">${ description }</span>
+                </div>
+            </div>
+            <div class="buyFormContainer">
+              <form name="buyForm" class="buyForm">
+                <input type="button" class="buyForm__operator buyForm__minus" value="-">
+                <span class="buyForm__total">1</span>
+                <input type="button" class="buyForm__operator buyForm__add" value="+">
+                <div class="buyForm__submitContainer"><input type="submit" value="確認購買" class="buyForm__submit"></div>
+              </form>
+            </div>
+            `
+            let streamProduct = document.querySelector('.stream__products')
+            streamProduct.innerHTML = buyProduct
+
+          } else {
+            // 賣家
+            console.log('dftgyuhi')
+            pushStreamItem(data)
+          }
         })
 
         .fail(function (res) {
@@ -1018,7 +1185,7 @@
 
     // API, PUT 結束直播
     function api_put_usersChannelId() {
-      let usersChannelData = {
+      let userChannelData = {
         'url': `${ server }/api/users-channel-id`,
         'method': 'PUT',
         'headers': {
@@ -1028,14 +1195,12 @@
         }
       }
 
-      $.ajax(usersChannelData)
+      $.ajax(userChannelData)
         .done(function (response) {
           if (response.result === true) {
             console.log(response)
             lightBox.close()
-            stopStream()
             api_get_items('init')
-
             sellerInit()
           }
         })
@@ -1045,5 +1210,82 @@
         })
     }
 
+    // API, PATCH 加入直播
+    function api_patch_userChannelID(event, form) {
+
+      // event.preventDefault()
+
+      // let userChannelID = document.querySelector('.streamID__input').value
+      
+
+      // let formData = new FormData(form)
+      // formData.append('channel_token', userChannelID)
+      // formData.append('_method', 'PATCH')
+
+      // let userChannelData = {
+      //   'url': `${ server }/api/users-channel-id`,
+      //   'method': 'POST',
+      //   // 'method': 'PATCH',
+      //   'headers': {
+      //     // 'Content-Type': 'application/json',
+      //     'X-Requested-With': 'XMLHttpRequest',
+      //     'Authorization': `Bearer ${ userToken }`
+      //   },
+      //   'cache': false,
+      //   processData: false,
+      //   contentType: false,
+      //   'mimeType': 'multipart/form-data',
+      //   'data': formData
+      // }
+      // console.log(formData)
+
+      //   $.ajax(userChannelData)
+      //     .done(function (response) {
+      //       console.log(response)
+      //       if (response.result === true) {
+      //         lightBox.close()
+      //         // api_get_items('init')
+      //         // sellerInit()
+      //       }
+      //     })
+
+      //     .fail(function (response) {
+      //       console.log('api_patch_userChannelID: Fail ' + response.responseText)
+      //     })
+
+      // event.preventDefault()
+
+      let userChannelID = document.querySelector('.streamID__input').value
+      
+
+      let userChannelData = {
+        'url': `${ server }/api/user-channel-id`,
+        'method': 'PATCH',
+        'headers': {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Authorization': `Bearer ${ userToken }`
+        },
+        'data': JSON.stringify({
+          channel_token: userChannelID
+        })
+      }
+      console.log(userChannelData)
+
+        $.ajax(userChannelData)
+          .done(function (response) {
+            console.log(response)
+            if (response.result === true) {
+              lightBox.close()
+              api_get_userStatus('stream')
+              // sellerInit()
+            }
+          })
+
+          .fail(function (response) {
+            console.log('api_patch_userChannelID: Fail ' + response.responseText)
+          })
+
+    }
   })
 })(lightbox, API)

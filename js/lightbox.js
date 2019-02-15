@@ -16,6 +16,10 @@ const lightbox = (()=>{
           </div>
         </div>
       `
+      root.innerHTML = lightBoxContainer
+
+      let closeButton = document.querySelector('.lightBox__close')
+      if (closeButton) closeButton.addEventListener('click', close)
 
     } else if (isClose === false) {
       lightBoxContainer = `
@@ -26,12 +30,8 @@ const lightbox = (()=>{
           </div>
         </div>
       `
+      root.innerHTML = lightBoxContainer
     }
-
-    root.innerHTML = lightBoxContainer
-
-    let closeButton = document.querySelector('.lightBox__close')
-    if (close) closeButton.addEventListener('click', close)
   }
 
   function close () {

@@ -1,5 +1,6 @@
 const API = (()=> {
-  let domain = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
+  'use strict'
+  const domain = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
 
   const headers = {
     'Content-Type': 'application/json',
