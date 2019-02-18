@@ -1,4 +1,4 @@
-const lightbox = (()=>{
+const lightbox = (() => {
   'use strict'
 
   function open( content, isClose ) {
