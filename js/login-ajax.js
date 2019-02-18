@@ -2,16 +2,20 @@
   let userToken = Cookies.get('buy-user-token')
   let server = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
 
-  let host
+  // personal info
+  let userID, userName, userEmail, userPhoto,  userPhone, host
   console.log('Global: ', userToken, host)
   let remainingQuantity
   console.log('Global: ' + remainingQuantity)
 
+  // function
+  const personalInfo = document.querySelector('.personalInfo')
+
   // domain
-  let hrefNow = window.location.href
-  let hrefRealOrigin = window.location.origin
-  let hrefOrigin = hrefRealOrigin + '/'
-  let isHome = (hrefNow === hrefOrigin || hrefNow === hrefRealOrigin || hrefNow === hrefOrigin + 'index.html')
+  const hrefNow = window.location.href
+  const hrefRealOrigin = window.location.origin
+  const hrefOrigin = hrefRealOrigin + '/'
+  const isHome = (hrefNow === hrefOrigin || hrefNow === hrefRealOrigin || hrefNow === hrefOrigin + 'index.html')
 
   $(document).ready(function () {
 
@@ -310,6 +314,36 @@
 
 
     /*---------------------- 
+    Personal Information
+    -----------------------*/
+    function getPersonalInfo() {
+      console.log('getPersonalInfo in')
+      let header = `
+      <h2>
+      個人資料管理<span class="buttonSmall buttonCallToAction startStreaming">新增收件人</span></h2>`
+      let userInfo = `
+        <h4 class="">個人資料</h4>
+        <div class="contentBody__object" data-user-key="${ userID }">
+          <img src="${ userPhoto }" alt="test" class="contentBody__object__photo">
+          <div class="contentBody__object__name">${ userName }</div>
+          <span class="contentBody__object__amount"><span class="amount">${userEmail}</span></span>
+          </span>
+          <div class="contentBody__object__spec">
+            <div class="contentBody__object__spec__title">手機號碼</div>
+            <span class="spec">${ userPhone }</span>
+          </div>
+          <div class="contentBody__object__function">
+            <span class="contentBody__object__update">修改</span>
+          </div>
+        </div>
+        <h4>收件人資料</h4>
+        <div class="contentBody__object recipients">尚未新增收件人資料</div>
+      `
+      contentHeader.innerHTML = header
+      contentBody.innerHTML = userInfo
+    }
+
+    /*---------------------- 
     Product Functions
     -----------------------*/
 
@@ -338,7 +372,7 @@
     function editProduct(item, callback) {
       // 原資料
       // let item = item
-      let updateName = item.querySelector('.contentBody__product__name').textContent
+      let updateName = item.querySelector('.contentBody__object__name').textContent
       let updateDescription = item.querySelector('.spec').textContent
       let updateAmount = item.querySelector('.amount').textContent
       let updateCost = item.querySelector('.cost').textContent
@@ -507,16 +541,16 @@
               </div>
               <div class="stream__products">
                 <div class="stream__onAir">
-                  <div class="contentBody__product stream__product" data-key="">
+                  <div class="contentBody__object stream__product" data-key="">
                   <span class="stream__status">On Air</span>
-                  <img src="" alt="" class="contentBody__product__photo stream__product__photo">
+                  <img src="" alt="" class="contentBody__object__photo stream__product__photo">
                   <div class="stream__product__mainInfo">
-                    <div class="contentBody__product__name stream__product__name"></div>
-                    <span class="contentBody__product__price stream__product__price">$ <span class="price"></span></span>
-                    <span class="contentBody__product__amount">（已售數量：<span class="soldAmount"></span></span>
-                    <span class="contentBody__product__cost">剩餘數量： <span class="remain"</span>）</span>
+                    <div class="contentBody__object__name stream__product__name"></div>
+                    <span class="contentBody__object__price stream__product__price">$ <span class="price"></span></span>
+                    <span class="contentBody__object__amount">（已售數量：<span class="soldAmount"></span></span>
+                    <span class="contentBody__object__cost">剩餘數量： <span class="remain"</span>）</span>
                   </div>
-                  <div class="contentBody__product__spec stream__product__spec">
+                  <div class="contentBody__object__spec stream__product__spec">
                     <span class="spec"></span>
                   </div>
                 </div>
@@ -593,16 +627,16 @@
       let onAirBox = document.querySelector('.stream__onAir')
 
       let streamItem = `
-        <div class="contentBody__product stream__product" data-key="${ data.key }">
+        <div class="contentBody__object stream__product" data-key="${ data.key }">
         <span class="stream__status">On Air</span>
-        <img src="${ data.photo }" alt="${ data.name }" class="contentBody__product__photo stream__product__photo">
+        <img src="${ data.photo }" alt="${ data.name }" class="contentBody__object__photo stream__product__photo">
         <div class="stream__product__mainInfo">
-          <div class="contentBody__product__name stream__product__name">${ data.name }</div>
-          <span class="contentBody__product__price stream__product__price">$ <span class="price">${ data.unit_price }</span></span>
-          <span class="contentBody__product__amount">（數量：<span class="amount">${ data.stock }</span></span>
-          <span class="contentBody__product__cost">成本：$ <span class="cost">${ data.cost }</span>）</span>
+          <div class="contentBody__object__name stream__product__name">${ data.name }</div>
+          <span class="contentBody__object__price stream__product__price">$ <span class="price">${ data.unit_price }</span></span>
+          <span class="contentBody__object__amount">（數量：<span class="amount">${ data.stock }</span></span>
+          <span class="contentBody__object__cost">成本：$ <span class="cost">${ data.cost }</span>）</span>
         </div>
-        <div class="contentBody__product__spec stream__product__spec">
+        <div class="contentBody__object__spec stream__product__spec">
           <span class="spec">${ data.description }</span>
         </div>
       </div>
@@ -722,11 +756,21 @@
       API.GET('/api/users')
         .done(function (response) {
           if (response.result === true) {
-            // console.log('api_get_user: Success ', response)
-            let userPhoto = response.response.avatar
-            let userName = response.response.name
+            console.log('api_get_user: ' + response)
+            let user = response.response
+            userID = user.id
+            userPhoto = user.avatar
+            userName = user.name
+            userEmail = user.email
+            userPhone = (!user.phone) ? user.phone : '尚未填寫手機號碼'
+
             checkSituation('login', userName, userPhoto)
             api_get_userStatus('init')
+
+            if (!isHome) {
+              // listen each function button
+              personalInfo.addEventListener('click', getPersonalInfo)
+            }
           }
         })
 
@@ -807,19 +851,19 @@
                 // 商品列表
                 productListContainer = contentBody
                 item += `
-                <div class="contentBody__product" data-key="${ id }">
-                  <img src="${ photo }" alt="${ name }" class="contentBody__product__photo">
-                  <div class="contentBody__product__name">${ name }</div>
-                  <span class="contentBody__product__amount">數量：<span class="amount">${ stock }</span></span>
-                  <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span></span>
-                  <div class="contentBody__product__spec">
-                    <div class="contentBody__product__spec__title">商品敘述</div>
+                <div class="contentBody__object" data-key="${ id }">
+                  <img src="${ photo }" alt="${ name }" class="contentBody__object__photo">
+                  <div class="contentBody__object__name">${ name }</div>
+                  <span class="contentBody__object__amount">數量：<span class="amount">${ stock }</span></span>
+                  <span class="contentBody__object__cost">成本：$ <span class="cost">${ cost }</span></span>
+                  <div class="contentBody__object__spec">
+                    <div class="contentBody__object__spec__title">商品敘述</div>
                     <span class="spec">${ description }</span>
                   </div>
-                  <span class="contentBody__product__price">$ <span class="price">${ unit_price }</span></span>
-                  <div class="contentBody__product__function">
-                    <span class="contentBody__product__update">修改</span>
-                    <span class="contentBody__product__delete">刪除</span>
+                  <span class="contentBody__object__price">$ <span class="price">${ unit_price }</span></span>
+                  <div class="contentBody__object__function">
+                    <span class="contentBody__object__update">修改</span>
+                    <span class="contentBody__object__delete">刪除</span>
                   </div>
                 </div>
                 `
@@ -830,17 +874,17 @@
                   productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
                   // 共同父層
-                  let myItem = document.querySelectorAll('.contentBody__product')
+                  let myItem = document.querySelectorAll('.contentBody__object')
                   for (let i = 0; i < myItem.length; i++) {
                     // 更新
-                    let productUpdate = myItem[i].querySelector('.contentBody__product__update')
+                    let productUpdate = myItem[i].querySelector('.contentBody__object__update')
 
                     productUpdate.addEventListener('click', function () {
                       editProduct(myItem[i], listenUpdateProduct)
                     })
 
                     // 刪除
-                    let productDelete = myItem[i].querySelector('.contentBody__product__delete')
+                    let productDelete = myItem[i].querySelector('.contentBody__object__delete')
                     productDelete.addEventListener('click', function () {
                       api_delete_items(myItem[i])
                     })
@@ -854,18 +898,18 @@
 
                   // 賣家直播產品列表
                   item += `
-                  <div class="contentBody__product stream__product" data-key="${ id }">
-                    <img src="${ photo }" alt="${ name }" class="contentBody__product__photo stream__product__photo">
-                    <div class="contentBody__product__function stream__product__function">
-                      <span class="contentBody__product__push">推播</span>
+                  <div class="contentBody__object stream__product" data-key="${ id }">
+                    <img src="${ photo }" alt="${ name }" class="contentBody__object__photo stream__product__photo">
+                    <div class="contentBody__object__function stream__product__function">
+                      <span class="contentBody__object__push">推播</span>
                     </div>
                     <div class="stream__product__mainInfo">
-                      <div class="contentBody__product__name stream__product__name">${ name }</div>
-                      <span class="contentBody__product__price stream__product__price">$ <span class="price">${ unit_price }</span></span>
-                      <span class="contentBody__product__amount">（數量：<span class="amount">${ stock }</span></span>
-                      <span class="contentBody__product__cost">成本：$ <span class="cost">${ cost }</span>）</span>
+                      <div class="contentBody__object__name stream__product__name">${ name }</div>
+                      <span class="contentBody__object__price stream__product__price">$ <span class="price">${ unit_price }</span></span>
+                      <span class="contentBody__object__amount">（數量：<span class="amount">${ stock }</span></span>
+                      <span class="contentBody__object__cost">成本：$ <span class="cost">${ cost }</span>）</span>
                     </div>
-                    <div class="contentBody__product__spec stream__product__spec">
+                    <div class="contentBody__object__spec stream__product__spec">
                       <span class="spec">${ description }</span>
                     </div>
                   </div>
@@ -877,11 +921,11 @@
                     productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
                     // 共同父層
-                    let myItem = document.querySelectorAll('.contentBody__product')
+                    let myItem = document.querySelectorAll('.contentBody__object')
 
                     for (let i = 0; i < myItem.length; i++) {
                       // 推播
-                      let productPush = myItem[i].querySelector('.contentBody__product__push')
+                      let productPush = myItem[i].querySelector('.contentBody__object__push')
 
                       productPush.addEventListener('click', function () {
                         let key = myItem[i].dataset.key
@@ -1269,7 +1313,7 @@
           console.log('api_get_streamingItem: Fail', response)
           if (response.responseJSON.response === 'You need to stream an item first') {
             let onAirBox = document.querySelector('.stream__onAir')
-            onAirBox.innerHTML = '<div class="contentBody__product stream__product">賣家尚未推播產品</di>'
+            onAirBox.innerHTML = '<div class="contentBody__object stream__product">賣家尚未推播產品</div>'
           }
           
 

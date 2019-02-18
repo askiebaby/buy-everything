@@ -701,29 +701,35 @@ header {
 .contentBody {
   margin-bottom: 50px;
 }
-.contentBody__product {
+.contentBody h4 {
+  color: #333;
+  margin-top: 45px;
+  border-left: 5px solid #FFC107;
+  padding-left: 15px;
+}
+.contentBody__object {
   padding: 10px;
   border: 1px solid #eee;
   border-radius: 5px;
   line-height: 1.8;
   position: relative;
 }
-.contentBody__product::after {
+.contentBody__object::after {
   content: '';
   clear: both;
   display: table;
 }
-.contentBody__product__photo {
+.contentBody__object__photo {
   float: left;
   margin-right: 10px;
   max-width: 150px;
 }
-.contentBody__product__name {
+.contentBody__object__name {
   font-weight: 700;
   font-size: 1.2em;
   color: #333;
 }
-.contentBody__product__spec {
+.contentBody__object__spec {
   background: #eee;
   border-left: 5px solid #d4d4d4;
   display: inline-block;
@@ -733,11 +739,11 @@ header {
   border-radius: 0 3px 3px 0;
   word-break: break-word;
 }
-.contentBody__product__spec__title {
+.contentBody__object__spec__title {
   font-size: .9em;
   color: #666;
 }
-.contentBody__product__price {
+.contentBody__object__price {
   font-weight: 700;
   color: #267abd;
   position: absolute;
@@ -745,7 +751,7 @@ header {
   top: 10px;
   font-size: 1.5em;
 }
-.contentBody__product__update {
+.contentBody__object__update {
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
@@ -753,10 +759,10 @@ header {
   background: #eee;
   color: #666;
 }
-.contentBody__product__update:hover {
+.contentBody__object__update:hover {
   background: #d4d4d4;
 }
-.contentBody__product__delete {
+.contentBody__object__delete {
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
@@ -764,10 +770,10 @@ header {
   background: #F25757;
   color: #f1f2f3;
 }
-.contentBody__product__delete:hover {
+.contentBody__object__delete:hover {
   background: #d31010;
 }
-.contentBody__product__push {
+.contentBody__object__push {
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
@@ -775,10 +781,10 @@ header {
   background: #267abd;
   color: #f1f2f3;
 }
-.contentBody__product__function {
+.contentBody__object__function {
   text-align: right;
 }
-.contentBody__product span + span {
+.contentBody__object span + span {
   margin-left: 5px;
 }
 .contentBody__product + .contentBody__product {
