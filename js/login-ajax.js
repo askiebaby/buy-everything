@@ -10,6 +10,9 @@
 
   // function
   const personalInfo = document.querySelector('.personalInfo')
+  const addButtonContainer = document.querySelector('.addButton__container')
+  const getItems = document.querySelector('.getItems')
+  
 
   // domain
   const hrefNow = window.location.href
@@ -61,7 +64,6 @@
     function sellerInit() {
 
       // 結束直播後把新增商品按鈕放回來
-      let addButtonContainer = document.querySelector('.addButton__container')
 
       if (addButtonContainer.innerHTML === '') {
         addButtonContainer.innerHTML = `<button class="addButton"><i class="fas fa-plus"></i></button>`
@@ -109,24 +111,7 @@
         </form>
       `
 
-      let addButton = document.querySelector('.addButton')
-
-      addButton.addEventListener('click', function () {
-        // callback
-        lightBox.open(addForm, true)
-
-        let photoReal = document.getElementById('addForm__photo')
-        photoReal.addEventListener('change', function () {
-          preview_image(event)
-        })
-
-        let productForm = document.forms.namedItem('productForm')
-
-        productForm.addEventListener('submit', function (event) {
-          api_post_items(event, productForm)
-        })
-
-      })
+      addProductInit(true, addForm)
 
     }
 
@@ -314,33 +299,150 @@
 
 
     /*---------------------- 
-    Personal Information
+    Personal Information Functions
     -----------------------*/
+
+    //
     function getPersonalInfo() {
       console.log('getPersonalInfo in')
       let header = `
-      <h2>
-      個人資料管理<span class="buttonSmall buttonCallToAction startStreaming">新增收件人</span></h2>`
+      <h2>個人資料管理</h2>`
       let userInfo = `
         <h4 class="">個人資料</h4>
         <div class="contentBody__object" data-user-key="${ userID }">
           <img src="${ userPhoto }" alt="test" class="contentBody__object__photo">
           <div class="contentBody__object__name">${ userName }</div>
-          <span class="contentBody__object__amount"><span class="amount">${userEmail}</span></span>
+          <span class="contentBody__object__email"><span class="email">${ userEmail }</span></span>
           </span>
           <div class="contentBody__object__spec">
             <div class="contentBody__object__spec__title">手機號碼</div>
             <span class="spec">${ userPhone }</span>
           </div>
-          <div class="contentBody__object__function">
+          <div class="contentBody__object__functionAbsolute">
             <span class="contentBody__object__update">修改</span>
           </div>
         </div>
-        <h4>收件人資料</h4>
-        <div class="contentBody__object recipients">尚未新增收件人資料</div>
+        <h4>收件人資料 (最多五筆) <span class="buttonSmall buttonCallToAction addRecipient">新增收件人</span></h4>
+        <div class="recipients">載入中...</div>
       `
       contentHeader.innerHTML = header
       contentBody.innerHTML = userInfo
+      addProductInit(false) // 關閉新增商品按鈕
+      api_get_recipients() // 取得收件人資料
+      
+      let addRecipientButton = document.querySelector('.addRecipient')
+      addRecipientButton.addEventListener('click', addRecipient)
+    }
+
+    // 取得收件人資料，擺好
+    function setRecipients(response) {
+      let recipientsContainer = document.querySelector('.recipients')
+
+      if (response.result === false) {
+        recipientsContainer.innerHTML = '尚未新增收件人資料'
+      } else {
+        // 有收件人資料時
+        let recipient = response.response
+        console.log(recipient)
+        let recipientCard = ''
+        for (let i = 0; i < recipient.length; i++) {
+          console.log(recipient.address)
+          recipientCard += `
+            <div class="contentBody__object" data-recipient-key="${recipient[i].recipient_id}">
+            <div class="contentBody__object__name">收件人姓名：${ recipient[i].name}</div>
+            <div class="contentBody__object__spec contentBody__object__spec__contact">
+              <div class="contentBody__object__spec__title">聯絡電話</div>
+              <span class="spec">${recipient[i].phone['phone_code']} ${recipient[i].phone.phone_number}</span>
+              <div class="contentBody__object__spec__title">送貨地址</div>
+              <span class="spec">[${recipient[i].address['post_code']}] ${recipient[i].address['city']}${recipient[i].address['district']}${recipient[i].address['others']}</span>
+            </div>
+            <div class="contentBody__object__functionAbsolute">
+              <span class="contentBody__object__update">修改</span>
+              <span class="contentBody__object__delete">刪除</span>
+            </div>
+          </div>
+            `
+        }
+
+        recipientsContainer.innerHTML = recipientCard
+        console.log(recipientCard, recipient)
+      }
+    }
+
+    function addRecipient () {
+      let addForm = `
+        <form action="" class="productForm" name="productForm" method="POST">
+        <h3><span>新增收件人</span></h3>
+        <!-- 收件人照片 -->
+        <div class="lightBox__layout__vertical">
+          <div class="lightBox__breakBox">
+          <!-- 收件人 -->
+            <label for="addForm__name">收件人姓名</label>
+            <input type="text" class="addForm__name" id="addForm__name" placeholder="必填" required="">
+          </div>
+          <div class="lightBox__breakBox">
+            <!-- 地址 -->
+            <label for="addForm__spec">地址</label>
+            <select class="city">
+              <option selected disabled>請選擇縣市</option>
+            </select>
+            <select class="district" disabled>
+            <option selected disabled>鄉鎮</option>
+            </select>
+            <input type="text" class="addForm__spec" id="addForm__spec" placeholder="必填" required="">
+          </div>
+        </div>
+        <input type="submit" value="送出" class="addForm__submit">
+      </form>
+      `
+      lightBox.open(addForm, true)
+
+      api_get_taiwanPostCode()
+    }
+
+    function filterCities(citiesArray){
+      let manyCities = citiesArray.response
+      let taiwanCities = []
+      let citySelect = document.querySelector('.city')
+      let districtSelect = document.querySelector('.district')
+      // 按照郵遞區號排好縣市
+      manyCities = manyCities.sort(function(a, b){
+        return a.ZipCode > b.ZipCode ? 1 : -1
+      })
+
+      // 把不在 taiwanCities 的 縣市加進去
+      // item 物件, index 索引, array 全部陣列
+      manyCities.forEach(function(item, index, array){
+        let isCityExist = taiwanCities.indexOf(item['City'])
+        if (isCityExist === -1) {
+          taiwanCities.push(item['City'])
+          let cityOption = document.createElement('OPTION')
+          cityOption.innerHTML = item['City']
+          cityOption.value = item['City']
+          citySelect.appendChild(cityOption)
+        }
+      })
+
+
+      citySelect.addEventListener('change', function(){
+        // 清掉鄉鎮原本的選單內容，重放一次
+        districtSelect.innerHTML = `<option selected disabled>鄉鎮</option>`
+        filterArea(citySelect.value, manyCities, districtSelect)
+      })
+
+    }
+
+    function filterArea (query, cities, selector) {
+      return cities.filter(function(item, index, array){
+        if (item['City'] === query) {
+          console.log(item['Area'])
+          let districtOption = document.createElement('OPTION')
+          districtOption.dataset.zipcode = item['ZipCode']
+          districtOption.innerHTML = `${item['ZipCode']} ${item['Area']}`
+          selector.appendChild(districtOption)
+          selector.disabled = false
+        }
+      })
     }
 
     /*---------------------- 
@@ -446,6 +548,39 @@
       })
     }
 
+    // 新增商品按鈕狀態
+    function addProductInit (isInit, addForm) {
+
+      let addButton = document.querySelector('.addButton')
+
+      if (isInit) {
+
+        // 結束直播後把新增商品按鈕放回來
+        if (addButtonContainer.innerHTML === '') {
+          addButtonContainer.innerHTML = `<button class="addButton"><i class="fas fa-plus"></i></button>`
+        }
+
+        addButton.addEventListener('click', function () {
+          // callback
+          lightBox.open(addForm, true)
+
+          let photoReal = document.getElementById('addForm__photo')
+          photoReal.addEventListener('change', function () {
+            preview_image(event)
+          })
+
+          let productForm = document.forms.namedItem('productForm')
+
+          productForm.addEventListener('submit', function (event) {
+            api_post_items(event, productForm)
+          })
+        })
+
+      } else {
+        if(addButton) addButton.remove()
+      }
+    }
+
     /*---------------------- 
     Streaming Functions
     -----------------------*/
@@ -474,19 +609,9 @@
     // 詢問直播id
     function askForStreamID() {
       console.log('輸入id')
-      // let streamInput = `
-      //   <form type="POST" class="streamForm" name="streamForm" action="${ server }/api/users-channel-id" enctype="multipart/form-data">
-      //     <h3><span>輸入您的直播ID</span></h3>
-      //     <div class="lightBox__breakBox lightBox__url">
-      //       <label for="streamID__input">直播ID</label>
-      //       <input type="text" placeholder="例如：8uhiVL" class="streamID__input" id="streamID__input" value="8uhiVL">
-      //     </div>
-      //     <input type="submit" value="送出" class="addForm__submit">
-      //   </form>
-      // `
       let streamInput = `
         <form type="POST" class="streamForm" name="streamForm">
-          <h3><span>輸入您的直播ID</span></h3>
+          <h3><span>輸入直播包廂ID（區分大小寫）</span></h3>
           <div class="lightBox__breakBox lightBox__url">
             <label for="streamID__input">直播ID</label>
             <input type="text" placeholder="例如：8uhiVL" class="streamID__input" id="streamID__input" value="8uhiVL">
@@ -613,8 +738,7 @@
             break
         }
 
-        let addButton = document.querySelector('.addButton')
-        addButton.remove()
+        addProductInit(false)
         host = userStatus.host
 
         // 正在包廂
@@ -717,7 +841,7 @@
         console.log('載入中')
       } else if (remainingQuantity >= 1){
         console.log('已經大於一個數量', oldQuantity, remainingQuantity)
-        totalContainer.innerHTML = `<input type="number" class="buyForm__total" value="1"></input>`
+        totalContainer.innerHTML = `<input type="number" class="buyForm__total" value="1" min="1" max="remainingQuantity"></input>`
         // total.value = 1
         add.addEventListener('click', function(){
           // 小於剩餘數量才可購買
@@ -739,9 +863,9 @@
       }
 
       // 每五秒撈推播商品資訊回來
-      setTimeout(function(){
-        productCalculator()
-      }, 5000)
+      // setTimeout(function(){
+      //   productCalculator()
+      // }, 5000)
     }
 
 
@@ -758,7 +882,7 @@
           if (response.result === true) {
             console.log('api_get_user: ' + response)
             let user = response.response
-            userID = user.id
+            userID = user.user_id
             userPhoto = user.avatar
             userName = user.name
             userEmail = user.email
@@ -770,19 +894,24 @@
             if (!isHome) {
               // listen each function button
               personalInfo.addEventListener('click', getPersonalInfo)
+              getItems.addEventListener('click', function(){
+                api_get_items('init')
+              })
             }
           }
         })
 
         .fail(function (response) {
-          console.log('api_get_user: Fail ', response.responseText)
+          console.log('api_get_user: Fail ', response)
           fbButton.innerHTML = '登入' // 未登入的初始畫面
 
           fbSDK('login')
           fbButton.addEventListener('click', buttonInit)
 
-          if (hrefNow !== hrefOrigin) {
-            window.location.assign(hrefOrigin)
+          if(response.response !== 'The token is invalid'){
+            if (hrefNow !== hrefOrigin) {
+              window.location.assign(hrefOrigin)
+            }
           }
         })
     }
@@ -814,6 +943,31 @@
         })
     }
 
+    // API, GET 取得該使用者建立之收貨人地址
+    // GET RECIPIENTS' INFORMATION UNDER A USER
+    function api_get_recipients () {
+      API.GET('/api/recipients')
+        .done(function (response) {
+          // console.log('api_get_recipients: Success' + response)
+          setRecipients(response)
+        })
+        .fail(function (response) {
+          console.log(`api_get_recipients: Fail ${response}`)
+        })
+    }
+
+    // API, GET 取得國碼
+    function api_get_taiwanPostCode () {
+      
+      API.GET('/api/taiwan-post-code')
+        .done(function(response){
+          filterCities(response)
+        })
+        .fail(function(response){
+          console.log('api_get_taiwanPostCode: Fail: ' + response)
+        })
+    }
+
 
     /*---------------------- 
     Product API
@@ -826,8 +980,6 @@
       API.GET('/api/items')
         .done(function (response) {
           let productList = response.response
-          let productAmountContainer = document.querySelector('.contentHeader__amountBox')
-
           let productListContainer
 
           let item = '<div class="stream__onAir"></div>',
@@ -845,8 +997,11 @@
 
               if (action === 'init') {
                 // 商品列表標題
-                if (contentHeader) contentHeader.firstElementChild.innerHTML = `
-                  賣家商品列表<span class="buttonSmall buttonCallToAction startStreaming">開始直播</span>`
+                if (contentHeader) contentHeader.innerHTML = `
+                  <h2>商品列表<span class="buttonSmall buttonCallToAction startStreaming">開始直播</span></h2>
+                  <p class="contentHeader__amountBox"></p>`
+
+                  let productAmountContainer = document.querySelector('.contentHeader__amountBox')
 
                 // 商品列表
                 productListContainer = contentBody
@@ -870,7 +1025,12 @@
                 productAmount++
 
                 if (!isHome) {
+                  // addProductInit(true)
+                  sellerInit()
                   productListContainer.innerHTML = item
+                  
+                  let productAmountContainer = document.querySelector('.contentHeader__amountBox')
+
                   productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
                   // 共同父層
@@ -918,6 +1078,9 @@
 
                   if (!isHome) {
                     productListContainer.innerHTML = item
+                    
+                    let productAmountContainer = document.querySelector('.contentHeader__amountBox')
+
                     productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
                     // 共同父層
@@ -1178,10 +1341,17 @@
               }
               
               lightBox.open(alertMsg, false)
+
               let continueStreamBtn = document.querySelector('.continueStreaming')
 
               continueStreamBtn.addEventListener('click', function () {
                 continueStream(userStatus, productCalculator)
+              })
+
+              let stopStream = document.querySelector('.stopStreaming')
+
+              stopStream.addEventListener('click', function () {
+                api_put_usersChannelId()
               })
             }
             startStreamingButtonsStatus(false)
@@ -1320,10 +1490,14 @@
         })
     }
 
-    // API, PUT 結束直播
+    // API, PUT 賣家結束直播
     function api_put_usersChannelId() {
+      
+      let serverPath
+      serverPath = (host) ? '/api/users-channel-id':'/api/user-channel-id'
+
       let userChannelData = {
-        'url': `${ server }/api/users-channel-id`,
+        'url': `${ server }${ serverPath }`,
         'method': 'PUT',
         'headers': {
           'Content-Type': 'application/json',

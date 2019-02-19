@@ -11,10 +11,6 @@
     height: 100%;
   }
 
-  &__layout__vertical {
-    display: flex;
-  }
-
   h3 {
     margin-bottom: 35px;
     font-size: 1.25em;
@@ -41,7 +37,7 @@
   label {
     color: $deepGray-2;
     font-size: .8em;
-    min-width: 75px;
+    min-width: 55px;
     display: inline-block;
     text-align: right;
     margin-right: 10px;
@@ -78,6 +74,8 @@
     line-height: 2;
     margin-bottom: 14px;
     text-align: left;
+    flex-basis: 100%;
+
     &:last-child {
       margin-bottom: 0;
     }
@@ -94,6 +92,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-wrap: wrap;
     }
   }
 

@@ -83,7 +83,6 @@ header {
 
   h4 {
     color: $deepGray;
-    margin-top: 45px;
     border-left: 5px solid $yellow;
     padding-left: 15px;
   }
@@ -94,13 +93,14 @@ header {
     border-radius: 5px;
     line-height: 1.8;
     position: relative;
+    margin-bottom: 30px;
     
     @include clearFix;
 
     &__photo {
       float: left;
       margin-right: 10px;
-      max-width: 150px;
+      width: 150px;
     }
 
     &__name {
@@ -114,7 +114,7 @@ header {
       border-left: 5px solid $lightGray;
       display: inline-block;
       width: calc(100% - 160px);
-      padding: 10px;
+      padding: 10px 10px 20px;
       margin: 10px 0;
       border-radius: 0 3px 3px 0;
       word-break: break-word;
@@ -122,8 +122,13 @@ header {
         &__title {
           font-size: .9em;
           color: $deepGray-2;
+          margin-top: 10px;
+        }
+        &__contact {
+          width: 100%;
         }
     }
+
 
     &__price {
       font-weight: 700;
@@ -157,6 +162,12 @@ header {
 
     &__function {
       text-align: right;
+      &Absolute {
+        position: absolute;
+        display: block;
+        right: 10px;
+        top: 10px;
+      }
     }
 
     span + span {
@@ -204,23 +215,23 @@ header {
   }
 
   &__name {
-    width: 360px;
+    width: calc(100% - 75px);
   }
 
   &__spec {
-    width: 480px;
+    width: calc(100% - 75px);
   }
 
   &__amount {
-    width: 75px;
+    width: 70px;
   }
 
   &__cost {
-    width: 75px;
+    width: 70px;
   }
 
   &__price {
-    width: 100px;
+    width: 90px;
   }
 
   &__submit {
