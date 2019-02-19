@@ -16,10 +16,11 @@ a, a:hover {
   text-decoration: none;
 }
 
-input[type=text], input[type=number], textarea {
+input[type=text], input[type=number], textarea, input[type=tel], select {
   padding: 12px;
   border-radius: 5px;
   border: 1px solid #ddd;
+  margin: 0 3px;
 }
 
 .maxWidth {
@@ -552,10 +553,15 @@ input[type=text], input[type=number], textarea {
 .lightBox label {
   color: #666;
   font-size: .8em;
-  min-width: 55px;
+  min-width: 65px;
   display: inline-block;
   text-align: right;
   margin-right: 10px;
+}
+.lightBox select {
+  border: 1px solid #ddd;
+  background: #fff;
+  height: 40px;
 }
 .lightBox__layer {
   width: 100%;
@@ -589,6 +595,11 @@ input[type=text], input[type=number], textarea {
 }
 .lightBox__breakBox:last-child {
   margin-bottom: 0;
+}
+.lightBox__flexBox {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 .lightBox__centerBox {
   line-height: 2;
@@ -828,10 +839,16 @@ header {
   object-fit: fill;
 }
 .addForm__name {
-  width: calc(100% - 75px);
+  width: calc(100% - 90px);
+}
+.addForm__realName {
+  width: 300px;
+}
+.addForm__phone {
+  width: 300px;
 }
 .addForm__spec {
-  width: calc(100% - 75px);
+  width: calc(100% - 90px);
 }
 .addForm__amount {
   width: 70px;

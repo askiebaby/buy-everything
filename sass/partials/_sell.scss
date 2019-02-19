@@ -215,11 +215,19 @@ header {
   }
 
   &__name {
-    width: calc(100% - 75px);
+    width: calc(100% - 90px);
+  }
+
+  &__realName {
+    width: 300px;
+  }
+
+  &__phone {
+    width: 300px;
   }
 
   &__spec {
-    width: calc(100% - 75px);
+    width: calc(100% - 90px);
   }
 
   &__amount {

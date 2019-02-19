@@ -304,7 +304,7 @@
 
     //
     function getPersonalInfo() {
-      console.log('getPersonalInfo in')
+      
       let header = `
       <h2>個人資料管理</h2>`
       let userInfo = `
@@ -343,17 +343,16 @@
       } else {
         // 有收件人資料時
         let recipient = response.response
-        console.log(recipient)
         let recipientCard = ''
         for (let i = 0; i < recipient.length; i++) {
-          console.log(recipient.address)
+          console.log(recipient)
           recipientCard += `
             <div class="contentBody__object" data-recipient-key="${recipient[i].recipient_id}">
             <div class="contentBody__object__name">收件人姓名：${ recipient[i].name}</div>
             <div class="contentBody__object__spec contentBody__object__spec__contact">
               <div class="contentBody__object__spec__title">聯絡電話</div>
-              <span class="spec">${recipient[i].phone['phone_code']} ${recipient[i].phone.phone_number}</span>
-              <div class="contentBody__object__spec__title">送貨地址</div>
+              <span class="spec">+${recipient[i].phone['phone_code']} ${recipient[i].phone.phone_number}</span>
+              <div class="contentBody__object__spec__title">收貨地址</div>
               <span class="spec">[${recipient[i].address['post_code']}] ${recipient[i].address['city']}${recipient[i].address['district']}${recipient[i].address['others']}</span>
             </div>
             <div class="contentBody__object__functionAbsolute">
@@ -365,7 +364,6 @@
         }
 
         recipientsContainer.innerHTML = recipientCard
-        console.log(recipientCard, recipient)
       }
     }
 
@@ -375,29 +373,45 @@
         <h3><span>新增收件人</span></h3>
         <!-- 收件人照片 -->
         <div class="lightBox__layout__vertical">
-          <div class="lightBox__breakBox">
+          <div class="lightBox__breakBox lightBox__flexBox">
           <!-- 收件人 -->
-            <label for="addForm__name">收件人姓名</label>
-            <input type="text" class="addForm__name" id="addForm__name" placeholder="必填" required="">
+            <label for="addForm__realName">收件人姓名</label>
+            <input type="text" class="addForm__realName" id="addForm__realName" placeholder="必填" required>
           </div>
-          <div class="lightBox__breakBox">
+          <div class="lightBox__breakBox lightBox__flexBox">
+          <!-- 聯絡電話 -->
+            <label for="addForm__phone">聯絡電話</label>
+            <select class="country" required>
+              <option selected disabled>請選擇國家</option>
+            </select>
+            <input type="tel" class="addForm__phone" id="addForm__phone" placeholder="必填" required>
+          </div>
+          <div class="lightBox__breakBox lightBox__flexBox">
             <!-- 地址 -->
             <label for="addForm__spec">地址</label>
             <select class="city">
               <option selected disabled>請選擇縣市</option>
             </select>
             <select class="district" disabled>
-            <option selected disabled>鄉鎮</option>
+              <option selected disabled>鄉鎮</option>
             </select>
-            <input type="text" class="addForm__spec" id="addForm__spec" placeholder="必填" required="">
+            <input type="text" class="addForm__spec" id="addForm__spec" placeholder="必填" required>
           </div>
         </div>
-        <input type="submit" value="送出" class="addForm__submit">
+        <input type="button" value="送出" class="addForm__submit">
       </form>
       `
       lightBox.open(addForm, true)
 
       api_get_taiwanPostCode()
+      api_get_phoneCode()
+
+      let submit = document.querySelector('.addForm__submit')
+
+      submit.addEventListener('click', function(){
+        api_post_recipients()
+      })
+
     }
 
     function filterCities(citiesArray){
@@ -418,7 +432,7 @@
           taiwanCities.push(item['City'])
           let cityOption = document.createElement('OPTION')
           cityOption.innerHTML = item['City']
-          cityOption.value = item['City']
+          cityOption.dataset.city = item['City']
           citySelect.appendChild(cityOption)
         }
       })
@@ -435,13 +449,27 @@
     function filterArea (query, cities, selector) {
       return cities.filter(function(item, index, array){
         if (item['City'] === query) {
-          console.log(item['Area'])
           let districtOption = document.createElement('OPTION')
           districtOption.dataset.zipcode = item['ZipCode']
+          districtOption.value = item['Area']
           districtOption.innerHTML = `${item['ZipCode']} ${item['Area']}`
           selector.appendChild(districtOption)
           selector.disabled = false
         }
+      })
+    }
+
+    function filterCountry (response) {
+      let countrySelect = document.querySelector('.country')
+      // 把不在 taiwanCities 的 縣市加進去
+      // item 物件, index 索引, array 全部陣列
+      response.forEach(function(item, index, array){    
+          let countryOption = document.createElement('OPTION')
+          countryOption.innerHTML = item['country']
+          countryOption.dataset.country = item['country_code']
+          countryOption.dataset.phone = item['phone_code']
+          if (item['country'].indexOf('Taiwan') !== -1){countryOption.selected = true}
+          countrySelect.appendChild(countryOption)
       })
     }
 
@@ -527,8 +555,6 @@
     </form>
       `
       lightBox.open(updateForm, true)
-
-      // console.log(callback, updateName, updateDescription, updateAmount, updateCost, updatePrice, updatePhoto, key)
 
       let photoReal = document.getElementById('addForm__photo')
       photoReal.addEventListener('change', function () {
@@ -885,7 +911,7 @@
             userID = user.user_id
             userPhoto = user.avatar
             userName = user.name
-            userEmail = user.email
+            userEmail = (user.email) ? user.email : '無法取得信箱'
             userPhone = (!user.phone) ? user.phone : '尚未填寫手機號碼'
 
             checkSituation('login', userName, userPhoto)
@@ -948,7 +974,6 @@
     function api_get_recipients () {
       API.GET('/api/recipients')
         .done(function (response) {
-          // console.log('api_get_recipients: Success' + response)
           setRecipients(response)
         })
         .fail(function (response) {
@@ -956,7 +981,68 @@
         })
     }
 
-    // API, GET 取得國碼
+    //
+    function api_post_recipients () {
+
+      let recipientName = document.querySelector('.addForm__realName').value
+      let phoneNumber = document.querySelector('.addForm__phone').value
+      let city = document.querySelector('.city').value
+      let district = document.querySelector('.district').value
+      let others = document.querySelector('.addForm__spec').value
+
+      // 取得 option 的 dataset
+      let country = document.querySelector('.country')
+      let countryIndex = country.selectedIndex
+      let phoneCode = country.children[countryIndex].dataset.phone
+      let countryCode = country.children[countryIndex].dataset.country
+      
+      let postCode = document.querySelector('.district')
+      let postCodeIndex = postCode.selectedIndex
+      postCode = postCode.children[postCodeIndex].dataset.zipcode
+      
+      
+
+      let recipientData = {
+        'url': `${ server }/api/recipients`,
+        'method': 'POST',
+        'headers': {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Authorization': `Bearer ${ userToken }`
+        },
+        'data': JSON.stringify({
+          name: recipientName,
+          phone: {
+            phone_code: phoneCode,
+            phone_number: phoneNumber
+          },
+          address: {
+            country_code: countryCode,
+            post_code: postCode,
+            city: city,
+            district: district,
+            others: others
+          }
+        })
+      }
+
+      $.ajax(recipientData)
+        .done(function (response) {
+          if (response.result === true) {
+            console.log(response)
+            api_get_recipients()
+            lightBox.close()
+            // let productId = response.response.channel_id
+            // api_get_userStatus('stream', productId)
+          }
+        })
+
+        .fail(function (response) {
+          console.log('api_post_user: Fail ' + response.responseText)
+        })
+    }
+
+    // API, GET 取得郵遞區號、縣市
     function api_get_taiwanPostCode () {
       
       API.GET('/api/taiwan-post-code')
@@ -965,6 +1051,19 @@
         })
         .fail(function(response){
           console.log('api_get_taiwanPostCode: Fail: ' + response)
+        })
+    }
+
+    // API, GET 取得名稱國碼以及電話國碼
+    // GET COUNTRY_CODE AND PHONE_CODE
+    function api_get_phoneCode () {
+      
+      API.GET('/api/country-code')
+        .done(function(response){
+          filterCountry(response.response)
+        })
+        .fail(function(response){
+          console.log('api_get_phoneCode: Fail: ' + response)
         })
     }
 

@@ -3,10 +3,11 @@ a, a:hover {
   text-decoration: none;
 }
 
-input[type=text], input[type=number], textarea {
+input[type=text], input[type=number], textarea, input[type=tel], select {
   padding: 12px;
   border-radius: 5px;
   border: 1px solid #ddd;
+  margin: 0 3px;
 }
 
 .maxWidth {

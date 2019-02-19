@@ -37,10 +37,16 @@
   label {
     color: $deepGray-2;
     font-size: .8em;
-    min-width: 55px;
+    min-width: 65px;
     display: inline-block;
     text-align: right;
     margin-right: 10px;
+  }
+
+  select {
+    border: 1px solid #ddd;
+    background: #fff;
+    height: 40px;
   }
 
   &__layer {
@@ -79,6 +85,12 @@
     &:last-child {
       margin-bottom: 0;
     }
+  }
+
+  &__flexBox {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
   }
 
   &__centerBox {
