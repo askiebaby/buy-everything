@@ -345,9 +345,8 @@
         let recipient = response.response
         let recipientCard = ''
         for (let i = 0; i < recipient.length; i++) {
-          console.log(recipient)
           recipientCard += `
-            <div class="contentBody__object" data-recipient-key="${recipient[i].recipient_id}">
+            <div class="contentBody__object" data-recipient="${recipient[i].recipient_id}">
             <div class="contentBody__object__name">收件人姓名：${ recipient[i].name}</div>
             <div class="contentBody__object__spec contentBody__object__spec__contact">
               <div class="contentBody__object__spec__title">聯絡電話</div>
@@ -364,6 +363,15 @@
         }
 
         recipientsContainer.innerHTML = recipientCard
+        
+        let deleteRecipient = document.querySelectorAll('.contentBody__object__delete')
+        for(let i = 0; i < recipient.length; i++){
+          deleteRecipient[i].addEventListener('click', function () {
+            let recipientKey = deleteRecipient[i].parentElement.parentElement.dataset.recipient
+            api_delete_Recipient(recipientKey)
+            // console.log('我按了刪除收件人 ' + recipientKey)
+          })
+        }
       }
     }
 
@@ -384,7 +392,7 @@
             <select class="country" required>
               <option selected disabled>請選擇國家</option>
             </select>
-            <input type="tel" class="addForm__phone" id="addForm__phone" placeholder="必填" required>
+            <input type="tel" class="addForm__phone" id="addForm__phone" placeholder="例如：0980218800" required>
           </div>
           <div class="lightBox__breakBox lightBox__flexBox">
             <!-- 地址 -->
@@ -465,7 +473,8 @@
       // item 物件, index 索引, array 全部陣列
       response.forEach(function(item, index, array){    
           let countryOption = document.createElement('OPTION')
-          countryOption.innerHTML = item['country']
+          countryOption.innerHTML = `${item['country']} (+${item['phone_code']})`
+          countryOption.value = item['country']
           countryOption.dataset.country = item['country_code']
           countryOption.dataset.phone = item['phone_code']
           if (item['country'].indexOf('Taiwan') !== -1){countryOption.selected = true}
@@ -981,7 +990,8 @@
         })
     }
 
-    //
+    // 新增收貨人地址
+    // ADD RECIPIENT'S ADDRESS 
     function api_post_recipients () {
 
       let recipientName = document.querySelector('.addForm__realName').value
@@ -1039,6 +1049,38 @@
 
         .fail(function (response) {
           console.log('api_post_user: Fail ' + response.responseText)
+        })
+    }
+
+    // API, DELETE 刪除收貨人
+    // DELETE RECIPIENTS
+    function api_delete_Recipient (recipient) {
+
+      let key = []
+      key.push(recipient)
+
+      let recipientData = {
+        'url': `${ server }/api/recipients`,
+        'method': 'DELETE',
+        'headers': {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Authorization': `Bearer ${ userToken }`
+        },
+        'data': JSON.stringify({
+          recipients: key
+        })
+      }
+
+      $.ajax(recipientData)
+
+        .done(function (response) {
+          console.log('api_delete_Recipient: Success', response)
+          api_get_recipients()
+        })
+
+        .fail(function (response) {
+          console.log('api_delete_Recipient: Fail', response.responseText)
         })
     }
 
