@@ -575,6 +575,11 @@ input[type=text], input[type=number], textarea, input[type=tel], select {
   color: #d31010;
   font-size: 1.2em;
 }
+.lightBox__errorMsg {
+  color: #F25757;
+  font-size: 14px;
+  font-size: .8em;
+}
 .lightBox__container {
   max-width: 992px;
   width: 75%;
@@ -877,7 +882,6 @@ header {
 
 .streamUrl__input, .streamUrl__description, .streamID__input, .streamID__description {
   display: block;
-  margin-left: 25px;
   width: calc(100% - 50px);
   margin-bottom: 10px;
 }

@@ -12,7 +12,7 @@
   const personalInfo = document.querySelector('.personalInfo')
   const addButtonContainer = document.querySelector('.addButton__container')
   const getItems = document.querySelector('.getItems')
-  
+  const streamHistory = document.querySelector('.streamHistory')
 
   // domain
   const hrefNow = window.location.href
@@ -649,7 +649,8 @@
           <h3><span>輸入直播包廂ID（區分大小寫）</span></h3>
           <div class="lightBox__breakBox lightBox__url">
             <label for="streamID__input">直播ID</label>
-            <input type="text" placeholder="例如：8uhiVL" class="streamID__input" id="streamID__input" value="8uhiVL">
+            <span class="lightBox__errorMsg"></span>
+            <input type="text" placeholder="例如：8uhiVL" class="streamID__input" id="streamID__input">
           </div>
           <input type="button" value="送出" class="addForm__submit">
         </form>
@@ -708,7 +709,7 @@
                     <div class="contentBody__object__name stream__product__name"></div>
                     <span class="contentBody__object__price stream__product__price">$ <span class="price"></span></span>
                     <span class="contentBody__object__amount">（已售數量：<span class="soldAmount"></span></span>
-                    <span class="contentBody__object__cost">剩餘數量： <span class="remain"</span>）</span>
+                    <span class="contentBody__object__cost">剩餘數量： <span class="remain"></span>）</span>
                   </div>
                   <div class="contentBody__object__spec stream__product__spec">
                     <span class="spec"></span>
@@ -853,7 +854,7 @@
       }
     }
 
-    
+    // 買家要下單的樣板
     function productCalculator () {
 
       let oldQuantity = remainingQuantity
@@ -898,10 +899,15 @@
       }
 
       // 每五秒撈推播商品資訊回來
-      // setTimeout(function(){
-      //   productCalculator()
-      // }, 5000)
+      setTimeout(function(){
+        productCalculator()
+      }, 5000)
     }
+
+    // 放置賣家直播歷史
+    // function setStreamHistory () {
+      
+    // }
 
 
     /*---------------------- 
@@ -932,6 +938,7 @@
               getItems.addEventListener('click', function(){
                 api_get_items('init')
               })
+              streamHistory.addEventListener('click', api_get_streamHistory)
             }
           }
         })
@@ -1123,8 +1130,8 @@
           let productList = response.response
           let productListContainer
 
-          let item = '<div class="stream__onAir"></div>',
-            productAmount = 0
+          let item = '<div class="stream__onAir"></div>'
+          let productAmount = 0
 
           if (productList.length !== 0) {
             for (let i = 0; i < productList.length; i++) {
@@ -1141,8 +1148,6 @@
                 if (contentHeader) contentHeader.innerHTML = `
                   <h2>商品列表<span class="buttonSmall buttonCallToAction startStreaming">開始直播</span></h2>
                   <p class="contentHeader__amountBox"></p>`
-
-                  let productAmountContainer = document.querySelector('.contentHeader__amountBox')
 
                 // 商品列表
                 productListContainer = contentBody
@@ -1166,7 +1171,7 @@
                 productAmount++
 
                 if (!isHome) {
-                  // addProductInit(true)
+
                   sellerInit()
                   productListContainer.innerHTML = item
                   
@@ -1411,6 +1416,8 @@
         })
     }
 
+    // API, GET 取得賣家訂單資料
+
 
     /*---------------------- 
     Streaming API
@@ -1445,13 +1452,18 @@
               if (!host) {
                 // 買家加入直播
                 continueStream(userStatus, productCalculator)
-
                 console.log(host, '買家', userStatus)
+
+                setTimeout(function(){
+                  api_get_userStatus()
+                }, 5000)
+
               } else {
                 // 賣家開始直播
                 console.log(host, '賣家')
                 continueStream(userStatus, function(){
                   console.log('賣家開始直播的callback')
+                  
                 })
               }
 
@@ -1460,7 +1472,6 @@
               let alertMsg
               if (!host) {
                 // 買家角色
-                // ***** 買家若未正確離開包廂也要提醒
 
                 alertMsg = `
                 <h3><span>您尚未離開直播，是否繼續觀看？</span></h3>
@@ -1498,13 +1509,16 @@
             startStreamingButtonsStatus(false)
 
           } else {
+            // let alertMsg = `<h3><span>提示訊息</span></h3>賣家已結束直播`
+            // lightBox.open(alertMsg, true)
             api_get_items('init')
           }
 
         })
 
-        .fail(function (res) {
-          console.log('api_get_userStatus: Fail', res.responseText)
+        .fail(function (response) {
+          console.log('api_get_userStatus: Fail', response.responseText)
+          // console.log(host)
         })
     }
 
@@ -1665,50 +1679,7 @@
     // API, PATCH 加入直播
     function api_patch_userChannelID(event, form) {
 
-      // event.preventDefault()
-
-      // let userChannelID = document.querySelector('.streamID__input').value
-      
-
-      // let formData = new FormData(form)
-      // formData.append('channel_token', userChannelID)
-      // formData.append('_method', 'PATCH')
-
-      // let userChannelData = {
-      //   'url': `${ server }/api/users-channel-id`,
-      //   'method': 'POST',
-      //   // 'method': 'PATCH',
-      //   'headers': {
-      //     // 'Content-Type': 'application/json',
-      //     'X-Requested-With': 'XMLHttpRequest',
-      //     'Authorization': `Bearer ${ userToken }`
-      //   },
-      //   'cache': false,
-      //   processData: false,
-      //   contentType: false,
-      //   'mimeType': 'multipart/form-data',
-      //   'data': formData
-      // }
-      // console.log(formData)
-
-      //   $.ajax(userChannelData)
-      //     .done(function (response) {
-      //       console.log(response)
-      //       if (response.result === true) {
-      //         lightBox.close()
-      //         // api_get_items('init')
-      //         // sellerInit()
-      //       }
-      //     })
-
-      //     .fail(function (response) {
-      //       console.log('api_patch_userChannelID: Fail ' + response.responseText)
-      //     })
-
-      // event.preventDefault()
-
       let userChannelID = document.querySelector('.streamID__input').value
-      
 
       let userChannelData = {
         'url': `${ server }/api/user-channel-id`,
@@ -1735,9 +1706,63 @@
           })
 
           .fail(function (response) {
-            console.log('api_patch_userChannelID: Fail ' + response.responseText)
+            console.log('api_patch_userChannelID: Fail ' + response)
+            let errorMsg = response.responseJSON.response
+            let errorContainer = document.querySelector('.lightBox__errorMsg')
+            if(errorMsg === 'The channel doesn\'t exist') {
+              errorContainer.innerHTML = `直播 ID 輸入錯誤`
+            }else if(errorMsg === 'You are currently holding a live-stream') {
+              errorContainer.innerHTML = `您正在直播中，所以無法進入新包廂`
+            }
           })
 
+    }
+
+    // API, GET 取得直播歷史紀錄
+    function api_get_streamHistory() {
+      API.GET('/api/channels')
+      .done(function(response){
+        console.log(response)
+        let history = response.response
+        let historyTemplate = ''
+        let historyAmount = 0
+
+        history.sort(function(a, b){
+          return a > b ? 1 : -1
+        })
+
+        for (let i = 0; i < history.length; i++){
+          let id = history[i].channel_id
+          let name = history[i].channel_description
+          let video = history[i].iFrame
+          let startTime = history[i].started_at
+          let endTime = history[i].ended_at
+          historyTemplate += `
+          <div class="contentBody__object" data-history="${id}">
+            <div class="contentBody__object__name">${name}</div>
+            <div class="contentBody__object__spec contentBody__object__spec__contact">
+              <div class="contentBody__object__spec__title">直播網址</div>
+              <span class="spec">${video}</span>
+              <div class="contentBody__object__spec__title">直播時間</div>
+              <span class="spec">${startTime} ~ ${endTime}</span>
+            </div>
+          </div>
+          `
+          historyAmount++
+        }
+        contentHeader.innerHTML = `<h2>直播歷史紀錄</h2><p class="contentHeader__amountBox"></p>`
+
+        let historyAmountContainer = document.querySelector('.contentHeader__amountBox')
+
+        historyAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ historyAmount } </span>項`
+
+        contentBody.innerHTML = historyTemplate
+        
+
+      })
+      .fail(function(response){
+        console.log(response)
+      })
     }
   })
 })(lightbox, API)
