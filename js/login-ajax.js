@@ -13,6 +13,8 @@
   const addButtonContainer = document.querySelector('.addButton__container')
   const getItems = document.querySelector('.getItems')
   const streamHistory = document.querySelector('.streamHistory')
+  const sellerOrders = document.querySelector('.sellerGetOrders')
+  const buyerOrders = document.querySelector('.buyerGetOrders')
 
   // domain
   const hrefNow = window.location.href
@@ -306,7 +308,7 @@
     function getPersonalInfo() {
       
       let header = `
-      <h2>個人資料管理</h2>`
+      <h2>買家 > 個人資料管理</h2>`
       let userInfo = `
         <h4 class="">個人資料</h4>
         <div class="contentBody__object" data-user-key="${ userID }">
@@ -422,6 +424,7 @@
 
     }
 
+    // 篩縣市
     function filterCities(citiesArray){
       let manyCities = citiesArray.response
       let taiwanCities = []
@@ -454,6 +457,7 @@
 
     }
 
+    // 篩鄉鎮
     function filterArea (query, cities, selector) {
       return cities.filter(function(item, index, array){
         if (item['City'] === query) {
@@ -467,6 +471,7 @@
       })
     }
 
+    // 篩國碼
     function filterCountry (response) {
       let countrySelect = document.querySelector('.country')
       // 把不在 taiwanCities 的 縣市加進去
@@ -904,11 +909,6 @@
       }, 5000)
     }
 
-    // 放置賣家直播歷史
-    // function setStreamHistory () {
-      
-    // }
-
 
     /*---------------------- 
     User API
@@ -935,10 +935,10 @@
             if (!isHome) {
               // listen each function button
               personalInfo.addEventListener('click', getPersonalInfo)
-              getItems.addEventListener('click', function(){
-                api_get_items('init')
-              })
+              getItems.addEventListener('click', function(){api_get_items('init')})
               streamHistory.addEventListener('click', api_get_streamHistory)
+              sellerOrders.addEventListener('click', api_get_sellerOrders)
+              // buyerOrders.addEventListener('click', )
             }
           }
         })
@@ -1146,7 +1146,7 @@
               if (action === 'init') {
                 // 商品列表標題
                 if (contentHeader) contentHeader.innerHTML = `
-                  <h2>商品列表<span class="buttonSmall buttonCallToAction startStreaming">開始直播</span></h2>
+                  <h2>賣家 > 商品列表<span class="buttonSmall buttonCallToAction startStreaming">開始直播</span></h2>
                   <p class="contentHeader__amountBox"></p>`
 
                 // 商品列表
@@ -1750,13 +1750,93 @@
           `
           historyAmount++
         }
-        contentHeader.innerHTML = `<h2>直播歷史紀錄</h2><p class="contentHeader__amountBox"></p>`
+        contentHeader.innerHTML = `<h2>賣家 > 直播歷史紀錄</h2><p class="contentHeader__amountBox"></p>`
 
         let historyAmountContainer = document.querySelector('.contentHeader__amountBox')
 
         historyAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ historyAmount } </span>項`
 
         contentBody.innerHTML = historyTemplate
+        
+
+      })
+      .fail(function(response){
+        console.log(response)
+      })
+    }
+
+    // API, GET 取得賣家全部訂單
+    function api_get_sellerOrders() {
+      API.GET('/api/seller-orders')
+      .done(function(response){
+        let order = response.response
+        console.log(order)
+        let orderTemplate = '<h4>全部訂單</h4>'
+        let orderAmount = 0
+
+        order.sort(function(a, b){
+          return a > b ? 1 : -1
+        })
+
+        for (let i = 0; i < order.length; i++){
+          // 訂單資訊
+          let orderNumber = order[i].order // 訂單編號
+          let name = order[i].name // 商品名稱
+          let description = order[i].description // 商品敘述
+          let unit_price = order[i].unit_price // 單價
+          let quantity = order[i].quantity // 數量
+          let effective = order[i].effective // 0 未結帳，1 已結帳
+          // TODO: 判定未付款以及已結帳的按鈕
+          let expiry_time = order[i].expiry_time // 付款期限
+          let time = order[i].time // 商品時間
+          let images = order[i].images // 商品照片
+          effective = (!effective) ? '已結帳' : '未結帳'
+
+          // 金流資訊
+          let total_amount = order[i].total_amount
+
+          // 物流資訊
+          let recipient = order[i].recipient
+          let user_id = order[i].user_id
+          let phone_code = order[i].phone_code
+          let phone_number = order[i].phone_number
+
+          let country = order[i].country
+          let post_code = order[i].post_code
+          let city = order[i].city
+          let district = order[i].district
+          let others = order[i].others
+
+
+          orderTemplate += `
+          <div class="contentBody__object" data-order="${orderNumber}">
+            <img src="${images}" alt="demo red" class="contentBody__object__photo">
+            <div class="contentBody__object__name">${name} （${effective}）</div>
+            <span class="contentBody__object__amount">購買數量：<span class="amount">${quantity}</span></span>
+            <span class="contentBody__object__cost">單價：$ <span class="cost">${unit_price}</span></span>
+            <span class="contentBody__object__price">$ <span class="price">${total_amount}</span></span>
+            <div class="contentBody__object__spec">
+              <div class="contentBody__object__spec__title">${description}</div>
+              <span class="spec"></span>
+            </div>
+            <div class="contentBody__object__spec">
+            <div class="spec" data-buyer="${user_id}">收件人姓名：${recipient}</div>
+            <div class="spec">聯絡電話：(+${phone_code}) ${phone_number}</div>
+            <div class="spec">收貨地址：${country} ${post_code} ${city}${district}${others}</div>
+            <div class="contentBody__object__spec__title">訂單時間：${time}。付款期限：${expiry_time}。</div>
+            </div>
+
+          </div>
+          `
+          orderAmount++
+        }
+        contentHeader.innerHTML = `<h2>賣家 > 訂單管理</h2><p class="contentHeader__amountBox"></p>`
+
+        let orderAmountContainer = document.querySelector('.contentHeader__amountBox')
+
+        orderAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ orderAmount } </span>項`
+
+        contentBody.innerHTML = orderTemplate
         
 
       })

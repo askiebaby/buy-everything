@@ -76,6 +76,7 @@ input[type=text], input[type=number], textarea, input[type=tel], select {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  line-height: 1.5em;
 }
 
 .buttonBig {
@@ -83,6 +84,7 @@ input[type=text], input[type=number], textarea, input[type=tel], select {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  line-height: 1.5em;
 }
 
 .buttonBig + .buttonBig {
@@ -250,6 +252,7 @@ input[type=text], input[type=number], textarea, input[type=tel], select {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  line-height: 1.5em;
 }
 
 .buttonBig {
@@ -257,6 +260,7 @@ input[type=text], input[type=number], textarea, input[type=tel], select {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  line-height: 1.5em;
 }
 
 .buttonBig + .buttonBig {
@@ -428,6 +432,7 @@ input[type=text], input[type=number], textarea, input[type=tel], select {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  line-height: 1.5em;
 }
 
 .buttonBig {
@@ -435,6 +440,7 @@ input[type=text], input[type=number], textarea, input[type=tel], select {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  line-height: 1.5em;
 }
 
 .buttonBig + .buttonBig {
@@ -681,6 +687,7 @@ header {
 }
 .contentHeader h2 {
   font-size: 1.2em;
+  line-height: 2em;
   margin-bottom: 20px;
 }
 .contentHeader__amountBox {
@@ -688,6 +695,7 @@ header {
   right: 0;
   top: 0;
   letter-spacing: .1em;
+  line-height: 2.25em;
 }
 .contentHeader__amount {
   font-weight: 700;
@@ -775,6 +783,7 @@ header {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  line-height: 1.5em;
   background: #eee;
   color: #666;
 }
@@ -786,6 +795,7 @@ header {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  line-height: 1.5em;
   background: #F25757;
   color: #f1f2f3;
 }
@@ -797,6 +807,7 @@ header {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  line-height: 1.5em;
   background: #267abd;
   color: #f1f2f3;
 }
