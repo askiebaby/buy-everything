@@ -1016,6 +1016,7 @@ header {
   color: #267abd;
   min-width: 45px;
   text-align: center;
+  max-width: 100px;
 }
 .buyForm__submit {
   padding: 15px 45px;

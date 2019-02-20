@@ -6,7 +6,6 @@
   let userID, userName, userEmail, userPhoto,  userPhone, host
   console.log('Global: ', userToken, host)
   let remainingQuantity
-  console.log('Global: ' + remainingQuantity)
 
   // function
   const personalInfo = document.querySelector('.personalInfo')
@@ -65,12 +64,6 @@
     // 賣家登入後的預設畫面
     function sellerInit() {
 
-      // 結束直播後把新增商品按鈕放回來
-
-      if (addButtonContainer.innerHTML === '') {
-        addButtonContainer.innerHTML = `<button class="addButton"><i class="fas fa-plus"></i></button>`
-      }
-
       let addForm = `
         <form action="${ server }/api/items" class="productForm" name="productForm" enctype="multipart/form-data" method="POST">
           <h3><span>新增商品</span></h3>
@@ -113,6 +106,7 @@
         </form>
       `
 
+      // 結束直播後把新增商品按鈕放回來
       addProductInit(true, addForm)
 
     }
@@ -341,7 +335,7 @@
       let recipientsContainer = document.querySelector('.recipients')
 
       if (response.result === false) {
-        recipientsContainer.innerHTML = '尚未新增收件人資料'
+        recipientsContainer.innerHTML = `尚未新增收件人資料。`
       } else {
         // 有收件人資料時
         let recipient = response.response
@@ -424,6 +418,10 @@
 
     }
 
+    function chooseRecipient () {
+      // if ()
+      lightBox.open(template, true)
+    }
     // 篩縣市
     function filterCities(citiesArray){
       let manyCities = citiesArray.response
@@ -591,14 +589,14 @@
     // 新增商品按鈕狀態
     function addProductInit (isInit, addForm) {
 
-      let addButton = document.querySelector('.addButton')
-
       if (isInit) {
 
         // 結束直播後把新增商品按鈕放回來
         if (addButtonContainer.innerHTML === '') {
           addButtonContainer.innerHTML = `<button class="addButton"><i class="fas fa-plus"></i></button>`
         }
+
+        let addButton = document.querySelector('.addButton')
 
         addButton.addEventListener('click', function () {
           // callback
@@ -617,6 +615,7 @@
         })
 
       } else {
+        let addButton = document.querySelector('.addButton')
         if(addButton) addButton.remove()
       }
     }
@@ -648,7 +647,7 @@
 
     // 詢問直播id
     function askForStreamID() {
-      console.log('輸入id')
+
       let streamInput = `
         <form type="POST" class="streamForm" name="streamForm">
           <h3><span>輸入直播包廂ID（區分大小寫）</span></h3>
@@ -664,14 +663,9 @@
 
       
       let submit = document.querySelector('.addForm__submit')
-      let streamForm = document.forms.namedItem('streamForm')
-      // streamForm.addEventListener('submit', function (event) {
-      //   api_patch_userChannelID(event, streamForm)
-      // })
       submit.addEventListener('click', function (event) {
         api_patch_userChannelID(event)
       })
-      // ***** 先做 UI
 
     }
 
@@ -737,9 +731,9 @@
             let buyForm = `
               <form name="buyForm" class="buyForm">
                 <input type="button" class="buyForm__operator buyForm__minus" value="-">
-                <span class="buyForm__totalContainer"><input type="number" class="buyForm__total">${remainingQuantity}</input></span>
+                <span class="buyForm__totalContainer"><input type="number" class="buyForm__totalAmount" value="1" min="1"></span>
                 <input type="button" class="buyForm__operator buyForm__add" value="+">
-                <div class="buyForm__submitContainer"><input type="submit" value="確認購買" class="buyForm__submit"></div>
+                <div class="buyForm__submitContainer"><input type="button" value="確認購買" class="buyForm__submit"></div>
               </form>`
 
               let buyFormContainer = document.querySelector('.buyFormContainer')
@@ -862,51 +856,31 @@
     // 買家要下單的樣板
     function productCalculator () {
 
-      let oldQuantity = remainingQuantity
-      console.log('productCalculator: '+remainingQuantity)
+      // console.log('productCalculator: '+remainingQuantity)
 
       let add = document.querySelector('.buyForm__add')
       let minus = document.querySelector('.buyForm__minus')
       let totalContainer = document.querySelector('.buyForm__totalContainer')
-      let total = totalContainer.querySelector('.buyForm__total')
-      let totalVal = total.textContent
-      console.log('開始計算', add, minus, total, totalVal, remainingQuantity)
+      let totalVal = totalContainer.querySelector('.buyForm__totalAmount').value
+      let submit = document.querySelector('.buyForm__submit')
+      // console.log('開始計算', add, minus, total, totalVal, remainingQuantity)
 
-      if (remainingQuantity === 0) {
-        // total.value = 0
-        totalContainer.innerHTML = `<input type="number" class="buyForm__total" value="0"></input>`
-        console.log('售完')
-      } else if (remainingQuantity === undefined) {
-        // total.value = 100
-        totalContainer.innerHTML = `<span class="buyForm__total">載入中</span>`
-        console.log('載入中')
-      } else if (remainingQuantity >= 1){
-        console.log('已經大於一個數量', oldQuantity, remainingQuantity)
-        totalContainer.innerHTML = `<input type="number" class="buyForm__total" value="1" min="1" max="remainingQuantity"></input>`
-        // total.value = 1
         add.addEventListener('click', function(){
-          // 小於剩餘數量才可購買
-          if (totalVal < remainingQuantity){
-            totalVal = totalVal +1 // 轉型別
-            total.value = totalVal
-            console.log(typeof totalVal, total.textContent, '+1')
-          }
+          totalVal = parseInt(totalVal) +1 // 轉型別
+          // total.value = totalVal
+          console.log(typeof totalVal, totalVal, total.value, '+1')
         })
-  
-        // 大於一項商品才可購買
+        
         minus.addEventListener('click', function(){
-          if (totalVal > 1){
+          if(totalVal > 1){
             totalVal = parseInt(totalVal) -1 // 轉型別
-            total.textContent = totalVal
-            console.log(typeof totalVal, total.textContent, '-1')
+            // total.value = totalVal
+            console.log(typeof totalVal, totalVal, total.value, '-1')
           }
         })
-      }
 
-      // 每五秒撈推播商品資訊回來
-      setTimeout(function(){
-        productCalculator()
-      }, 5000)
+        submit.addEventListener('click', chooseRecipient)
+
     }
 
 
@@ -1133,6 +1107,11 @@
           let item = '<div class="stream__onAir"></div>'
           let productAmount = 0
 
+          // 商品列表標題
+          if (contentHeader) contentHeader.innerHTML = `
+          <h2>賣家 > 商品列表<span class="buttonSmall buttonCallToAction startStreaming">開始直播</span></h2>
+          <p class="contentHeader__amountBox"></p>`
+
           if (productList.length !== 0) {
             for (let i = 0; i < productList.length; i++) {
               let id = productList[i].id
@@ -1144,10 +1123,6 @@
               let photo = productList[i].images
 
               if (action === 'init') {
-                // 商品列表標題
-                if (contentHeader) contentHeader.innerHTML = `
-                  <h2>賣家 > 商品列表<span class="buttonSmall buttonCallToAction startStreaming">開始直播</span></h2>
-                  <p class="contentHeader__amountBox"></p>`
 
                 // 商品列表
                 productListContainer = contentBody
@@ -1176,7 +1151,6 @@
                   productListContainer.innerHTML = item
                   
                   let productAmountContainer = document.querySelector('.contentHeader__amountBox')
-
                   productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
                   // 共同父層
@@ -1262,9 +1236,12 @@
               }
             }
           } else {
-
-            item = '您尚未新增商品。'
-            startStreamingButtonsStatus(false)
+            if (action === 'init') {
+              sellerInit()
+              contentBody.innerHTML = '您尚未新增商品。'
+              startStreamingButtonsStatus(false)
+            }
+            
 
           }
 
@@ -1416,6 +1393,11 @@
         })
     }
 
+    // API, POST 買家購買商品
+    function api_post_orders (){
+      console.log('按下確認購買')
+      // /api/orders/{item_id}/{recipient_id}
+    }
     // API, GET 取得賣家訂單資料
 
 
@@ -1446,17 +1428,15 @@
               productId: productId
             }
 
-            
-            console.log(host)
             if (action === 'stream') {
               if (!host) {
                 // 買家加入直播
                 continueStream(userStatus, productCalculator)
                 console.log(host, '買家', userStatus)
 
-                setTimeout(function(){
-                  api_get_userStatus()
-                }, 5000)
+                // setTimeout(function(){
+                //   api_get_userStatus()
+                // }, 5000)
 
               } else {
                 // 賣家開始直播
@@ -1468,7 +1448,6 @@
               }
 
             } else if (action === 'init') {
-              console.log(host, !host)
               let alertMsg
               if (!host) {
                 // 買家角色
@@ -1722,41 +1701,44 @@
     function api_get_streamHistory() {
       API.GET('/api/channels')
       .done(function(response){
-        console.log(response)
+        addProductInit(false) // 關閉新增商品按鈕
+        contentHeader.innerHTML = `<h2>賣家 > 直播歷史紀錄</h2><p class="contentHeader__amountBox"></p>`
+
         let history = response.response
         let historyTemplate = ''
         let historyAmount = 0
 
-        history.sort(function(a, b){
-          return a > b ? 1 : -1
-        })
-
-        for (let i = 0; i < history.length; i++){
-          let id = history[i].channel_id
-          let name = history[i].channel_description
-          let video = history[i].iFrame
-          let startTime = history[i].started_at
-          let endTime = history[i].ended_at
-          historyTemplate += `
-          <div class="contentBody__object" data-history="${id}">
-            <div class="contentBody__object__name">${name}</div>
-            <div class="contentBody__object__spec contentBody__object__spec__contact">
-              <div class="contentBody__object__spec__title">直播網址</div>
-              <span class="spec">${video}</span>
-              <div class="contentBody__object__spec__title">直播時間</div>
-              <span class="spec">${startTime} ~ ${endTime}</span>
+        if(history.length !== 0) {
+          history.sort(function(a, b){
+            return a > b ? 1 : -1
+          })
+  
+          for (let i = 0; i < history.length; i++){
+            let id = history[i].channel_id
+            let name = history[i].channel_description
+            let video = history[i].iFrame
+            let startTime = history[i].started_at
+            let endTime = history[i].ended_at
+            historyTemplate += `
+            <div class="contentBody__object" data-history="${id}">
+              <div class="contentBody__object__name">${name}</div>
+              <div class="contentBody__object__spec contentBody__object__spec__contact">
+                <div class="contentBody__object__spec__title">直播網址</div>
+                <span class="spec">${video}</span>
+                <div class="contentBody__object__spec__title">直播時間</div>
+                <span class="spec">${startTime} ~ ${endTime}</span>
+              </div>
             </div>
-          </div>
-          `
-          historyAmount++
+            `
+            historyAmount++
+          }
+          let historyAmountContainer = document.querySelector('.contentHeader__amountBox')
+          historyAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ historyAmount } </span>項`
+          contentBody.innerHTML = historyTemplate
+        }else {
+          contentBody.innerHTML = `您尚未開過任何直播包廂。`
         }
-        contentHeader.innerHTML = `<h2>賣家 > 直播歷史紀錄</h2><p class="contentHeader__amountBox"></p>`
-
-        let historyAmountContainer = document.querySelector('.contentHeader__amountBox')
-
-        historyAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ historyAmount } </span>項`
-
-        contentBody.innerHTML = historyTemplate
+        
         
 
       })
@@ -1770,73 +1752,76 @@
       API.GET('/api/seller-orders')
       .done(function(response){
         let order = response.response
-        console.log(order)
         let orderTemplate = '<h4>全部訂單</h4>'
         let orderAmount = 0
 
-        order.sort(function(a, b){
-          return a > b ? 1 : -1
-        })
-
-        for (let i = 0; i < order.length; i++){
-          // 訂單資訊
-          let orderNumber = order[i].order // 訂單編號
-          let name = order[i].name // 商品名稱
-          let description = order[i].description // 商品敘述
-          let unit_price = order[i].unit_price // 單價
-          let quantity = order[i].quantity // 數量
-          let effective = order[i].effective // 0 未結帳，1 已結帳
-          // TODO: 判定未付款以及已結帳的按鈕
-          let expiry_time = order[i].expiry_time // 付款期限
-          let time = order[i].time // 商品時間
-          let images = order[i].images // 商品照片
-          effective = (!effective) ? '已結帳' : '未結帳'
-
-          // 金流資訊
-          let total_amount = order[i].total_amount
-
-          // 物流資訊
-          let recipient = order[i].recipient
-          let user_id = order[i].user_id
-          let phone_code = order[i].phone_code
-          let phone_number = order[i].phone_number
-
-          let country = order[i].country
-          let post_code = order[i].post_code
-          let city = order[i].city
-          let district = order[i].district
-          let others = order[i].others
-
-
-          orderTemplate += `
-          <div class="contentBody__object" data-order="${orderNumber}">
-            <img src="${images}" alt="demo red" class="contentBody__object__photo">
-            <div class="contentBody__object__name">${name} （${effective}）</div>
-            <span class="contentBody__object__amount">購買數量：<span class="amount">${quantity}</span></span>
-            <span class="contentBody__object__cost">單價：$ <span class="cost">${unit_price}</span></span>
-            <span class="contentBody__object__price">$ <span class="price">${total_amount}</span></span>
-            <div class="contentBody__object__spec">
-              <div class="contentBody__object__spec__title">${description}</div>
-              <span class="spec"></span>
-            </div>
-            <div class="contentBody__object__spec">
-            <div class="spec" data-buyer="${user_id}">收件人姓名：${recipient}</div>
-            <div class="spec">聯絡電話：(+${phone_code}) ${phone_number}</div>
-            <div class="spec">收貨地址：${country} ${post_code} ${city}${district}${others}</div>
-            <div class="contentBody__object__spec__title">訂單時間：${time}。付款期限：${expiry_time}。</div>
-            </div>
-
-          </div>
-          `
-          orderAmount++
-        }
         contentHeader.innerHTML = `<h2>賣家 > 訂單管理</h2><p class="contentHeader__amountBox"></p>`
+        addProductInit(false) // 關閉新增商品按鈕
 
-        let orderAmountContainer = document.querySelector('.contentHeader__amountBox')
+        if(order.length !== 0) {
+          order.sort(function(a, b){
+            return a > b ? 1 : -1
+          })
 
-        orderAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ orderAmount } </span>項`
+          for (let i = 0; i < order.length; i++){
+            // 訂單資訊
+            let orderNumber = order[i].order // 訂單編號
+            let name = order[i].name // 商品名稱
+            let description = order[i].description // 商品敘述
+            let unit_price = order[i].unit_price // 單價
+            let quantity = order[i].quantity // 數量
+            let effective = order[i].effective // 0 未結帳，1 已結帳
+            // TODO: 判定未付款以及已結帳的按鈕
+            let expiry_time = order[i].expiry_time // 付款期限
+            let time = order[i].time // 商品時間
+            let images = order[i].images // 商品照片
+            effective = (!effective) ? '已結帳' : '未結帳'
 
-        contentBody.innerHTML = orderTemplate
+            // 金流資訊
+            let total_amount = order[i].total_amount
+
+            // 物流資訊
+            let recipient = order[i].recipient
+            let user_id = order[i].user_id
+            let phone_code = order[i].phone_code
+            let phone_number = order[i].phone_number
+
+            let country = order[i].country
+            let post_code = order[i].post_code
+            let city = order[i].city
+            let district = order[i].district
+            let others = order[i].others
+
+
+            orderTemplate += `
+            <div class="contentBody__object" data-order="${orderNumber}">
+              <img src="${images}" alt="demo red" class="contentBody__object__photo">
+              <div class="contentBody__object__name">${name} （${effective}）</div>
+              <span class="contentBody__object__amount">購買數量：<span class="amount">${quantity}</span></span>
+              <span class="contentBody__object__cost">單價：$ <span class="cost">${unit_price}</span></span>
+              <span class="contentBody__object__price">$ <span class="price">${total_amount}</span></span>
+              <div class="contentBody__object__spec">
+                <div class="contentBody__object__spec__title">${description}</div>
+                <span class="spec"></span>
+              </div>
+              <div class="contentBody__object__spec">
+              <div class="spec" data-buyer="${user_id}">收件人姓名：${recipient}</div>
+              <div class="spec">聯絡電話：(+${phone_code}) ${phone_number}</div>
+              <div class="spec">收貨地址：${country} ${post_code} ${city}${district}${others}</div>
+              <div class="contentBody__object__spec__title">訂單時間：${time}。付款期限：${expiry_time}。</div>
+              </div>
+
+            </div>
+            `
+            orderAmount++
+          }
+
+          let orderAmountContainer = document.querySelector('.contentHeader__amountBox')
+          orderAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ orderAmount } </span>項`
+          contentBody.innerHTML = orderTemplate
+        }else{
+          contentBody.innerHTML = `您尚無任何訂單。`
+        }
         
 
       })
