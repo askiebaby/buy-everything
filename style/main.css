@@ -25,7 +25,7 @@ input[type=text], input[type=number], textarea, input[type=tel], select {
 
 .maxWidth {
   position: relative;
-  max-width: 1200px;
+  max-width: 1080px;
   width: 100%;
   margin: auto;
 }
@@ -222,11 +222,21 @@ input[type=text], input[type=number], textarea, input[type=tel], select {
 }
 .loginPage__user__photo {
   border-radius: 50%;
-  width: 35px;
+  width: 38px;
+  height: 38px;
   margin-right: 15px;
   margin-top: auto;
   margin-bottom: auto;
   display: flex;
+  padding: 2px;
+  background: #f7fcff;
+  background: -moz-linear-gradient(-45deg, #f7fcff 0%, #87dfff 100%);
+  background: -webkit-gradient(left top, right bottom, color-stop(0%, #f7fcff), color-stop(100%, #87dfff));
+  background: -webkit-linear-gradient(-45deg, #f7fcff 0%, #87dfff 100%);
+  background: -o-linear-gradient(-45deg, #f7fcff 0%, #87dfff 100%);
+  background: -ms-linear-gradient(-45deg, #f7fcff 0%, #87dfff 100%);
+  background: linear-gradient(135deg, #f7fcff 0%, #87dfff 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7fcff', endColorstr='#87dfff', GradientType=1 );
 }
 .loginPage__user__name {
   color: #333;
@@ -658,7 +668,7 @@ header {
 
 .content {
   position: relative;
-  max-width: 992px;
+  max-width: 1080px;
   margin: auto;
 }
 
@@ -735,7 +745,7 @@ header {
   border-radius: 5px;
   line-height: 1.8;
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 .contentBody__object::after {
   content: '';
@@ -744,8 +754,9 @@ header {
 }
 .contentBody__object__photo {
   float: left;
+  margin-top: 5px;
   margin-right: 10px;
-  width: 150px;
+  width: 140px;
 }
 .contentBody__object__name {
   font-weight: 700;
@@ -756,8 +767,8 @@ header {
   background: #eee;
   border-left: 5px solid #d4d4d4;
   display: inline-block;
-  width: calc(100% - 160px);
-  padding: 10px 10px 20px;
+  width: calc(100% - 150px);
+  padding: 10px;
   margin: 10px 0;
   border-radius: 0 3px 3px 0;
   word-break: break-word;
@@ -766,6 +777,9 @@ header {
   font-size: .9em;
   color: #666;
   margin-top: 10px;
+}
+.contentBody__object__spec__title:first-child {
+  margin-top: 0;
 }
 .contentBody__object__spec__contact {
   width: 100%;
@@ -910,7 +924,7 @@ header {
 .stream__frame {
   width: 65%;
   border: 1px solid #999;
-  max-height: calc(1200px * 0.65 * 0.5625);
+  max-height: calc(1080px * 0.65 * 0.5625);
 }
 .stream__onAir {
   position: absolute;
@@ -925,12 +939,12 @@ header {
 }
 .stream__onAir .stream__product__spec {
   background: #fff;
-  border-left-color: #e6e6e6;
+  border-left-color: #267abd;
 }
 .stream__products {
   width: 34%;
-  min-height: 400px;
-  max-height: calc( 1200px * 0.65 * 0.5625);
+  min-height: 360px;
+  max-height: calc(1080px * 0.65 * 0.5625);
   border: 1px solid #999;
   background: #eee;
   overflow-y: auto;
@@ -965,13 +979,14 @@ header {
   font-size: .9em;
 }
 .stream__product__name {
-  width: 100%;
+  width: calc(100% - 52px);
 }
 .stream__product__price {
   position: relative;
   top: auto;
   right: auto;
   font-size: initial;
+  padding: 0 10px 0 0;
 }
 .stream__product__spec {
   width: 100%;
@@ -1033,4 +1048,7 @@ header {
 .buyForm__submitContainer {
   margin-top: 30px;
   flex-basis: 100%;
+}
+.buyForm .order__navButton {
+  color: #d4d4d4;
 }

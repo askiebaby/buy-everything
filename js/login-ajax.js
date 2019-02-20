@@ -3,7 +3,7 @@
   let server = 'https://facebookoptimizedlivestreamsellingsystem.rayawesomespace.space'
 
   // personal info
-  let userID, userName, userEmail, userPhoto,  userPhone, host
+  let userID, userName, userEmail, userPhoto, userPhone, host
   console.log('Global: ', userToken, host)
   let remainingQuantity
 
@@ -106,6 +106,8 @@
         </form>
       `
 
+
+
       // 結束直播後把新增商品按鈕放回來
       addProductInit(true, addForm)
 
@@ -205,8 +207,7 @@
 
     function checkSituation(action, userName, userPhoto) {
 
-      let hrefSeller = hrefOrigin + 'seller/index.html'
-      let hrefBuyer = hrefOrigin + 'buyer/index.html'
+      let hrefSeller = hrefOrigin + 'service/index.html'
       let functions
 
       if (isHome) {
@@ -228,13 +229,9 @@
             <p class="loginPage__user__name">${ userName } 登入中</p>
           </div>
           <div class="loginPage__function">
-            <a href="buyer/index.html" class="buttonBig loginPage__function__buyer">
-              <i class="fas fa-cart-plus fa-fw"></i>
-              Buy Something
-            </a>
-            <a href="seller/index.html" class="buttonBig loginPage__function__seller">
+            <a href="service/index.html" class="buttonBig loginPage__function__seller">
               <i class="fas fa-hand-holding-usd fa-fw"></i>
-              Sell Something
+              買起來！賣起來！
             </a>
           </div>
           `
@@ -249,7 +246,7 @@
 
       } else if (hrefNow === hrefSeller) {
 
-        console.log('現在是賣家頁面')
+        // console.log('現在是服務頁面')
 
         if (action === 'logout') {
           window.location.assign(hrefOrigin)
@@ -271,18 +268,9 @@
           fbButton.addEventListener('click', buttonLogout)
           api_get_items('init')
         }
-
-      } else if (hrefNow === hrefBuyer) {
-
-        console.log('現在是買家頁面')
-
-        if (!boolean) {
-          window.location.assign(hrefOrigin)
-        } else {
-          // do something
-        }
       } else {
         // 外網
+        window.location.assign(hrefOrigin)
       }
     }
 
@@ -300,7 +288,7 @@
 
     //
     function getPersonalInfo() {
-      
+
       let header = `
       <h2>買家 > 個人資料管理</h2>`
       let userInfo = `
@@ -325,7 +313,7 @@
       contentBody.innerHTML = userInfo
       addProductInit(false) // 關閉新增商品按鈕
       api_get_recipients() // 取得收件人資料
-      
+
       let addRecipientButton = document.querySelector('.addRecipient')
       addRecipientButton.addEventListener('click', addRecipient)
     }
@@ -359,9 +347,9 @@
         }
 
         recipientsContainer.innerHTML = recipientCard
-        
+
         let deleteRecipient = document.querySelectorAll('.contentBody__object__delete')
-        for(let i = 0; i < recipient.length; i++){
+        for (let i = 0; i < recipient.length; i++) {
           deleteRecipient[i].addEventListener('click', function () {
             let recipientKey = deleteRecipient[i].parentElement.parentElement.dataset.recipient
             api_delete_Recipient(recipientKey)
@@ -371,7 +359,7 @@
       }
     }
 
-    function addRecipient () {
+    function addRecipient() {
       let addForm = `
         <form action="" class="productForm" name="productForm" method="POST">
         <h3><span>新增收件人</span></h3>
@@ -412,30 +400,30 @@
 
       let submit = document.querySelector('.addForm__submit')
 
-      submit.addEventListener('click', function(){
+      submit.addEventListener('click', function () {
         api_post_recipients()
       })
 
     }
 
-    function chooseRecipient () {
+    function chooseRecipient() {
       // if ()
       lightBox.open(template, true)
     }
     // 篩縣市
-    function filterCities(citiesArray){
+    function filterCities(citiesArray) {
       let manyCities = citiesArray.response
       let taiwanCities = []
       let citySelect = document.querySelector('.city')
       let districtSelect = document.querySelector('.district')
       // 按照郵遞區號排好縣市
-      manyCities = manyCities.sort(function(a, b){
+      manyCities = manyCities.sort(function (a, b) {
         return a.ZipCode > b.ZipCode ? 1 : -1
       })
 
       // 把不在 taiwanCities 的 縣市加進去
       // item 物件, index 索引, array 全部陣列
-      manyCities.forEach(function(item, index, array){
+      manyCities.forEach(function (item, index, array) {
         let isCityExist = taiwanCities.indexOf(item['City'])
         if (isCityExist === -1) {
           taiwanCities.push(item['City'])
@@ -447,7 +435,7 @@
       })
 
 
-      citySelect.addEventListener('change', function(){
+      citySelect.addEventListener('change', function () {
         // 清掉鄉鎮原本的選單內容，重放一次
         districtSelect.innerHTML = `<option selected disabled>鄉鎮</option>`
         filterArea(citySelect.value, manyCities, districtSelect)
@@ -456,8 +444,8 @@
     }
 
     // 篩鄉鎮
-    function filterArea (query, cities, selector) {
-      return cities.filter(function(item, index, array){
+    function filterArea(query, cities, selector) {
+      return cities.filter(function (item, index, array) {
         if (item['City'] === query) {
           let districtOption = document.createElement('OPTION')
           districtOption.dataset.zipcode = item['ZipCode']
@@ -470,18 +458,20 @@
     }
 
     // 篩國碼
-    function filterCountry (response) {
+    function filterCountry(response) {
       let countrySelect = document.querySelector('.country')
       // 把不在 taiwanCities 的 縣市加進去
       // item 物件, index 索引, array 全部陣列
-      response.forEach(function(item, index, array){    
-          let countryOption = document.createElement('OPTION')
-          countryOption.innerHTML = `${item['country']} (+${item['phone_code']})`
-          countryOption.value = item['country']
-          countryOption.dataset.country = item['country_code']
-          countryOption.dataset.phone = item['phone_code']
-          if (item['country'].indexOf('Taiwan') !== -1){countryOption.selected = true}
-          countrySelect.appendChild(countryOption)
+      response.forEach(function (item, index, array) {
+        let countryOption = document.createElement('OPTION')
+        countryOption.innerHTML = `${item['country']} (+${item['phone_code']})`
+        countryOption.value = item['country']
+        countryOption.dataset.country = item['country_code']
+        countryOption.dataset.phone = item['phone_code']
+        if (item['country'].indexOf('Taiwan') !== -1) {
+          countryOption.selected = true
+        }
+        countrySelect.appendChild(countryOption)
       })
     }
 
@@ -587,37 +577,39 @@
     }
 
     // 新增商品按鈕狀態
-    function addProductInit (isInit, addForm) {
+    function addProductInit(isInit, addForm) {
 
-      if (isInit) {
+      if (!isHome) {
+        if (isInit) {
+          // 結束直播後把新增商品按鈕放回來
+          if (addButtonContainer.innerHTML === '') {
+            addButtonContainer.innerHTML = `<button class="addButton"><i class="fas fa-plus"></i></button>`
+          }
 
-        // 結束直播後把新增商品按鈕放回來
-        if (addButtonContainer.innerHTML === '') {
-          addButtonContainer.innerHTML = `<button class="addButton"><i class="fas fa-plus"></i></button>`
+          let addButton = document.querySelector('.addButton')
+
+          addButton.addEventListener('click', function () {
+            // callback
+            lightBox.open(addForm, true)
+
+            let photoReal = document.getElementById('addForm__photo')
+            photoReal.addEventListener('change', function () {
+              preview_image(event)
+            })
+
+            let productForm = document.forms.namedItem('productForm')
+
+            productForm.addEventListener('submit', function (event) {
+              api_post_items(event, productForm)
+            })
+          })
+
+        } else {
+          let addButton = document.querySelector('.addButton')
+          if (addButton) addButton.remove()
         }
-
-        let addButton = document.querySelector('.addButton')
-
-        addButton.addEventListener('click', function () {
-          // callback
-          lightBox.open(addForm, true)
-
-          let photoReal = document.getElementById('addForm__photo')
-          photoReal.addEventListener('change', function () {
-            preview_image(event)
-          })
-
-          let productForm = document.forms.namedItem('productForm')
-
-          productForm.addEventListener('submit', function (event) {
-            api_post_items(event, productForm)
-          })
-        })
-
-      } else {
-        let addButton = document.querySelector('.addButton')
-        if(addButton) addButton.remove()
       }
+
     }
 
     /*---------------------- 
@@ -661,7 +653,7 @@
       `
       lightBox.open(streamInput, true)
 
-      
+
       let submit = document.querySelector('.addForm__submit')
       submit.addEventListener('click', function (event) {
         api_patch_userChannelID(event)
@@ -671,16 +663,17 @@
 
     // 渲染買賣家直播畫面
     function continueStream(userStatus, callback) {
+      let onAirBox = document.querySelector('.stream__onAir')
       let streamHeader, streamUI
       lightBox.close()
 
       if (isHome) {
-        window.location.assign(hrefOrigin + 'seller/index.html')
+        window.location.assign(hrefOrigin + 'service/index.html')
       } else {
         console.log(userStatus)
         switch (userStatus.host) {
           case 0:
-          // 買家
+            // 買家
             streamHeader = `
             <h2>
               親愛的買家：您正在直播包廂（${ userStatus.channelToken }）<span class="buttonSmall buttonCallToAction stopStreaming" data-key="${ userStatus.productId }">離開包廂</span>
@@ -720,14 +713,6 @@
             </div>
             `
 
-            contentHeader.innerHTML = streamHeader
-            contentBody.innerHTML = streamUI
-
-            videoSdk(document, 'script', 'facebook-jssdk')
-
-            api_get_streamingItem()
-
-
             let buyForm = `
               <form name="buyForm" class="buyForm">
                 <input type="button" class="buyForm__operator buyForm__minus" value="-">
@@ -736,16 +721,26 @@
                 <div class="buyForm__submitContainer"><input type="button" value="確認購買" class="buyForm__submit"></div>
               </form>`
 
-              let buyFormContainer = document.querySelector('.buyFormContainer')
+            let buyFormContainer = document.querySelector('.buyFormContainer')
+
+            // 如果是還在直播包廂時，點擊選單其他功能，
+            // 而後來繼續直播，要能夠不重新渲染畫面。
+            if(!onAirBox.firstElementChild){
+              contentHeader.innerHTML = streamHeader
+              contentBody.innerHTML = streamUI
+
+              videoSdk(document, 'script', 'facebook-jssdk')
+              api_get_streamingItem()
               buyFormContainer.innerHTML = buyForm
+            }
 
             callback()
             break
 
           case 1:
 
-          // 賣家
-          console.log('賣家')
+            // 賣家
+            console.log('賣家')
             streamHeader = `
             直播包廂：${ userStatus.channelToken }<span class="buttonSmall buttonCallToAction stopStreaming" data-key="${ userStatus.productId }">結束直播</span>
             <div class="contentHeader__description">
@@ -765,11 +760,15 @@
               <div class="stream__products"></div>
             </div>
             `
-            contentHeader.firstElementChild.innerHTML = streamHeader
-            contentBody.innerHTML = streamUI
-
-            videoSdk(document, 'script', 'facebook-jssdk')
-            api_get_items('stream', userStatus.host)
+            // 如果是還在直播包廂時，點擊選單其他功能，
+            // 而後來繼續直播，要能夠不重新渲染畫面。
+            if(!onAirBox.firstElementChild){
+              contentHeader.firstElementChild.innerHTML = streamHeader
+              contentBody.innerHTML = streamUI
+              videoSdk(document, 'script', 'facebook-jssdk')
+              api_get_items('stream', userStatus.host)
+            }
+            
             break
         }
 
@@ -785,6 +784,8 @@
     function pushStreamItem(data) {
       let onAirBox = document.querySelector('.stream__onAir')
 
+      console.log(data)
+
       let streamItem = `
         <div class="contentBody__object stream__product" data-key="${ data.key }">
         <span class="stream__status">On Air</span>
@@ -792,8 +793,8 @@
         <div class="stream__product__mainInfo">
           <div class="contentBody__object__name stream__product__name">${ data.name }</div>
           <span class="contentBody__object__price stream__product__price">$ <span class="price">${ data.unit_price }</span></span>
-          <span class="contentBody__object__amount">（數量：<span class="amount">${ data.stock }</span></span>
-          <span class="contentBody__object__cost">成本：$ <span class="cost">${ data.cost }</span>）</span>
+          <span class="contentBody__object__amount">（銷售數量：<span class="amount">${ data.soldQuantity }</span></span>
+          <span class="contentBody__object__cost">剩餘數量： <span class="cost">${ data.remainingQuantity }</span>）</span>
         </div>
         <div class="contentBody__object__spec stream__product__spec">
           <span class="spec">${ data.description }</span>
@@ -854,7 +855,7 @@
     }
 
     // 買家要下單的樣板
-    function productCalculator () {
+    function productCalculator() {
 
       // console.log('productCalculator: '+remainingQuantity)
 
@@ -865,24 +866,28 @@
       let submit = document.querySelector('.buyForm__submit')
       // console.log('開始計算', add, minus, total, totalVal, remainingQuantity)
 
-        add.addEventListener('click', function(){
-          totalVal = parseInt(totalVal) +1 // 轉型別
-          // total.value = totalVal
-          console.log(typeof totalVal, totalVal, total.value, '+1')
-        })
-        
-        minus.addEventListener('click', function(){
-          if(totalVal > 1){
-            totalVal = parseInt(totalVal) -1 // 轉型別
-            // total.value = totalVal
-            console.log(typeof totalVal, totalVal, total.value, '-1')
-          }
-        })
+      add.addEventListener('click', function () {
+        totalVal = parseInt(totalVal) + 1 // 轉型別
+        // total.value = totalVal
+        console.log(typeof totalVal, totalVal, total.value, '+1')
+      })
 
-        submit.addEventListener('click', chooseRecipient)
+      minus.addEventListener('click', function () {
+        if (totalVal > 1) {
+          totalVal = parseInt(totalVal) - 1 // 轉型別
+          // total.value = totalVal
+          console.log(typeof totalVal, totalVal, total.value, '-1')
+        }
+      })
+
+      submit.addEventListener('click', chooseRecipient)
 
     }
 
+    function URCtoLocalDate(UTCdate) {
+      let UTC = new Date(UTCdate)
+      return UTC.toLocaleString()
+    }
 
     /*---------------------- 
     User API
@@ -904,14 +909,28 @@
             userPhone = (!user.phone) ? user.phone : '尚未填寫手機號碼'
 
             checkSituation('login', userName, userPhoto)
-            api_get_userStatus('init')
+            api_get_userStatus('init', undefined, api_get_items)
 
             if (!isHome) {
-              // listen each function button
-              personalInfo.addEventListener('click', getPersonalInfo)
-              getItems.addEventListener('click', function(){api_get_items('init')})
-              streamHistory.addEventListener('click', api_get_streamHistory)
-              sellerOrders.addEventListener('click', api_get_sellerOrders)
+              
+              // 個人資料管理
+              personalInfo.addEventListener('click', function() {
+                api_get_userStatus('init', undefined, getPersonalInfo)
+              })
+
+              // 商品列表
+              getItems.addEventListener('click', function() {api_get_userStatus('init', undefined, api_get_items)})
+
+              // 賣家訂單管理
+              sellerOrders.addEventListener('click', function() {
+                api_get_userStatus('init', undefined, api_get_sellerOrders)
+              })
+
+              // 直播歷史紀錄
+              streamHistory.addEventListener('click', function() {
+                api_get_userStatus('init', undefined, api_get_streamHistory)
+              })
+
               // buyerOrders.addEventListener('click', )
             }
           }
@@ -923,8 +942,8 @@
 
           fbSDK('login')
           fbButton.addEventListener('click', buttonInit)
-
-          if(response.response !== 'The token is invalid'){
+          // token 過期要重取，點擊登出按鈕才要登出
+          if (response.responseJSON.response !== 'The token is invalid') {
             if (hrefNow !== hrefOrigin) {
               window.location.assign(hrefOrigin)
             }
@@ -956,12 +975,13 @@
 
         .fail(function (response) {
           console.log('api_post_user: Fail ' + response.responseText)
+          fbSDK('login')
         })
     }
 
     // API, GET 取得該使用者建立之收貨人地址
     // GET RECIPIENTS' INFORMATION UNDER A USER
-    function api_get_recipients () {
+    function api_get_recipients() {
       API.GET('/api/recipients')
         .done(function (response) {
           setRecipients(response)
@@ -973,7 +993,7 @@
 
     // 新增收貨人地址
     // ADD RECIPIENT'S ADDRESS 
-    function api_post_recipients () {
+    function api_post_recipients() {
 
       let recipientName = document.querySelector('.addForm__realName').value
       let phoneNumber = document.querySelector('.addForm__phone').value
@@ -986,12 +1006,12 @@
       let countryIndex = country.selectedIndex
       let phoneCode = country.children[countryIndex].dataset.phone
       let countryCode = country.children[countryIndex].dataset.country
-      
+
       let postCode = document.querySelector('.district')
       let postCodeIndex = postCode.selectedIndex
       postCode = postCode.children[postCodeIndex].dataset.zipcode
-      
-      
+
+
 
       let recipientData = {
         'url': `${ server }/api/recipients`,
@@ -1035,7 +1055,7 @@
 
     // API, DELETE 刪除收貨人
     // DELETE RECIPIENTS
-    function api_delete_Recipient (recipient) {
+    function api_delete_Recipient(recipient) {
 
       let key = []
       key.push(recipient)
@@ -1066,26 +1086,26 @@
     }
 
     // API, GET 取得郵遞區號、縣市
-    function api_get_taiwanPostCode () {
-      
+    function api_get_taiwanPostCode() {
+
       API.GET('/api/taiwan-post-code')
-        .done(function(response){
+        .done(function (response) {
           filterCities(response)
         })
-        .fail(function(response){
+        .fail(function (response) {
           console.log('api_get_taiwanPostCode: Fail: ' + response)
         })
     }
 
     // API, GET 取得名稱國碼以及電話國碼
     // GET COUNTRY_CODE AND PHONE_CODE
-    function api_get_phoneCode () {
-      
+    function api_get_phoneCode() {
+
       API.GET('/api/country-code')
-        .done(function(response){
+        .done(function (response) {
           filterCountry(response.response)
         })
-        .fail(function(response){
+        .fail(function (response) {
           console.log('api_get_phoneCode: Fail: ' + response)
         })
     }
@@ -1097,7 +1117,7 @@
 
     // API, GET 取得已建立商品資訊
     // Get uploaded items information
-    function api_get_items(action, host) { //分情境
+    function api_get_items(action) { //分情境
 
       API.GET('/api/items')
         .done(function (response) {
@@ -1106,11 +1126,6 @@
 
           let item = '<div class="stream__onAir"></div>'
           let productAmount = 0
-
-          // 商品列表標題
-          if (contentHeader) contentHeader.innerHTML = `
-          <h2>賣家 > 商品列表<span class="buttonSmall buttonCallToAction startStreaming">開始直播</span></h2>
-          <p class="contentHeader__amountBox"></p>`
 
           if (productList.length !== 0) {
             for (let i = 0; i < productList.length; i++) {
@@ -1123,6 +1138,11 @@
               let photo = productList[i].images
 
               if (action === 'init') {
+
+                // 商品列表標題
+                if (contentHeader) contentHeader.innerHTML = `
+                <h2>賣家 > 商品列表<span class="buttonSmall buttonCallToAction startStreaming">開始直播</span></h2>
+                <p class="contentHeader__amountBox"></p>`
 
                 // 商品列表
                 productListContainer = contentBody
@@ -1149,7 +1169,7 @@
 
                   sellerInit()
                   productListContainer.innerHTML = item
-                  
+
                   let productAmountContainer = document.querySelector('.contentHeader__amountBox')
                   productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
@@ -1176,8 +1196,8 @@
 
                 productListContainer = document.querySelector('.stream__products')
 
-                  // 賣家直播產品列表
-                  item += `
+                // 賣家直播產品列表
+                item += `
                   <div class="contentBody__object stream__product" data-key="${ id }">
                     <img src="${ photo }" alt="${ name }" class="contentBody__object__photo stream__product__photo">
                     <div class="contentBody__object__function stream__product__function">
@@ -1194,45 +1214,47 @@
                     </div>
                   </div>
                   `
-                  productAmount++
+                productAmount++
 
-                  if (!isHome) {
-                    productListContainer.innerHTML = item
-                    
-                    let productAmountContainer = document.querySelector('.contentHeader__amountBox')
+                if (!isHome) {
 
-                    productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
+                  api_get_streamingItem()
+                  productListContainer.innerHTML = item
 
-                    // 共同父層
-                    let myItem = document.querySelectorAll('.contentBody__object')
+                  let productAmountContainer = document.querySelector('.contentHeader__amountBox')
 
-                    for (let i = 0; i < myItem.length; i++) {
-                      // 推播
-                      let productPush = myItem[i].querySelector('.contentBody__object__push')
+                  productAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ productAmount } </span>項`
 
-                      productPush.addEventListener('click', function () {
-                        let key = myItem[i].dataset.key
-                        let name = myItem[i].querySelector('.stream__product__name').textContent
-                        let photo = myItem[i].querySelector('.stream__product__photo').src
-                        let unit_price = myItem[i].querySelector('.price').textContent
-                        let stock = myItem[i].querySelector('.amount').textContent
-                        let cost = myItem[i].querySelector('.cost').textContent
-                        let description = myItem[i].querySelector('.spec').textContent
-                        let pushItemData = {
-                          key: key,
-                          name: name,
-                          photo: photo,
-                          unit_price: unit_price,
-                          stock: stock,
-                          cost: cost,
-                          description: description
-                        }
+                  // 共同父層
+                  let myItem = document.querySelectorAll('.contentBody__object')
 
-                        api_post_streamingItem(pushItemData)
-                      })
-                    }
+                  for (let i = 0; i < myItem.length; i++) {
+                    // 推播
+                    let productPush = myItem[i].querySelector('.contentBody__object__push')
+
+                    productPush.addEventListener('click', function () {
+                      let key = myItem[i].dataset.key
+                      let name = myItem[i].querySelector('.stream__product__name').textContent
+                      let photo = myItem[i].querySelector('.stream__product__photo').src
+                      let unit_price = myItem[i].querySelector('.price').textContent
+                      let stock = myItem[i].querySelector('.amount').textContent
+                      let cost = myItem[i].querySelector('.cost').textContent
+                      let description = myItem[i].querySelector('.spec').textContent
+                      let pushItemData = {
+                        key: key,
+                        name: name,
+                        photo: photo,
+                        unit_price: unit_price,
+                        stock: stock,
+                        cost: cost,
+                        description: description
+                      }
+
+                      api_post_streamingItem(pushItemData)
+                    })
                   }
-                  startStreamingButtonsStatus(false)
+                }
+                startStreamingButtonsStatus(false)
               }
             }
           } else {
@@ -1241,7 +1263,7 @@
               contentBody.innerHTML = '您尚未新增商品。'
               startStreamingButtonsStatus(false)
             }
-            
+
 
           }
 
@@ -1394,7 +1416,7 @@
     }
 
     // API, POST 買家購買商品
-    function api_post_orders (){
+    function api_post_orders() {
       console.log('按下確認購買')
       // /api/orders/{item_id}/{recipient_id}
     }
@@ -1407,7 +1429,7 @@
 
     // API, GET 取得使用者狀態
     // GET USER STATUS
-    function api_get_userStatus(action, productId) {
+    function api_get_userStatus(action, productId, callback) {
 
       API.GET('/api/user-status')
         .done(function (response) {
@@ -1432,22 +1454,15 @@
               if (!host) {
                 // 買家加入直播
                 continueStream(userStatus, productCalculator)
-                console.log(host, '買家', userStatus)
-
-                // setTimeout(function(){
-                //   api_get_userStatus()
-                // }, 5000)
-
+                // console.log(host, '買家', userStatus)
               } else {
                 // 賣家開始直播
                 console.log(host, '賣家')
-                continueStream(userStatus, function(){
-                  console.log('賣家開始直播的callback')
-                  
-                })
+                continueStream(userStatus)
               }
 
             } else if (action === 'init') {
+
               let alertMsg
               if (!host) {
                 // 買家角色
@@ -1470,7 +1485,7 @@
                 </div>
                 `
               }
-              
+
               lightBox.open(alertMsg, false)
 
               let continueStreamBtn = document.querySelector('.continueStreaming')
@@ -1483,21 +1498,21 @@
 
               stopStream.addEventListener('click', function () {
                 api_put_usersChannelId()
+                callback()
               })
             }
             startStreamingButtonsStatus(false)
 
-          } else {
-            // let alertMsg = `<h3><span>提示訊息</span></h3>賣家已結束直播`
-            // lightBox.open(alertMsg, true)
-            api_get_items('init')
+          } else if (response.result === false) {
+            // 預設的callback是載入商品列表
+            if (!isHome) callback('init') 
           }
 
         })
 
         .fail(function (response) {
           console.log('api_get_userStatus: Fail', response.responseText)
-          // console.log(host)
+
         })
     }
 
@@ -1552,8 +1567,6 @@
       $.ajax(streamItemData)
         .done(function (response) {
           if (response.result === true) {
-            console.log('push了')
-            // ***** 記得改買家的 data 不傳 cost
             api_get_streamingItem(data)
           }
         })
@@ -1580,6 +1593,16 @@
           remainingQuantity = response.response.remaining_quantity
           let soldQuantity = response.response.sold_quantity
           let unitPrice = response.response.unit_price
+          
+          let streamData = {
+            key: item_id,
+            name: name,
+            description: description,
+            photo: image,
+            remainingQuantity: remainingQuantity,
+            soldQuantity: soldQuantity,
+            unit_price: unitPrice
+          }
 
           let keyContainer = document.querySelector('.stream__product')
           let nameContainer = document.querySelector('.stream__product__name')
@@ -1590,7 +1613,7 @@
           let unitPriceContainer = document.querySelector('.stream__product__price')
 
 
-          if(!host){
+          if (!host) {
             console.log('我是買家')
 
             keyContainer.dataset.key = item_id
@@ -1602,14 +1625,14 @@
             unitPriceContainer.textContent = unitPrice
 
             // 每五秒撈推播商品資訊回來
-            setTimeout(function(){
+            setTimeout(function () {
               api_get_streamingItem()
             }, 5000)
 
           } else {
             // 賣家
-            console.log('dftgyuhi')
-            pushStreamItem(data)
+            console.log('賣家取得推播商品')
+            pushStreamItem(streamData)
           }
         })
 
@@ -1619,16 +1642,16 @@
             let onAirBox = document.querySelector('.stream__onAir')
             onAirBox.innerHTML = '<div class="contentBody__object stream__product">賣家尚未推播產品</div>'
           }
-          
+
 
         })
     }
 
     // API, PUT 賣家結束直播
     function api_put_usersChannelId() {
-      
+
       let serverPath
-      serverPath = (host) ? '/api/users-channel-id':'/api/user-channel-id'
+      serverPath = (host) ? '/api/users-channel-id' : '/api/user-channel-id'
 
       let userChannelData = {
         'url': `${ server }${ serverPath }`,
@@ -1674,52 +1697,52 @@
       }
       console.log(userChannelData)
 
-        $.ajax(userChannelData)
-          .done(function (response) {
-            console.log(response)
-            if (response.result === true) {
-              lightBox.close()
-              api_get_userStatus('stream')
-              // sellerInit()
-            }
-          })
+      $.ajax(userChannelData)
+        .done(function (response) {
+          console.log(response)
+          if (response.result === true) {
+            lightBox.close()
+            api_get_userStatus('stream')
+          }
+        })
 
-          .fail(function (response) {
-            console.log('api_patch_userChannelID: Fail ' + response)
-            let errorMsg = response.responseJSON.response
-            let errorContainer = document.querySelector('.lightBox__errorMsg')
-            if(errorMsg === 'The channel doesn\'t exist') {
-              errorContainer.innerHTML = `直播 ID 輸入錯誤`
-            }else if(errorMsg === 'You are currently holding a live-stream') {
-              errorContainer.innerHTML = `您正在直播中，所以無法進入新包廂`
-            }
-          })
+        .fail(function (response) {
+          console.log('api_patch_userChannelID: Fail ' + response)
+          let errorMsg = response.responseJSON.response
+          let errorContainer = document.querySelector('.lightBox__errorMsg')
+          if (errorMsg === 'The channel doesn\'t exist') {
+            errorContainer.innerHTML = `直播 ID 輸入錯誤`
+          } else if (errorMsg === 'You are currently holding a live-stream') {
+            errorContainer.innerHTML = `您正在直播中，所以無法進入新包廂`
+          }
+        })
 
     }
 
     // API, GET 取得直播歷史紀錄
     function api_get_streamHistory() {
+
       API.GET('/api/channels')
-      .done(function(response){
-        addProductInit(false) // 關閉新增商品按鈕
-        contentHeader.innerHTML = `<h2>賣家 > 直播歷史紀錄</h2><p class="contentHeader__amountBox"></p>`
+        .done(function (response) {
+          addProductInit(false) // 關閉新增商品按鈕
+          contentHeader.innerHTML = `<h2>賣家 > 直播歷史紀錄</h2><p class="contentHeader__amountBox"></p>`
 
-        let history = response.response
-        let historyTemplate = ''
-        let historyAmount = 0
+          let history = response.response
+          let historyTemplate = ''
+          let historyAmount = 0
 
-        if(history.length !== 0) {
-          history.sort(function(a, b){
-            return a > b ? 1 : -1
-          })
-  
-          for (let i = 0; i < history.length; i++){
-            let id = history[i].channel_id
-            let name = history[i].channel_description
-            let video = history[i].iFrame
-            let startTime = history[i].started_at
-            let endTime = history[i].ended_at
-            historyTemplate += `
+          if (history.length !== 0) {
+            history.sort(function (a, b) {
+              return a > b ? 1 : -1
+            })
+
+            for (let i = 0; i < history.length; i++) {
+              let id = history[i].channel_id
+              let name = history[i].channel_description
+              let video = history[i].iFrame
+              let startTime = URCtoLocalDate(history[i].started_at)
+              let endTime = URCtoLocalDate(history[i].ended_at)
+              historyTemplate += `
             <div class="contentBody__object" data-history="${id}">
               <div class="contentBody__object__name">${name}</div>
               <div class="contentBody__object__spec contentBody__object__spec__contact">
@@ -1730,73 +1753,74 @@
               </div>
             </div>
             `
-            historyAmount++
+              historyAmount++
+            }
+            let historyAmountContainer = document.querySelector('.contentHeader__amountBox')
+            historyAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ historyAmount } </span>項`
+            contentBody.innerHTML = historyTemplate
+          } else {
+            contentBody.innerHTML = `您尚未開過任何直播包廂。`
           }
-          let historyAmountContainer = document.querySelector('.contentHeader__amountBox')
-          historyAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ historyAmount } </span>項`
-          contentBody.innerHTML = historyTemplate
-        }else {
-          contentBody.innerHTML = `您尚未開過任何直播包廂。`
-        }
-        
-        
 
-      })
-      .fail(function(response){
-        console.log(response)
-      })
+
+
+        })
+        .fail(function (response) {
+          console.log(response)
+        })
     }
 
     // API, GET 取得賣家全部訂單
     function api_get_sellerOrders() {
       API.GET('/api/seller-orders')
-      .done(function(response){
-        let order = response.response
-        let orderTemplate = '<h4>全部訂單</h4>'
-        let orderAmount = 0
+        .done(function (response) {
+          let order = response.response
+          let orderTemplate = '<h4><span class="order__navButton allOrder">全部訂單</span> | <span class="order__navButton paidOrder">已付款</span> | <span class="order__navButton notPayOrder">未付款</span></h4>'
+          let orderAmount = 0
 
-        contentHeader.innerHTML = `<h2>賣家 > 訂單管理</h2><p class="contentHeader__amountBox"></p>`
-        addProductInit(false) // 關閉新增商品按鈕
+          contentHeader.innerHTML = `<h2>賣家 > 訂單管理</h2><p class="contentHeader__amountBox"></p>`
+          addProductInit(false) // 關閉新增商品按鈕
 
-        if(order.length !== 0) {
-          order.sort(function(a, b){
-            return a > b ? 1 : -1
-          })
+          if (order.length !== 0) {
+            order.sort(function (a, b) {
+              return a > b ? 1 : -1
+            })
 
-          for (let i = 0; i < order.length; i++){
-            // 訂單資訊
-            let orderNumber = order[i].order // 訂單編號
-            let name = order[i].name // 商品名稱
-            let description = order[i].description // 商品敘述
-            let unit_price = order[i].unit_price // 單價
-            let quantity = order[i].quantity // 數量
-            let effective = order[i].effective // 0 未結帳，1 已結帳
-            // TODO: 判定未付款以及已結帳的按鈕
-            let expiry_time = order[i].expiry_time // 付款期限
-            let time = order[i].time // 商品時間
-            let images = order[i].images // 商品照片
-            effective = (!effective) ? '已結帳' : '未結帳'
+            for (let i = 0; i < order.length; i++) {
+              console.log(order[i])
+              // 訂單資訊
+              let orderNumber = order[i].order // 訂單編號
+              let name = order[i].name // 商品名稱
+              let description = order[i].description // 商品敘述
+              let unit_price = order[i].unit_price // 單價
+              let quantity = order[i].quantity // 數量
+              let status = order[i].status // 0 未結帳，1 已結帳
+              // TODO: 判定未付款以及已結帳的按鈕
+              let expiry_time = URCtoLocalDate(order[i].expiry_time) // 付款期限
+              let time = URCtoLocalDate(order[i].time) // 商品時間
+              let images = order[i].images // 商品照片
+              status = (!status) ? '未結帳' : '已結帳' // 結帳狀態
 
-            // 金流資訊
-            let total_amount = order[i].total_amount
+              // 金流資訊
+              let total_amount = order[i].total_amount
 
-            // 物流資訊
-            let recipient = order[i].recipient
-            let user_id = order[i].user_id
-            let phone_code = order[i].phone_code
-            let phone_number = order[i].phone_number
+              // 物流資訊
+              let recipient = order[i].recipient
+              let user_id = order[i].user_id
+              let phone_code = order[i].phone_code
+              let phone_number = order[i].phone_number
 
-            let country = order[i].country
-            let post_code = order[i].post_code
-            let city = order[i].city
-            let district = order[i].district
-            let others = order[i].others
+              let country = order[i].country
+              let post_code = order[i].post_code
+              let city = order[i].city
+              let district = order[i].district
+              let others = order[i].others
 
 
-            orderTemplate += `
+              orderTemplate += `
             <div class="contentBody__object" data-order="${orderNumber}">
               <img src="${images}" alt="demo red" class="contentBody__object__photo">
-              <div class="contentBody__object__name">${name} （${effective}）</div>
+              <div class="contentBody__object__name">${name} （${status}）</div>
               <span class="contentBody__object__amount">購買數量：<span class="amount">${quantity}</span></span>
               <span class="contentBody__object__cost">單價：$ <span class="cost">${unit_price}</span></span>
               <span class="contentBody__object__price">$ <span class="price">${total_amount}</span></span>
@@ -1813,21 +1837,21 @@
 
             </div>
             `
-            orderAmount++
+              orderAmount++
+            }
+
+            let orderAmountContainer = document.querySelector('.contentHeader__amountBox')
+            orderAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ orderAmount } </span>項`
+            contentBody.innerHTML = orderTemplate
+          } else {
+            contentBody.innerHTML = `您尚無任何訂單。`
           }
 
-          let orderAmountContainer = document.querySelector('.contentHeader__amountBox')
-          orderAmountContainer.innerHTML = `共<span class="contentHeader__amount"> ${ orderAmount } </span>項`
-          contentBody.innerHTML = orderTemplate
-        }else{
-          contentBody.innerHTML = `您尚無任何訂單。`
-        }
-        
 
-      })
-      .fail(function(response){
-        console.log(response)
-      })
+        })
+        .fail(function (response) {
+          console.log(response)
+        })
     }
   })
 })(lightbox, API)

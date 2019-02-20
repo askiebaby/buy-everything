@@ -9,7 +9,7 @@ header {
 
 .content {
   position: relative;
-  max-width: $media-md;
+  max-width: 1080px;
   margin: auto;
 }
 
@@ -95,14 +95,15 @@ header {
     border-radius: 5px;
     line-height: 1.8;
     position: relative;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
     
     @include clearFix;
 
     &__photo {
       float: left;
+      margin-top: 5px;
       margin-right: 10px;
-      width: 150px;
+      width: 140px;
     }
 
     &__name {
@@ -115,8 +116,8 @@ header {
       background: $lightGray-2;
       border-left: 5px solid $lightGray;
       display: inline-block;
-      width: calc(100% - 160px);
-      padding: 10px 10px 20px;
+      width: calc(100% - 150px);
+      padding: 10px;
       margin: 10px 0;
       border-radius: 0 3px 3px 0;
       word-break: break-word;
@@ -125,6 +126,10 @@ header {
           font-size: .9em;
           color: $deepGray-2;
           margin-top: 10px;
+
+          &:first-child {
+            margin-top: 0;
+          }
         }
         &__contact {
           width: 100%;
@@ -286,7 +291,7 @@ header {
   &__frame {
     width: 65%;
     border: 1px solid #999;
-    max-height: calc(#{$media-lg} * 0.65 * 0.5625);
+    max-height: calc(1080px * 0.65 * 0.5625);
   }
 
   &__onAir {
@@ -302,14 +307,14 @@ header {
     }
     .stream__product__spec {
       background: #fff;
-      border-left-color: darken(#fff, 10);
+      border-left-color: $primaryColor;
     }
   }
 
   &__products {
     width: 34%;
-    min-height: 400px;
-    max-height: calc( #{$media-lg} * 0.65 * 0.5625);
+    min-height: 360px;
+    max-height: calc(1080px * 0.65 * 0.5625);
     border: 1px solid $deepGray-3;
     background: $lightGray-2;
     overflow-y: auto;
@@ -351,7 +356,7 @@ header {
   }
 
   &__product__name {
-    width: 100%;
+    width: calc(100% - 52px);
   }
 
   &__product__price {
@@ -359,6 +364,7 @@ header {
     top: auto;
     right: auto;
     font-size: initial;
+    padding: 0 10px 0 0;
   }
 
   &__product__spec {
@@ -426,6 +432,11 @@ header {
     &Container {
       margin-top: 30px;
       flex-basis: 100%;
+    }
+  }
+  .order {
+    &__navButton {
+      color: $lightGray;
     }
   }
 }
