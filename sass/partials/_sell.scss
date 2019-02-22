@@ -434,10 +434,69 @@ header {
       flex-basis: 100%;
     }
   }
-  .order {
-    &__navButton {
-      color: $lightGray;
+}
+
+.order {
+  &__navButton {
+    color: #cccccc;
+    margin: 0 5px;
+    cursor: pointer;
+    &:hover{
+      color: darken(#cccccc, 20);
     }
+  }
+  &__navButton + &__navButton {
+    border-left: 1px solid $yellow;
+    padding-left: 10px;
+  }
+
+  &__navChecked {
+    color: $primaryColor;
+    &:hover{
+      color: darken($primaryColor, 20);
+    }
+  }
+  &__number {
+    position: absolute;
+    left: 10px;
+    top: 160px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #666;
+  }
+  &__status {
+    position: absolute;
+    left: 10px;
+    top: 190px;
+    padding: 0 10px;
+    border-radius: 5px;
+
+    &__paid {
+      color: $deepBlueGreen;
+      border: 1px solid $deepBlueGreen;
+    }
+
+    &__notPaid {
+      color: $tomato;
+      border: 1px solid $tomato;
+    }
+  }
+
+  &__redExpiredTime {
+    position: absolute;
+    left: 10px;
+    top: 230px;
+    color: $tomato;
+    font-size: 12px;
+    width: 140px;  
+  }
+  &__greenExpiredTime {
+    position: absolute;
+    left: 10px;
+    top: 230px;
+    color: $deepBlueGreen;
+    font-size: 12px;
+    width: 140px;  
   }
 }
 

@@ -1049,6 +1049,61 @@ header {
   margin-top: 30px;
   flex-basis: 100%;
 }
-.buyForm .order__navButton {
-  color: #d4d4d4;
+
+.order__navButton {
+  color: #cccccc;
+  margin: 0 5px;
+  cursor: pointer;
+}
+.order__navButton:hover {
+  color: #999999;
+}
+.order__navButton + .order__navButton {
+  border-left: 1px solid #FFC107;
+  padding-left: 10px;
+}
+.order__navChecked {
+  color: #267abd;
+}
+.order__navChecked:hover {
+  color: #154368;
+}
+.order__number {
+  position: absolute;
+  left: 10px;
+  top: 160px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #666;
+}
+.order__status {
+  position: absolute;
+  left: 10px;
+  top: 190px;
+  padding: 0 10px;
+  border-radius: 5px;
+}
+.order__status__paid {
+  color: #00A58F;
+  border: 1px solid #00A58F;
+}
+.order__status__notPaid {
+  color: #F25757;
+  border: 1px solid #F25757;
+}
+.order__redExpiredTime {
+  position: absolute;
+  left: 10px;
+  top: 230px;
+  color: #F25757;
+  font-size: 12px;
+  width: 140px;
+}
+.order__greenExpiredTime {
+  position: absolute;
+  left: 10px;
+  top: 230px;
+  color: #00A58F;
+  font-size: 12px;
+  width: 140px;
 }
