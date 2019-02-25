@@ -449,7 +449,18 @@
 
     // 篩鄉鎮
     function filterArea(query, cities, selector) {
-      return cities.filter(function (item, index, array) {
+      // return cities.filter(function (item, index, array) {
+      //   if (item['City'] === query) {
+      //     let districtOption = document.createElement('OPTION')
+      //     districtOption.dataset.zipcode = item['ZipCode']
+      //     districtOption.value = item['Area']
+      //     districtOption.innerHTML = `${item['ZipCode']} ${item['Area']}`
+      //     selector.appendChild(districtOption)
+      //     selector.disabled = false
+      //   }
+      // })
+
+      return cities.forEach(function (item, index, array) {
         if (item['City'] === query) {
           let districtOption = document.createElement('OPTION')
           districtOption.dataset.zipcode = item['ZipCode']
